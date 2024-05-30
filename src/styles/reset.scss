@@ -1,0 +1,43 @@
+// @import '../../public/assets/fonts/croogla/Croogla.ttf';
+
+@font-face {
+    font-family: "Croogla";
+    src:  url("../../public/assets/fonts/croogla/Croogla.ttf")format("truetype"),
+    url("../../public/assets/fonts/croogla/Croogla.woff2")format("woff2"),
+    url("../../public/assets/fonts/croogla/Croogla.eot?#iefix")format("embedded-opentype")
+}
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Croogla";
+}
+body {
+  background-color: #eaedf7;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.roll {
+  animation: spin 1s infinite;
+}
+.css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 12px !important;
+  margin: 0 !important;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
