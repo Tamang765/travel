@@ -3,7 +3,6 @@ import { IconButton, MenuItem, Popover } from "@mui/material";
 import { useSnackbar } from "notistack";
 import React from "react";
 import { AiOutlineLogout } from "react-icons/ai";
-import { FaMoon } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../auth/useAuthContext";
 import { useTheme } from "../../providers/ThemeProvider";

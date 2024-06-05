@@ -6,6 +6,7 @@ import menu from "../../routes/paths";
 export const Layout = ({ children }) => {
   const { colors } = useTheme();
 
+  // TODO: check whether to show the sidebar menu or not
   const [showSideMenu, setShowSideMenu] = useState(
     menu.map((m) => ({
       title: m.title,

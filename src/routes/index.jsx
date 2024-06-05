@@ -10,6 +10,7 @@ import {
   Customers,
   DeletedUsers,
   EmergencyContacts,
+  Faqs,
   LandingPage,
   LoginPage,
   Notifications,
@@ -264,7 +265,7 @@ export default function Router() {
               path: "faqs",
               element: (
                 <Layout>
-                  <Admins />
+                  <Faqs />
                 </Layout>
               ),
             },

@@ -84,3 +84,5 @@ export const VehicleModels = Loadable(
 export const EmergencyContacts = Loadable(
   lazy(() => import("../pages/supports/EmergencyContacts"))
 );
+
+export const Faqs = Loadable(lazy(() => import("../pages/supports/Faqs")));

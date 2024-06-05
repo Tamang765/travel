@@ -3,8 +3,10 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 // slices
 import emergencyContactSlice from "./slices/emergencyContactSlice";
+import faqSlice from "./slices/faqSlice";
 import roleSlice from "./slices/roleSlice";
 import teamSlice from "./slices/teamSlice";
+import userTypeSlice from "./slices/userTypeSlice";
 import vehicleSlice from "./slices/vehicleSlice";
 
 // ----------------------------------------------------------------------
@@ -44,10 +46,26 @@ export const emergencyContactPersistConfig = {
   whitelist: ["sortBy", "checkout"],
 };
 
+export const faqPersistConfig = {
+  key: "faq",
+  storage,
+  keyPrefix: "redux-",
+  whitelist: ["sortBy", "checkout"],
+};
+
+export const userTypePersistConfig = {
+  key: "userType",
+  storage,
+  keyPrefix: "redux-",
+  whitelist: ["sortBy", "checkout"],
+};
+
 const rootReducer = combineReducers({
   team: persistReducer(teamPersistConfig, teamSlice),
   role: persistReducer(rolePersistConfig, roleSlice),
+  userType: persistReducer(userTypePersistConfig, userTypeSlice),
   vehicle: persistReducer(vehiclePersistConfig, vehicleSlice),
+  faq: persistReducer(faqPersistConfig, faqSlice),
   emergencyContact: persistReducer(
     emergencyContactPersistConfig,
     emergencyContactSlice

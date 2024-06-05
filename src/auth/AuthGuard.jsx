@@ -9,6 +9,7 @@ import { useSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
 import Login from "../pages/LoginPage";
 import { fetchRoles } from "../redux/slices/roleSlice";
+import { fetchUserTypes } from "../redux/slices/userTypeSlice";
 import { useAuthContext } from "./useAuthContext";
 
 // ----------------------------------------------------------------------
@@ -30,6 +31,7 @@ export default function AuthGuard({ children }) {
 
   useEffect(() => {
     dispatch(fetchRoles({ enqueueSnackbar }));
+    dispatch(fetchUserTypes({ enqueueSnackbar }));
   }, [dispatch, enqueueSnackbar]);
 
   // ===================

@@ -1,10 +1,9 @@
+import { formats } from "numeral";
 import PropTypes from "prop-types";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "../../utils/highlight";
 //
-import EditorToolbar, { formats } from "./EditorToolbar";
-import { StyledEditor } from "./styles";
 
 // ----------------------------------------------------------------------
 
@@ -26,26 +25,13 @@ export default function Editor({
   simple = false,
   helperText,
   sx,
+  placeholder = "Write something...",
   ...other
 }) {
-  const modules = {
-    toolbar: {
-      container: `#${id}`,
-    },
-    history: {
-      delay: 500,
-      maxStack: 100,
-      userOnly: true,
-    },
-    syntax: true,
-    clipboard: {
-      matchVisual: false,
-    },
-  };
-
+  console.log("value", value);
   return (
     <>
-      <StyledEditor
+      {/* <StyledEditor
         sx={{
           ...(error && {
             border: (theme) => `solid 1px ${theme.palette.error.main}`,
@@ -53,19 +39,16 @@ export default function Editor({
           ...sx,
         }}
       >
-        <EditorToolbar id={id} isSimple={simple} />
-
-        <ReactQuill
-          value={value}
-          onChange={onChange}
-          modules={modules}
-          formats={formats}
-          placeholder="Write something awesome..."
-          {...other}
-        />
-      </StyledEditor>
-
-      {helperText && helperText}
+        <EditorToolbar id={id} isSimple={simple} /> */}
+      <ReactQuill
+        value={value}
+        onChange={onChange}
+        formats={formats}
+        placeholder={placeholder}
+        {...other}
+        theme="snow"
+      />
+      {/* </StyledEditor> */}
     </>
   );
 }
