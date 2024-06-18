@@ -190,3 +190,17 @@ main {
   height: 100%;
   display: block;
 }
+
+
+
+.activeSide {
+  color: #FBB02E;
+}
+
+.activeSide > .icon {
+  background-color: #FBB02E;
+  border-radius: 50%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  padding: 5px;
+}

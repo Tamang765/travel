@@ -20,6 +20,7 @@ export const StyledSection = styled("div")(({ theme }) => ({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",
+    height: "100vh",
   },
 }));
 

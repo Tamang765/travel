@@ -57,29 +57,24 @@ export const Riders = Loadable(
 
 export const Roles = Loadable(lazy(() => import("../pages/users/roles/Roles")));
 
+// TODO: entries
+export const Brands = Loadable(lazy(() => import("../pages/entries/Brands")));
+
+export const Colors = Loadable(lazy(() => import("../pages/entries/Colors")));
+
+export const Sizes = Loadable(lazy(() => import("../pages/entries/Sizes")));
+
+export const Categories = Loadable(
+  lazy(() => import("../pages/entries/Categories"))
+);
+
 // TODO: settings
-// TODO: vehicles
-export const VehicleBrands = Loadable(
-  lazy(() => import("../pages/settings/vehicles/VehicleBrands"))
-);
-
-export const VehicleCC = Loadable(
-  lazy(() => import("../pages/settings/vehicles/VehicleCC"))
-);
-
-export const VehicleColors = Loadable(
-  lazy(() => import("../pages/settings/vehicles/VehicleColors"))
-);
-
-export const VehicleSymbols = Loadable(
-  lazy(() => import("../pages/settings/vehicles/VehicleSymbols"))
-);
-
-export const VehicleModels = Loadable(
-  lazy(() => import("../pages/settings/vehicles/VehicleModels"))
+export const Settings = Loadable(
+  lazy(() => import("../pages/settings/Settings"))
 );
 
 // TODO: supports
+
 // TODO: emergency contacts
 export const EmergencyContacts = Loadable(
   lazy(() => import("../pages/supports/EmergencyContacts"))

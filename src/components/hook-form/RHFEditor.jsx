@@ -37,8 +37,6 @@ export default function RHFEditor({ name, placeholder, helperText, ...other }) {
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => {
-        console.log(field.value, "value");
-
         return (
           <Stack>
             <Editor

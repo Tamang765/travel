@@ -11,6 +11,7 @@ import Login from "../pages/LoginPage";
 import { fetchRoles } from "../redux/slices/roleSlice";
 import { fetchUserTypes } from "../redux/slices/userTypeSlice";
 import { useAuthContext } from "./useAuthContext";
+import { fetchCategories } from "../redux/slices/categorySlice";
 
 // ----------------------------------------------------------------------
 AuthGuard.propTypes = {
@@ -30,8 +31,8 @@ export default function AuthGuard({ children }) {
   // TODO: fetch the common data here
 
   useEffect(() => {
-    dispatch(fetchRoles({ enqueueSnackbar }));
-    dispatch(fetchUserTypes({ enqueueSnackbar }));
+    dispatch(fetchCategories({ enqueueSnackbar }));
+    // dispatch(fetchUserTypes({ enqueueSnackbar }));
   }, [dispatch, enqueueSnackbar]);
 
   // ===================

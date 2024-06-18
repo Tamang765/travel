@@ -21,8 +21,10 @@ export const fetchEmergencyContacts = createAsyncThunk(
   async ({ enqueueSnackbar, limit, page }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`users/emergency-contacts`, {
-        page: page + 1,
-        limit,
+        params: {
+          page: page + 1,
+          limit,
+        },
       });
 
       return {

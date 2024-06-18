@@ -1,4 +1,4 @@
-import { AnimatePresence, m } from "framer-motion";
+import { m } from "framer-motion";
 import PropTypes from "prop-types";
 // @mui
 import { IconButton, Stack, Typography } from "@mui/material";
@@ -26,7 +26,7 @@ export default function MultiFilePreview({ thumbnail, files, onRemove, sx }) {
   }
 
   return (
-    <AnimatePresence initial={false}>
+    <>
       {files.map((file) => {
         const { key, name = "", size = 0 } = fileData(file);
 
@@ -36,8 +36,8 @@ export default function MultiFilePreview({ thumbnail, files, onRemove, sx }) {
           return (
             <Stack
               key={key}
-              component={m.div}
-              {...varFade().inUp}
+              // component={m.div}
+              // {...varFade().inUp}
               alignItems="center"
               display="inline-flex"
               justifyContent="center"
@@ -124,6 +124,6 @@ export default function MultiFilePreview({ thumbnail, files, onRemove, sx }) {
           </Stack>
         );
       })}
-    </AnimatePresence>
+    </>
   );
 }

@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 // @mui
-import { Box, Tooltip, Stack } from "@mui/material";
+import { Box, Stack, Tooltip } from "@mui/material";
 //
-import { fileData, fileFormat, fileThumb } from "./utils";
 import DownloadButton from "./DownloadButton";
+import { fileData, fileFormat, fileThumb } from "./utils";
 
 // ----------------------------------------------------------------------
 

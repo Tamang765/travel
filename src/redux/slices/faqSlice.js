@@ -21,8 +21,10 @@ export const fetchFaqs = createAsyncThunk(
   async ({ enqueueSnackbar, limit, page }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`faq`, {
-        page: page + 1,
-        limit,
+        params: {
+          page: page + 1,
+          limit,
+        },
       });
 
       return {

@@ -21,8 +21,10 @@ export const fetchRoles = createAsyncThunk(
   async ({ enqueueSnackbar, limit, page }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`acl/roles`, {
-        page: page + 1,
-        limit,
+        params: {
+          page: page + 1,
+          limit,
+        },
       });
 
       return {

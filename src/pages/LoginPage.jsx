@@ -9,7 +9,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Login | Ridex Admin Portal</title>
+        <title> Login | City Garms Admin Portal</title>
       </Helmet>
 
       <Login />

@@ -39,7 +39,6 @@ export default function RHFDateField({
       control={control}
       render={({ field, fieldState: { error } }) => (
         <Stack>
-          {console.log(field?.value, "value")}
           <DatePicker
             slotProps={{ textField: { size: size } }}
             maxDate={maxDate ? moment(maxDate) : undefined}

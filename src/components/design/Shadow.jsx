@@ -3,7 +3,6 @@ import { useTheme } from "../../providers/ThemeProvider";
 export const Shadow = ({ children }) => {
   const { colors, theme } = useTheme();
 
-  console.log(colors, "fol")
   return (
     <div
       style={{

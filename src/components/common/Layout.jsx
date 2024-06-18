@@ -8,14 +8,16 @@ export const Layout = ({ children }) => {
 
   // TODO: check whether to show the sidebar menu or not
   const [showSideMenu, setShowSideMenu] = useState(
-    menu.map((m) => ({
+    menu?.map((m) => ({
       title: m.title,
-      show: m.childrens.some(
-        (c) =>
-          c.path === window.location.pathname ||
-          (c.childrens &&
-            c.childrens.some((a) => a.path === window.location.pathname))
-      ),
+      show:
+        m?.childrens?.length &&
+        m?.childrens?.some(
+          (c) =>
+            c.path === window.location.pathname ||
+            (c.childrens &&
+              c.childrens.some((a) => a.path === window.location.pathname))
+        ),
     }))
   );
 
@@ -28,13 +30,13 @@ export const Layout = ({ children }) => {
       <Sidebar showSideMenu={showSideMenu} setShowSideMenu={setShowSideMenu} />
 
       <div
-      // onClick={() => {
-      //   setShowSideMenu((prev) => {
-      //     return prev.map((data) => {
-      //       return { ...data, show: false };
-      //     });
-      //   });
-      // }}
+        onClick={() => {
+          setShowSideMenu((prev) => {
+            return prev.map((data) => {
+              return { ...data, show: false };
+            });
+          });
+        }}
       >
         <Header />
       </div>

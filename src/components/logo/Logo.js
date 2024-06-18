@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 import { Link as RouterLink } from "react-router-dom";
 // @mui
 import { Box, Link } from "@mui/material";
-import logoImage from "./LOGO.jpeg";
+import logoImage from "./logo.png";
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +27,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
         margin: "auto",
         cursor: "pointer",
         mixBlendMode: "multiply",
+        filter: "invert(100%)",
         ...sx,
       }}
     />

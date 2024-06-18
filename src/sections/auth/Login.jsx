@@ -12,7 +12,7 @@ export default function Login() {
   return (
     <LoginLayout>
       <Stack spacing={2} sx={{ mb: 5, position: "relative", color: "black" }}>
-        <Typography variant="h4">Log in to RIDEX</Typography>
+        <Typography variant="h4">Log in to City Garms</Typography>
       </Stack>
 
       <AuthLoginForm />

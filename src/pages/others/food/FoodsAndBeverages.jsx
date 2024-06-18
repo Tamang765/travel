@@ -1,10 +1,4 @@
-import {
-  Button,
-  IconButton,
-  Input,
-  Option,
-  Select,
-} from "@material-tailwind/react";
+import { Button, IconButton, Input } from "@material-tailwind/react";
 import {
   Box,
   Checkbox,
@@ -276,13 +270,13 @@ function EnhancedTableToolbar(props) {
                       <span className="text-red-500 ml-2">*</span>
                     </h3>
                     <div className="w-full">
-                      <Select>
+                      {/* <Select>
                         <Option>Material Tailwind HTML</Option>
                         <Option>Material Tailwind React</Option>
                         <Option>Material Tailwind Vue</Option>
                         <Option>Material Tailwind Angular</Option>
                         <Option>Material Tailwind Svelte</Option>
-                      </Select>
+                      </Select> */}
                     </div>
                   </div>
                 </form>

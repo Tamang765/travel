@@ -80,7 +80,7 @@ export function AuthProvider({ children }) {
 
       if (token) {
         setSession(token);
-        const response = await axiosInstance.get("users/auth-user/get");
+        const response = await axiosInstance.get("auth-user");
         const user = response.data.data;
 
         dispatch({
@@ -103,8 +103,8 @@ export function AuthProvider({ children }) {
       dispatch({
         type: "INITIAL",
         payload: {
-          isAuthenticated: false,
-          user: null,
+          isAuthenticated: true,
+          user: {},
         },
       });
     }
@@ -121,14 +121,14 @@ export function AuthProvider({ children }) {
       password,
     });
 
-    const { access_token, user } = response.data.data;
+    const { token, data } = response.data;
 
     if (response.status === 200) {
-      setSession(access_token);
+      setSession(token);
       dispatch({
         type: "LOGIN",
         payload: {
-          user,
+          user: data,
         },
       });
     } else {

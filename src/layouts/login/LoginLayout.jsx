@@ -38,7 +38,7 @@ export default function LoginLayout({ children }) {
           disabledEffect
           visibleByDefault
           alt="auth"
-          src="/ridex.jpeg"
+          src="/citygarm.png"
           sx={
             {
               // width: "100%",

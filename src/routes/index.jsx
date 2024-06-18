@@ -4,9 +4,13 @@ import AuthGuard from "../auth/AuthGuard";
 import GuestGuard from "../auth/GuestGuard";
 import { PATH_AFTER_LOGIN } from "../config-global";
 import CompactLayout from "../layouts/compact/CompactLayout";
+import Products from "../pages/entries/Products";
 import { Layout } from "../routers";
 import {
   Admins,
+  Brands,
+  Categories,
+  Colors,
   Customers,
   DeletedUsers,
   EmergencyContacts,
@@ -17,12 +21,9 @@ import {
   Page404,
   Riders,
   Roles,
+  Settings,
+  Sizes,
   TodayRides,
-  VehicleBrands,
-  VehicleCC,
-  VehicleColors,
-  VehicleModels,
-  VehicleSymbols,
 } from "./elements";
 
 //
@@ -73,7 +74,7 @@ export default function Router() {
         },
 
         {
-          path: "today-trips",
+          path: "orders",
           element: (
             <Layout>
               <TodayRides />
@@ -179,73 +180,112 @@ export default function Router() {
           ],
         },
 
-        // TODO: vehicles
+        // TODO: Entries
+        {
+          path: "/admin/entries",
+          children: [
+            {
+              element: <Navigate to="/admin/entries/brands" replace />,
+              index: true,
+            },
+
+            {
+              path: "products",
+              element: (
+                <Layout>
+                  <Products />
+                </Layout>
+              ),
+            },
+
+            {
+              path: "brands",
+              element: (
+                <Layout>
+                  <Brands />
+                </Layout>
+              ),
+            },
+
+            {
+              path: "colors",
+              element: (
+                <Layout>
+                  <Colors />
+                </Layout>
+              ),
+            },
+
+            {
+              path: "categories",
+              element: (
+                <Layout>
+                  <Categories />
+                </Layout>
+              ),
+            },
+
+            {
+              path: "sizes",
+              element: (
+                <Layout>
+                  <Sizes />
+                </Layout>
+              ),
+            },
+          ],
+        },
+
+        // TODO: Settings
         {
           path: "/admin/settings",
           children: [
             {
-              element: <Navigate to="/admin/settings/vehicles" replace />,
+              element: <Navigate to="/admin/settings" replace />,
               index: true,
             },
+
             {
-              path: "vehicles",
+              path: "refer-delivery",
               element: (
                 <Layout>
-                  <Admins />
+                  <Settings />
                 </Layout>
               ),
             },
 
             {
-              path: "vehicles/types",
+              path: "brands",
               element: (
                 <Layout>
-                  <Admins />
+                  <Brands />
                 </Layout>
               ),
             },
 
             {
-              path: "vehicles/brands",
+              path: "colors",
               element: (
                 <Layout>
-                  <VehicleBrands />
+                  <Colors />
                 </Layout>
               ),
             },
 
             {
-              path: "vehicles/cc",
+              path: "categories",
               element: (
                 <Layout>
-                  <VehicleCC />
+                  <Categories />
                 </Layout>
               ),
             },
 
             {
-              path: "vehicles/colors",
+              path: "sizes",
               element: (
                 <Layout>
-                  <VehicleColors />
-                </Layout>
-              ),
-            },
-
-            {
-              path: "vehicles/symbols",
-              element: (
-                <Layout>
-                  <VehicleSymbols />
-                </Layout>
-              ),
-            },
-
-            {
-              path: "vehicles/models",
-              element: (
-                <Layout>
-                  <VehicleModels />
+                  <Sizes />
                 </Layout>
               ),
             },
@@ -291,6 +331,7 @@ export default function Router() {
         },
       ],
     },
+
     {
       element: <CompactLayout />,
       children: [{ path: "404", element: <Page404 /> }],

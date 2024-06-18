@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LogoImg from "../assest/images/LOGO.jpeg";
-import { SidebarItem } from "./SidebarItem";
 import menu from "../../routes/paths";
+import LogoImg from "../assest/images/logo.png";
+import { SidebarItem } from "./SidebarItem";
 
 export const Sidebar = ({ showSideMenu, setShowSideMenu }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -14,12 +14,9 @@ export const Sidebar = ({ showSideMenu, setShowSideMenu }) => {
   };
 
   return (
-    <section
-      className="px-8 top-0 fixed
-    left-[100px] z-50 right-0"
-    >
+    <section>
       <div
-        className="sidebar bg-dark"
+        className="bg-dark fixed w-[250px] top-0 left-0 overflow-y-scroll h-screen"
         // style={{ width: isOpen ? "290px" : "70px" }}
         style={{ width: "100px" }}
       >

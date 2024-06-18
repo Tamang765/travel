@@ -21,8 +21,10 @@ export const fetchUserTypes = createAsyncThunk(
   async ({ enqueueSnackbar, limit, page }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`users/types`, {
-        page: page + 1,
-        limit,
+        params: {
+          page: page + 1,
+          limit,
+        },
       });
 
       return {

@@ -28,7 +28,6 @@ export default function Editor({
   placeholder = "Write something...",
   ...other
 }) {
-  console.log("value", value);
   return (
     <>
       {/* <StyledEditor

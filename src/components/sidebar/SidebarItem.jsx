@@ -17,8 +17,6 @@ export const SidebarItem = ({
     }))
   );
 
-  console.log(expandMenu, "expand menu");
-
   if (item.childrens) {
     return (
       <div
@@ -45,7 +43,15 @@ export const SidebarItem = ({
               })
             }
           >
-            <div className="flex flex-col gap-1 justify-center items-center w-full">
+            <div
+              className={`flex flex-col gap-1 justify-center items-center w-full ${
+                showSideMenu &&
+                showSideMenu[index].title === item.title &&
+                showSideMenu[index].show
+                  ? "activeSide"
+                  : "link"
+              }`}
+            >
               {item.icon && <div className="icon">{item.icon}</div>}
               <div className="text-xs font-normal">{item.title}</div>
             </div>
