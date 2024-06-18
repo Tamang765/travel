@@ -15,7 +15,7 @@ import { EditDialog } from "../../components/component/modals/EditModal";
 import TableNoData from "../../components/table/TableNoData";
 import TableSkeleton from "../../components/table/TableSkeleton";
 import { useTheme } from "../../providers/ThemeProvider";
-import { EnhancedTableHead } from "./TableHeads";
+import { EnhancedTableHead } from "./CustomerHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
 import TeamForm from "./TeamForm";
 
@@ -136,8 +136,6 @@ export default function EnhancedTable({
   //   );
   // };
 
-  console.log(rows, "rows");
-
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -215,7 +213,20 @@ export default function EnhancedTable({
                               {row.name}
                             </span>
                           </TableCell>
-
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            onClick={(event) => handleClick(event, row.role)}
+                          >
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row.role}
+                            </span>
+                          </TableCell>
                           <TableCell
                             style={{
                               color: colors.text,

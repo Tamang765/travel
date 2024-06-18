@@ -7,6 +7,12 @@ export const headCells = [
   },
 
   {
+    id: "role",
+    numeric: true,
+    disablePadding: false,
+    label: "Role",
+  },
+  {
     id: "email",
     numeric: true,
     disablePadding: false,

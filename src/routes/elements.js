@@ -42,7 +42,7 @@ export const Admins = Loadable(
 );
 
 export const Customers = Loadable(
-  lazy(() => import("../pages/users/customers/Customer"))
+  lazy(() => import("../pages/users/customers/Customers"))
 );
 
 export const DeletedUsers = Loadable(

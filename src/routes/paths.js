@@ -9,12 +9,10 @@ import { RiContactsBookLine } from "react-icons/ri";
 import { SiBrandfolder } from "react-icons/si";
 
 import {
-  HiOutlineGift,
   HiOutlineQuestionMarkCircle,
   HiOutlineUserCircle,
   HiOutlineUsers,
 } from "react-icons/hi";
-import { MdOutlineAdminPanelSettings } from "react-icons/md";
 
 export const ROOTS_DASHBOARD = "/admin";
 
@@ -103,21 +101,11 @@ const menu = [
         icon: <HiOutlineUsers size={20} />,
       },
 
-      {
-        title: "Roles",
-        path: path(ROOTS_DASHBOARD, "/users/roles"),
-        icon: <MdOutlineAdminPanelSettings size={20} />,
-      },
       // {
-      //   title: "Persmissions",
-      //   path: path(ROOTS_DASHBOARD, "/users/permissions"),
-      //   icon: <MdOutlineLockOpen size={20} />,
+      //   title: "Roles",
+      //   path: path(ROOTS_DASHBOARD, "/users/roles"),
+      //   icon: <MdOutlineAdminPanelSettings size={20} />,
       // },
-      {
-        title: "Promo Code",
-        path: path(ROOTS_DASHBOARD, "/users/promo-code"),
-        icon: <HiOutlineGift size={20} />,
-      },
     ],
   },
 

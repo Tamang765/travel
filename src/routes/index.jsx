@@ -12,7 +12,6 @@ import {
   Categories,
   Colors,
   Customers,
-  DeletedUsers,
   EmergencyContacts,
   Faqs,
   LandingPage,
@@ -20,8 +19,6 @@ import {
   MyProfile,
   Notifications,
   Page404,
-  Riders,
-  Roles,
   Settings,
   Sizes,
   TodayRides,
@@ -118,76 +115,6 @@ export default function Router() {
                 </Layout>
               ),
             },
-
-            {
-              path: "riders",
-              element: (
-                <Layout>
-                  <Riders title={"Riders"} />
-                </Layout>
-              ),
-            },
-
-            {
-              path: "today-riders",
-              element: (
-                <Layout>
-                  <Riders title={"Today Riders"} />
-                </Layout>
-              ),
-            },
-
-            {
-              path: "deleted-users",
-              element: (
-                <Layout>
-                  <DeletedUsers />
-                </Layout>
-              ),
-            },
-
-            {
-              path: "users-otp",
-              element: (
-                <Layout>
-                  <DeletedUsers />
-                </Layout>
-              ),
-            },
-
-            {
-              path: "roles",
-              element: (
-                <Layout>
-                  <Roles />
-                </Layout>
-              ),
-            },
-
-            {
-              path: "permissions",
-              element: (
-                <Layout>
-                  <Roles />
-                </Layout>
-              ),
-            },
-
-            {
-              path: "promo-code",
-              element: (
-                <Layout>
-                  <Roles />
-                </Layout>
-              ),
-            },
-
-            // { path: "add", element: <CreateSeason /> },
-            // {
-            //   path: "view/:slug",
-            //   element: <Seasons isEdit={false} view={true} />,
-            // },
-            // { path: "detail/:slug", element: <Seasons isEdit={true} /> },
           ],
         },
 

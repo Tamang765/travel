@@ -191,7 +191,7 @@ export const TotalRoom = () => {
   return (
     <div className="mt-8">
       <Shadow>
-        <TitleSm>riders count </TitleSm>
+        <TitleSm>Order count</TitleSm>
         <Caption>Projects where development work is on completion</Caption>
         <ReactApexChart
           options={dataLine.options}

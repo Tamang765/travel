@@ -165,7 +165,7 @@ export default function TodayRides() {
       <Shadow>
         <Card color="transparent" shadow={false}>
           <EnhancedTable
-            title="Today Rides"
+            title="Orders"
             headCells={headCells}
             rows={rows}
             showAdd={false}
@@ -174,4 +174,4 @@ export default function TodayRides() {
       </Shadow>
     </>
   );
-};
+}

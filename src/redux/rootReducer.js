@@ -15,6 +15,7 @@ import sizeSlice from "./slices/sizeSlice";
 import teamSlice from "./slices/teamSlice";
 import userSlice from "./slices/userSlice";
 import userTypeSlice from "./slices/userTypeSlice";
+import customerSlice from "./slices/customerSlice";
 
 // ----------------------------------------------------------------------
 
@@ -103,6 +104,12 @@ export const userPersistConfig = {
   keyPrefix: "redux-",
 };
 
+export const customerPersistConfig = {
+  key: "customer",
+  storage,
+  keyPrefix: "redux-",
+};
+
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authSlice),
   user: persistReducer(userPersistConfig, userSlice),
@@ -114,6 +121,7 @@ const rootReducer = combineReducers({
   size: persistReducer(sizePersistConfig, sizeSlice),
   color: persistReducer(colorPersistConfig, colorSlice),
   brand: persistReducer(brandPersistConfig, brandSlice),
+  customer: persistReducer(customerPersistConfig, customerSlice),
   product: persistReducer(productPersistConfig, productSlice),
   setting: persistReducer(settingsPersistConfig, referSlice),
   emergencyContact: persistReducer(
