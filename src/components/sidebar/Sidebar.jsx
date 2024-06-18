@@ -16,7 +16,7 @@ export const Sidebar = ({ showSideMenu, setShowSideMenu }) => {
   return (
     <section>
       <div
-        className="bg-dark fixed w-[250px] top-0 left-0 overflow-y-scroll h-screen"
+        className="bg-dark fixed w-[250px] top-0 left-0"
         // style={{ width: isOpen ? "290px" : "70px" }}
         style={{ width: "100px" }}
       >
@@ -33,7 +33,7 @@ export const Sidebar = ({ showSideMenu, setShowSideMenu }) => {
             />
           </div>
         </div>
-        <div className="flex flex-col min-h-[calc(100vh-5rem)] gap-2 justify-start mt-5">
+        <div className="flex flex-col overflow-y-scroll h-[calc(100vh-6.1rem)] gap-2 justify-start mt-5">
           {menu.map((item, index) => {
             return (
               <SidebarItem
