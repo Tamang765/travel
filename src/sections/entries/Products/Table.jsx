@@ -17,10 +17,10 @@ import { EditDialog } from "../../../components/component/modals/EditModal";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
-import { deleteBrand } from "../../../redux/slices/brandSlice";
 import Form from "./Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
+import { deleteProduct } from "../../../redux/slices/productSlice";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -146,7 +146,7 @@ export default function EnhancedTable({
   // TODO: delete the brand
   const handleDelete = () => {
     dispatch(
-      deleteBrand({
+      deleteProduct({
         id: dataToEdit?.id,
         enqueueSnackbar,
         handleClose: () => setOpenConfirmModal(false),

@@ -1,4 +1,3 @@
-import { Button } from "@material-tailwind/react";
 import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
@@ -7,16 +6,18 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
+import moment from "moment";
+import { useSnackbar } from "notistack";
 import { useMemo, useState } from "react";
 import { AiOutlineEdit } from "react-icons/ai";
-import { MdOutlineDeleteOutline } from "react-icons/md";
-import { useSelector } from "react-redux";
-import { ConfirmDialog } from "../../components/component/modals/ConfirmDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { EditDialog } from "../../components/component/modals/EditModal";
 import TableNoData from "../../components/table/TableNoData";
 import TableSkeleton from "../../components/table/TableSkeleton";
 import { useTheme } from "../../providers/ThemeProvider";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
+import TeamForm from "./TeamForm";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -51,18 +52,24 @@ export default function EnhancedTable({
   showFilter = true,
   showSearch = true,
   showAdd = true,
+  showPrint = false,
   headCells,
   rows,
-  setOpenAdd,
   page,
   rowsPerPage,
+  setOpenAdd,
+  setRefresh,
+  refresh,
 }) {
   const { colors } = useTheme();
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
   const [selected, setSelected] = useState([]);
   const [openConfirmDialoug, setOpenConfirmDialoug] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
 
   const [dataToEdit, setDataToEdit] = useState();
 
@@ -79,7 +86,7 @@ export default function EnhancedTable({
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.name);
+      const newSelected = rows.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -118,6 +125,19 @@ export default function EnhancedTable({
     [order, orderBy, page, rows, rowsPerPage]
   );
 
+  // TODO: functions
+  // const handleDeleteUser = () => {
+  //   dispatch(
+  //     deleteTeamMembers({
+  //       enqueueSnackbar,
+  //       handleClose: () => setOpenConfirmDialoug(false),
+  //       userId: dataToEdit?.id,
+  //     })
+  //   );
+  // };
+
+  console.log(rows, "rows");
+
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -127,7 +147,12 @@ export default function EnhancedTable({
           showAdd={showAdd}
           showSearch={showSearch}
           showFilter={showFilter}
+          showPrint={showPrint}
           setOpenAdd={setOpenAdd}
+          limit={rowsPerPage}
+          page={page}
+          setRefresh={setRefresh}
+          refresh={refresh}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -143,7 +168,7 @@ export default function EnhancedTable({
             <TableBody>
               {(fetchLoading ? [...Array(5)] : visibleRows)?.map(
                 (row, index) => {
-                  const isItemSelected = isSelected(row?.name);
+                  const isItemSelected = isSelected(row?.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -169,7 +194,7 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                               checked={isItemSelected}
-                              onClick={(event) => handleClick(event, row.name)}
+                              onClick={(event) => handleClick(event, row.id)}
                               inputProps={{
                                 "aria-labelledby": labelId,
                               }}
@@ -180,9 +205,15 @@ export default function EnhancedTable({
                               color: colors.text,
                             }}
                             id={labelId}
-                            onClick={(event) => handleClick(event, row.name)}
+                            onClick={(event) => handleClick(event, row.id)}
                           >
-                            {row.name}
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row.name}
+                            </span>
                           </TableCell>
                           <TableCell
                             style={{
@@ -190,7 +221,13 @@ export default function EnhancedTable({
                             }}
                             onClick={(event) => handleClick(event, row.role)}
                           >
-                            {row.role}
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row.role}
+                            </span>
                           </TableCell>
                           <TableCell
                             style={{
@@ -198,7 +235,13 @@ export default function EnhancedTable({
                             }}
                             onClick={(event) => handleClick(event, row.contact)}
                           >
-                            {row.email}
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row.email}
+                            </span>
                           </TableCell>
 
                           <TableCell
@@ -207,7 +250,13 @@ export default function EnhancedTable({
                             }}
                             onClick={(event) => handleClick(event, row.address)}
                           >
-                            {row.phone}
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row.phone}
+                            </span>
                           </TableCell>
 
                           <TableCell
@@ -216,7 +265,15 @@ export default function EnhancedTable({
                             }}
                             onClick={(event) => handleClick(event, row.date)}
                           >
-                            {row?.joinedDate}
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {moment(row?.joinedDate)
+                                .format("Do MMMM, YYYY")
+                                .replace(/(\d+)(th|st|nd|rd)/, "$1$2")}
+                            </span>
                           </TableCell>
 
                           <TableCell
@@ -225,10 +282,16 @@ export default function EnhancedTable({
                             }}
                           >
                             <Stack flexDirection={"row"} gap={2}>
-                              <button className="flex items-center bg-secondary text-sm text-white p-2 rounded-lg">
+                              <button
+                                onClick={() => {
+                                  setOpenEditModal(true);
+                                  setDataToEdit(row);
+                                }}
+                                className="flex items-center bg-secondary text-sm text-white p-2 rounded-lg"
+                              >
                                 <AiOutlineEdit size={20} />
                               </button>
-                              <button
+                              {/* <Button
                                 onClick={() => {
                                   setOpenConfirmDialoug(true);
                                   setDataToEdit(row);
@@ -236,7 +299,7 @@ export default function EnhancedTable({
                                 className="flex items-center bg-red text-sm text-white p-2 rounded-lg"
                               >
                                 <MdOutlineDeleteOutline size={20} />
-                              </button>
+                              </Button> */}
                             </Stack>
                           </TableCell>
                         </TableRow>
@@ -256,20 +319,40 @@ export default function EnhancedTable({
         </TableContainer>
       </Box>
 
+      {/* TODO: edit modal */}
+      <EditDialog
+        open={openEditModal}
+        title={`Edit role (${dataToEdit?.name})`}
+        handleClose={() => setOpenEditModal(false)}
+        maxWidth="lg"
+      >
+        <TeamForm
+          data={dataToEdit}
+          isEdit={true}
+          handleClose={() => setOpenEditModal(false)}
+        />
+      </EditDialog>
+
       {/* TODO: delete confirm dialoug */}
 
-      <ConfirmDialog
+      {/* <ConfirmDialog
         open={openConfirmDialoug}
         loading={deleteLoading}
         disabled={deleteLoading}
         action={
-          <Button variant="contained" className="!bg-primary">
+          <Button
+            loading={deleteLoading}
+            disabled={deleteLoading}
+            onClick={handleDeleteUser}
+            variant="contained"
+            className="!bg-primary"
+          >
             Confirm
           </Button>
         }
         handleClose={() => setOpenConfirmDialoug(false)}
         title={`Are you sure, you want to delete the user(${dataToEdit?.name})?`}
-      />
+      /> */}
     </>
   );
 }

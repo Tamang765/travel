@@ -92,6 +92,11 @@ const menu = [
     title: "Users",
     icon: <HiOutlineUsers size={35} color="#ddd" />,
     childrens: [
+      // {
+      //   title: "Admins",
+      //   path: path(ROOTS_DASHBOARD, "/users/admins"),
+      //   icon: <HiOutlineUsers size={20} />,
+      // },
       {
         title: "Customers",
         path: path(ROOTS_DASHBOARD, "/users/customers"),

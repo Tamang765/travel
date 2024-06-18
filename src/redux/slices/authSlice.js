@@ -13,9 +13,7 @@ export const changePassword = createAsyncThunk(
   "changePassword/auth",
   async ({ enqueueSnackbar, data, reset }, thunkApi) => {
     try {
-      const response = await axiosInstance.post(`users/update-password`, data);
-
-      console.log(response.data, "response of change password");
+      const response = await axiosInstance.post(`change-password`, data);
 
       return {
         enqueueSnackbar,

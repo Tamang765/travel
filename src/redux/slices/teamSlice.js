@@ -26,9 +26,12 @@ export const fetchTeamMembers = createAsyncThunk(
           page: page + 1,
         },
       });
+
       return {
-        data: response.data.data.items,
-        meta: response.data.data.meta,
+        data: response.data.data.data,
+        meta: {
+          total: response.data.data.total,
+        },
       };
     } catch (error) {
       return thunkApi.rejectWithValue({ error, enqueueSnackbar });

@@ -1,5 +1,4 @@
 import { Card, TablePagination } from "@mui/material";
-import moment from "moment";
 import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,47 +7,7 @@ import { fetchTeamMembers } from "../../../redux/slices/teamSlice";
 import { Shadow } from "../../../routers";
 import EnhancedTable from "../../../sections/teams/AdminTable";
 import TeamForm from "../../../sections/teams/TeamForm";
-
-const headCells = [
-  {
-    id: "name",
-    numeric: false,
-    disablePadding: false,
-    label: "Name",
-  },
-
-  {
-    id: "role",
-    numeric: true,
-    disablePadding: false,
-    label: "Role",
-  },
-  {
-    id: "email",
-    numeric: true,
-    disablePadding: false,
-    label: "Email",
-  },
-
-  {
-    id: "phone",
-    numeric: true,
-    disablePadding: false,
-    label: "Phone",
-  },
-  {
-    id: "date",
-    numeric: true,
-    disablePadding: false,
-    label: "Joined Date",
-  },
-
-  {
-    id: "action",
-    disablePadding: false,
-    label: "Action",
-  },
-];
+import { headCells } from "../../../sections/teams/headCells";
 
 export default function Admins() {
   // TODO: hooks
@@ -62,6 +21,7 @@ export default function Admins() {
     limit: 10,
   });
   const [rows, setRows] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   // TODO: get the data from slice
   const teams = useSelector((state) => state.team.teams);
@@ -69,7 +29,7 @@ export default function Admins() {
   // TODO: fetching the admins
   useEffect(() => {
     dispatch(fetchTeamMembers({ enqueueSnackbar, ...pagination }));
-  }, [dispatch, enqueueSnackbar, pagination]);
+  }, [dispatch, enqueueSnackbar, pagination, refresh]);
 
   // TODO: set the rows
 
@@ -80,9 +40,7 @@ export default function Admins() {
       phone: team?.phone,
       role: team?.user_type?.title,
       email: team?.email,
-      joinedDate: moment(team?.created_at)
-        .format("Do MMMM, YYYY")
-        .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
+      joinedDate: team?.created_at,
     }));
     setRows(data);
   }, [teams]);
@@ -102,18 +60,23 @@ export default function Admins() {
 
   // TODO: console.logs
 
+  console.log(teams, "teams");
+
   return (
     <>
       <Shadow>
         <Card color="transparent" shadow={false}>
           <EnhancedTable
+            showSearch={true}
             title="Admins"
             headCells={headCells}
             rows={rows}
-            showFilter={false}
+            showFilter={true}
             setOpenAdd={() => setOpenAdd((prev) => !prev)}
             page={pagination.page}
             rowsPerPage={pagination.limit}
+            setRefresh={setRefresh}
+            refresh={refresh}
           />
 
           {/* TODO: pagination */}

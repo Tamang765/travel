@@ -37,8 +37,7 @@ const MyProfile = () => {
     email: Yup.string()
       .required("Email is required")
       .matches(emailRegex, "Email must be a valid email address"),
-    first_name: Yup.string().required("First name is required"),
-    last_name: Yup.string().required("Last name is required"),
+    name: Yup.string().required("First name is required"),
     phone: Yup.string().required("Phone number is required"),
   });
 
@@ -60,8 +59,7 @@ const MyProfile = () => {
   const personalInfoDefaultValues = useMemo(
     () => ({
       email: user?.email,
-      first_name: user?.first_name,
-      last_name: user?.last_name,
+      name: user?.name,
       phone: user?.phone,
     }),
     [user]
@@ -166,12 +164,8 @@ const MyProfile = () => {
             </CardHeader>
             <CardBody className="flex flex-col space-y-2">
               <div className="flex flex-col space-y-1">
-                <Typography variant="subtitle1">
-                  First Name: {user?.first_name}
-                </Typography>
-                <Typography variant="subtitle1">
-                  Last Name: {user?.last_name}
-                </Typography>
+                <Typography variant="subtitle1">Name: {user?.name}</Typography>
+
                 <Typography variant="subtitle1">
                   Phone: {user?.phone}
                 </Typography>
@@ -200,10 +194,7 @@ const MyProfile = () => {
                 <div className="flex flex-col space-y-4">
                   <div className="flex space-x-4">
                     <div className="w-1/2">
-                      <RHFTextField name={"first_name"} label={"First Name"} />
-                    </div>
-                    <div className="w-1/2">
-                      <RHFTextField name={"last_name"} label={"Last Name"} />
+                      <RHFTextField name={"name"} label={"Name"} />
                     </div>
                   </div>
                   <div className="flex space-x-4">
