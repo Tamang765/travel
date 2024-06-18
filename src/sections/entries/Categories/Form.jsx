@@ -35,6 +35,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   const defaultValues = useMemo(
     () => ({
       name: data?.name,
+      photo: data?.photo,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data]
@@ -95,6 +96,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
 
   // TODO: console.logs
 
+
   return (
     <Box p={3}>
       <FormProvider
@@ -118,7 +120,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
           <Upload
             isAvatar={false}
             text={"Upload picture"}
-            file={photo}
+            file={photo || defaultValues.photo}
             name="photo"
             accept="image/*"
             maxSize={1}

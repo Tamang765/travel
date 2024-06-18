@@ -127,6 +127,7 @@ const menu = [
       },
     ],
   },
+
   {
     title: "Support",
     icon: <HiOutlineUserCircle size={35} color="#ddd" />,
