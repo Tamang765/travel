@@ -36,9 +36,9 @@ export const SidebarItem = ({
               setShowSideMenu((prev) => {
                 return prev.map((data) => {
                   if (data.title === item.title) {
-                    return { ...data, show: !data.show };
+                    return { ...data, show: !data.show, active: true };
                   }
-                  return { ...data, show: false };
+                  return { ...data, show: false, active: false };
                 });
               })
             }
@@ -47,7 +47,7 @@ export const SidebarItem = ({
               className={`flex flex-col gap-1 justify-center items-center w-full ${
                 showSideMenu &&
                 showSideMenu[index].title === item.title &&
-                showSideMenu[index].show
+                showSideMenu[index].active
                   ? "activeSide"
                   : "link"
               }`}

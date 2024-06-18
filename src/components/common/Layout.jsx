@@ -18,6 +18,12 @@ export const Layout = ({ children }) => {
             (c.childrens &&
               c.childrens.some((a) => a.path === window.location.pathname))
         ),
+      active: m.childrens.some(
+        (c) =>
+          c.path === window.location.pathname ||
+          (c.childrens &&
+            c.childrens.some((a) => a.path === window.location.pathname))
+      ),
     }))
   );
 
