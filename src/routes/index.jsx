@@ -17,6 +17,7 @@ import {
   Faqs,
   LandingPage,
   LoginPage,
+  MyProfile,
   Notifications,
   Page404,
   Riders,
@@ -64,6 +65,16 @@ export default function Router() {
             </Layout>
           ),
         },
+
+        {
+          path: "my-profile",
+          element: (
+            <Layout>
+              <MyProfile />
+            </Layout>
+          ),
+        },
+
         {
           path: "notifications",
           element: (

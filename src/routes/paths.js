@@ -1,8 +1,4 @@
-import {
-  AiOutlineCalendar,
-  AiOutlinePlus,
-  AiOutlineUserDelete,
-} from "react-icons/ai";
+import { AiOutlineCalendar, AiOutlinePlus } from "react-icons/ai";
 import { BiCalendarX } from "react-icons/bi";
 import { CiGrid41, CiViewTimeline } from "react-icons/ci";
 import { FaProductHunt } from "react-icons/fa";
@@ -18,14 +14,7 @@ import {
   HiOutlineUserCircle,
   HiOutlineUsers,
 } from "react-icons/hi";
-import {
-  MdDirectionsBike,
-  MdOutlineAdminPanelSettings,
-  MdOutlineLockOpen,
-  MdPassword,
-  MdPedalBike,
-} from "react-icons/md";
-import { RiAdminLine } from "react-icons/ri";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
 
 export const ROOTS_DASHBOARD = "/admin";
 
@@ -104,45 +93,21 @@ const menu = [
     icon: <HiOutlineUsers size={35} color="#ddd" />,
     childrens: [
       {
-        title: "Admin",
-        path: path(ROOTS_DASHBOARD, "/users/admins"),
-        icon: <RiAdminLine size={20} />,
-      },
-      {
         title: "Customers",
         path: path(ROOTS_DASHBOARD, "/users/customers"),
         icon: <HiOutlineUsers size={20} />,
       },
-      {
-        title: "Riders",
-        path: path(ROOTS_DASHBOARD, "/users/riders"),
-        icon: <MdDirectionsBike size={20} />,
-      },
-      {
-        title: "Today Riders",
-        path: path(ROOTS_DASHBOARD, "/users/today-riders"),
-        icon: <MdPedalBike size={20} />,
-      },
-      {
-        title: "Deleted Users",
-        path: path(ROOTS_DASHBOARD, "/users/deleted-users"),
-        icon: <AiOutlineUserDelete size={20} />,
-      },
-      {
-        title: "Users OTP",
-        path: path(ROOTS_DASHBOARD, "/users/users-otp"),
-        icon: <MdPassword size={20} />,
-      },
+
       {
         title: "Roles",
         path: path(ROOTS_DASHBOARD, "/users/roles"),
         icon: <MdOutlineAdminPanelSettings size={20} />,
       },
-      {
-        title: "Persmissions",
-        path: path(ROOTS_DASHBOARD, "/users/permissions"),
-        icon: <MdOutlineLockOpen size={20} />,
-      },
+      // {
+      //   title: "Persmissions",
+      //   path: path(ROOTS_DASHBOARD, "/users/permissions"),
+      //   icon: <MdOutlineLockOpen size={20} />,
+      // },
       {
         title: "Promo Code",
         path: path(ROOTS_DASHBOARD, "/users/promo-code"),

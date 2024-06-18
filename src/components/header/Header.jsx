@@ -6,7 +6,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../auth/useAuthContext";
 import { useTheme } from "../../providers/ThemeProvider";
-import { PATH_AUTH } from "../../routes/paths";
+import { PATH_AUTH, ROOTS_DASHBOARD } from "../../routes/paths";
 import { SearchBox } from "../common/SearchBox";
 
 const imgSrc =
@@ -19,7 +19,7 @@ export const Header = () => {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const { logout } = useAuthContext();
+  const { logout, user } = useAuthContext();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -72,7 +72,7 @@ export const Header = () => {
             <Avatar
               size="md"
               variant="circular"
-              src={imgSrc}
+              src={user?.profile || imgSrc}
               alt="candice wu"
             />
           </IconButton>
@@ -90,24 +90,10 @@ export const Header = () => {
             }}
           >
             <ul>
-              <MenuItem>
+              <MenuItem
+                onClick={() => navigate(`${ROOTS_DASHBOARD}/my-profile`)}
+              >
                 <Typography onClick={handleClose}>My Profile</Typography>
-              </MenuItem>
-
-              <MenuItem>
-                <Typography onClick={handleClose}>Edit Profile</Typography>
-              </MenuItem>
-
-              <MenuItem>
-                <Typography onClick={handleClose}>Account Setting</Typography>
-              </MenuItem>
-
-              <MenuItem>
-                <Typography onClick={handleClose}>Support</Typography>
-              </MenuItem>
-
-              <MenuItem>
-                <Typography onClick={handleClose}>Activity</Typography>
               </MenuItem>
 
               <MenuItem onClick={handleLogout} className="flex">

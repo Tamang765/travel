@@ -28,14 +28,13 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   const createCCLoading = useSelector((state) => state.category.isLoading);
 
   const Schema = Yup.object().shape({
-    cc: Yup.string().required("cc is required"),
+    name: Yup.string().required("Category name is required"),
   });
 
   // TODO: default values in the form
   const defaultValues = useMemo(
     () => ({
-      cc: data?.cc,
-      remarks: data?.remarks,
+      name: data?.name,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data]
@@ -68,15 +67,25 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   }, []);
 
   const onCreateCategory = (values) => {
-    // TODO: dispatch the action to create a brand
-    dispatch(createCategory({ data: values, enqueueSnackbar, handleClose }));
+    const formData = new FormData();
+    formData.append("name", values.name);
+    if (photo) {
+      formData.append("photo", photo);
+    }
+    // TODO: dispatch the action to create a category
+    dispatch(createCategory({ data: formData, enqueueSnackbar, handleClose }));
   };
 
   const onUpdateCategory = (values) => {
+    const formData = new FormData();
+    formData.append("name", values.name);
+    if (photo) {
+      formData.append("photo", photo);
+    }
     // TODO: dispatch the action to update a brand
     dispatch(
       updateCategory({
-        data: values,
+        data: formData,
         enqueueSnackbar,
         handleClose,
         id: data?.slug,
@@ -102,8 +111,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             sm: "repeat(1, 1fr)",
           }}
         >
-          <RHFTextField name={"cc"} label={"Vehicle's cc *"} />
-          <RHFTextField name={"remarks"} label={"Remarks"} />
+          <RHFTextField name={"name"} label={"Category name *"} />
         </Box>
 
         <Box mt={3}>
@@ -126,7 +134,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             variant="contained"
             className="!bg-primary w-fit"
           >
-            {isEdit ? "Update CC" : "Create CC"}
+            {isEdit ? "Update Category" : "Create Category"}
           </LoadingButton>
         </Stack>
       </FormProvider>

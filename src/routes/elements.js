@@ -27,6 +27,12 @@ export const Notifications = Loadable(
   lazy(() => import("../pages/general/Notifications"))
 );
 
+// TODO: my profile
+
+export const MyProfile = Loadable(
+  lazy(() => import("../pages/myProfile/MyProfile"))
+);
+
 // export const Profile = Loadable(lazy(() => import("../pages/general/Profile")));
 
 // TODO: users section

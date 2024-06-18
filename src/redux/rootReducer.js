@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 // slices
+import authSlice from "./slices/authSlice";
 import brandSlice from "./slices/brandSlice";
 import categorySlice from "./slices/categorySlice";
 import colorSlice from "./slices/colorSlice";
@@ -12,6 +13,7 @@ import referSlice from "./slices/referSlice";
 import roleSlice from "./slices/roleSlice";
 import sizeSlice from "./slices/sizeSlice";
 import teamSlice from "./slices/teamSlice";
+import userSlice from "./slices/userSlice";
 import userTypeSlice from "./slices/userTypeSlice";
 
 // ----------------------------------------------------------------------
@@ -89,7 +91,21 @@ export const settingsPersistConfig = {
   keyPrefix: "redux-",
 };
 
+export const authPersistConfig = {
+  key: "auth",
+  storage,
+  keyPrefix: "redux-",
+};
+
+export const userPersistConfig = {
+  key: "user",
+  storage,
+  keyPrefix: "redux-",
+};
+
 const rootReducer = combineReducers({
+  auth: persistReducer(authPersistConfig, authSlice),
+  user: persistReducer(userPersistConfig, userSlice),
   team: persistReducer(teamPersistConfig, teamSlice),
   role: persistReducer(rolePersistConfig, roleSlice),
   userType: persistReducer(userTypePersistConfig, userTypeSlice),

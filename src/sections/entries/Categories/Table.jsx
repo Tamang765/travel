@@ -167,8 +167,6 @@ export default function EnhancedTable({
 
   // ============
 
-  console.log("rows", rows);
-
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -310,7 +308,7 @@ export default function EnhancedTable({
       {/* TODO: edit role modal */}
       <EditDialog
         open={openEditModal}
-        title={`Edit cc ${dataToEdit?.cc}`}
+        title={`Edit category (${dataToEdit?.name})`}
         handleClose={() => setOpenEditModal(false)}
         maxWidth="sm"
       >
@@ -325,7 +323,7 @@ export default function EnhancedTable({
       <ConfirmDialog
         handleClose={() => setOpenConfirmModal(false)}
         open={openConfirmModal}
-        title={`Are you sure, you want to delete cc(${dataToEdit?.cc})?`}
+        title={`Are you sure, you want to delete category (${dataToEdit?.name})?`}
         action={
           <Button
             loading={deleteLoading}

@@ -8,10 +8,8 @@ import LoadingScreen from "../components/loading-screen";
 import { useSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
 import Login from "../pages/LoginPage";
-import { fetchRoles } from "../redux/slices/roleSlice";
-import { fetchUserTypes } from "../redux/slices/userTypeSlice";
-import { useAuthContext } from "./useAuthContext";
 import { fetchCategories } from "../redux/slices/categorySlice";
+import { useAuthContext } from "./useAuthContext";
 
 // ----------------------------------------------------------------------
 AuthGuard.propTypes = {
@@ -22,7 +20,7 @@ export default function AuthGuard({ children }) {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
-  const { isAuthenticated, isInitialized } = useAuthContext();
+  const { isAuthenticated, isInitialized, user } = useAuthContext();
 
   const { pathname } = useLocation();
 
@@ -41,7 +39,9 @@ export default function AuthGuard({ children }) {
     return <LoadingScreen />;
   }
 
-  if (!isAuthenticated) {
+  console.log(user, isAuthenticated, "user");
+
+  if (!isAuthenticated || !user) {
     // TODO: change this to !isAuthenticated
     if (pathname !== requestedLocation) {
       setRequestedLocation(pathname);
