@@ -18,9 +18,9 @@ const initialState = {
 // TODO: fetch all the roles
 export const fetchRoles = createAsyncThunk(
   "fetchRoles/roles",
-  async ({ enqueueSnackbar, limit, page }, thunkApi) => {
+  async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
-      const response = await axiosInstance.get(`acl/roles`, {
+      const response = await axiosInstance.get(`auth/users/roles`, {
         params: {
           page: page + 1,
           limit,

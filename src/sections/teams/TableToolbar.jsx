@@ -11,7 +11,6 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { useSnackbar } from "notistack";
 import { useMemo, useState } from "react";
 import {
   AiOutlineEdit,
@@ -24,7 +23,7 @@ import {
   MdOutlineDeleteOutline,
   MdOutlineRefresh,
 } from "react-icons/md";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { TitleMd, TitleSm } from "../../routers";
 
 // TODO: menu options
@@ -59,8 +58,6 @@ export function EnhancedTableToolbar({
   refresh,
 }) {
   // TODO: hooks
-  const dispatch = useDispatch();
-  const { enqueueSnackbar } = useSnackbar();
 
   // TODO: use states
   const [anchorEl, setAnchorEl] = useState(null);

@@ -7,10 +7,9 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import moment from "moment";
-import { useSnackbar } from "notistack";
 import { useMemo, useState } from "react";
 import { AiOutlineEdit } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { EditDialog } from "../../components/component/modals/EditModal";
 import TableNoData from "../../components/table/TableNoData";
 import TableSkeleton from "../../components/table/TableSkeleton";
@@ -62,13 +61,10 @@ export default function EnhancedTable({
   refresh,
 }) {
   const { colors } = useTheme();
-  const dispatch = useDispatch();
-  const { enqueueSnackbar } = useSnackbar();
 
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
   const [selected, setSelected] = useState([]);
-  const [openConfirmDialoug, setOpenConfirmDialoug] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
 
   const [dataToEdit, setDataToEdit] = useState();
@@ -76,7 +72,6 @@ export default function EnhancedTable({
   // TODO: get the data from slice
 
   const fetchLoading = useSelector((state) => state.team.fetchLoading);
-  const deleteLoading = useSelector((state) => state.team.isLoading);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";

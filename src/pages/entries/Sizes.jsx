@@ -56,6 +56,8 @@ export default function Sizes() {
     page: 0,
     limit: 10,
   });
+  const [refresh, setRefresh] = useState(false);
+
   const [rows, setRows] = useState([]);
 
   // TODO: get the data from slice
@@ -64,7 +66,7 @@ export default function Sizes() {
   // TODO: fetching the sizes
   useEffect(() => {
     dispatch(fetchSizes({ enqueueSnackbar, ...pagination }));
-  }, [dispatch, enqueueSnackbar, pagination]);
+  }, [dispatch, enqueueSnackbar, pagination, refresh]);
 
   // TODO: set the rows
 
@@ -110,6 +112,8 @@ export default function Sizes() {
             setOpenAdd={() => setOpenAdd((prev) => !prev)}
             page={pagination.page}
             rowsPerPage={pagination.limit}
+            setRefresh={setRefresh}
+            refresh={refresh}
           />
 
           {/* TODO: pagination */}

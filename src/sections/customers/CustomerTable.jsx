@@ -1,4 +1,3 @@
-import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import Table from "@mui/material/Table";
@@ -7,17 +6,13 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import moment from "moment";
-import { useSnackbar } from "notistack";
 import { useMemo, useState } from "react";
-import { AiOutlineEdit } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
-import { EditDialog } from "../../components/component/modals/EditModal";
+import { useSelector } from "react-redux";
 import TableNoData from "../../components/table/TableNoData";
 import TableSkeleton from "../../components/table/TableSkeleton";
 import { useTheme } from "../../providers/ThemeProvider";
 import { EnhancedTableHead } from "./CustomerHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
-import TeamForm from "./TeamForm";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -62,21 +57,15 @@ export default function EnhancedTable({
   refresh,
 }) {
   const { colors } = useTheme();
-  const dispatch = useDispatch();
-  const { enqueueSnackbar } = useSnackbar();
 
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("name");
   const [selected, setSelected] = useState([]);
-  const [openConfirmDialoug, setOpenConfirmDialoug] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
-
-  const [dataToEdit, setDataToEdit] = useState();
 
   // TODO: get the data from slice
 
   const fetchLoading = useSelector((state) => state.team.fetchLoading);
-  const deleteLoading = useSelector((state) => state.team.isLoading);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -203,7 +192,6 @@ export default function EnhancedTable({
                               color: colors.text,
                             }}
                             id={labelId}
-                            onClick={(event) => handleClick(event, row.id)}
                           >
                             <span
                               style={{
@@ -213,25 +201,11 @@ export default function EnhancedTable({
                               {row.name}
                             </span>
                           </TableCell>
+
                           <TableCell
                             style={{
                               color: colors.text,
                             }}
-                            onClick={(event) => handleClick(event, row.role)}
-                          >
-                            <span
-                              style={{
-                                color: colors.text,
-                              }}
-                            >
-                              {row.role}
-                            </span>
-                          </TableCell>
-                          <TableCell
-                            style={{
-                              color: colors.text,
-                            }}
-                            onClick={(event) => handleClick(event, row.contact)}
                           >
                             <span
                               style={{
@@ -246,7 +220,6 @@ export default function EnhancedTable({
                             style={{
                               color: colors.text,
                             }}
-                            onClick={(event) => handleClick(event, row.address)}
                           >
                             <span
                               style={{
@@ -261,7 +234,6 @@ export default function EnhancedTable({
                             style={{
                               color: colors.text,
                             }}
-                            onClick={(event) => handleClick(event, row.date)}
                           >
                             <span
                               style={{
@@ -272,33 +244,6 @@ export default function EnhancedTable({
                                 .format("Do MMMM, YYYY")
                                 .replace(/(\d+)(th|st|nd|rd)/, "$1$2")}
                             </span>
-                          </TableCell>
-
-                          <TableCell
-                            style={{
-                              color: colors.text,
-                            }}
-                          >
-                            <Stack flexDirection={"row"} gap={2}>
-                              <button
-                                onClick={() => {
-                                  setOpenEditModal(true);
-                                  setDataToEdit(row);
-                                }}
-                                className="flex items-center bg-secondary text-sm text-white p-2 rounded-lg"
-                              >
-                                <AiOutlineEdit size={20} />
-                              </button>
-                              {/* <Button
-                                onClick={() => {
-                                  setOpenConfirmDialoug(true);
-                                  setDataToEdit(row);
-                                }}
-                                className="flex items-center bg-red text-sm text-white p-2 rounded-lg"
-                              >
-                                <MdOutlineDeleteOutline size={20} />
-                              </Button> */}
-                            </Stack>
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -316,41 +261,6 @@ export default function EnhancedTable({
           </Table>
         </TableContainer>
       </Box>
-
-      {/* TODO: edit modal */}
-      <EditDialog
-        open={openEditModal}
-        title={`Edit role (${dataToEdit?.name})`}
-        handleClose={() => setOpenEditModal(false)}
-        maxWidth="lg"
-      >
-        <TeamForm
-          data={dataToEdit}
-          isEdit={true}
-          handleClose={() => setOpenEditModal(false)}
-        />
-      </EditDialog>
-
-      {/* TODO: delete confirm dialoug */}
-
-      {/* <ConfirmDialog
-        open={openConfirmDialoug}
-        loading={deleteLoading}
-        disabled={deleteLoading}
-        action={
-          <Button
-            loading={deleteLoading}
-            disabled={deleteLoading}
-            onClick={handleDeleteUser}
-            variant="contained"
-            className="!bg-primary"
-          >
-            Confirm
-          </Button>
-        }
-        handleClose={() => setOpenConfirmDialoug(false)}
-        title={`Are you sure, you want to delete the user(${dataToEdit?.name})?`}
-      /> */}
     </>
   );
 }

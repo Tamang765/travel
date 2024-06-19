@@ -61,6 +61,8 @@ export default function EnhancedTable({
   page,
   rowsPerPage,
   setOpenAdd,
+  refresh,
+  setRefresh,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -167,6 +169,8 @@ export default function EnhancedTable({
           showFilter={showFilter}
           showPrint={showPrint}
           setOpenAdd={setOpenAdd}
+          refresh={refresh}
+          setRefresh={setRefresh}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">

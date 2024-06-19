@@ -18,7 +18,7 @@ const initialState = {
 // TODO: fetch all the colors
 export const fetchColors = createAsyncThunk(
   "fetchColors/colors",
-  async ({ enqueueSnackbar, limit, page }, thunkApi) => {
+  async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     console.log(limit, page);
     try {
       const response = await axiosInstance.get(`colors`, {

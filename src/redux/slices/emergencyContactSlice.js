@@ -18,7 +18,7 @@ const initialState = {
 // TODO: fetch all the emergencyContacts
 export const fetchEmergencyContacts = createAsyncThunk(
   "fetchEmergencyContacts/emergencyContacts",
-  async ({ enqueueSnackbar, limit, page }, thunkApi) => {
+  async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`users/emergency-contacts`, {
         params: {

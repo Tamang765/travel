@@ -18,7 +18,7 @@ const initialState = {
 // TODO: fetch all the sizes
 export const fetchSizes = createAsyncThunk(
   "fetchSizes/sizes",
-  async ({ enqueueSnackbar, limit, page }, thunkApi) => {
+  async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`sizes`, {
         params: {

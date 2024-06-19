@@ -18,7 +18,7 @@ const initialState = {
 // TODO: fetch all the brands
 export const fetchBrands = createAsyncThunk(
   "fetchBrands/brands",
-  async ({ enqueueSnackbar, limit, page }, thunkApi) => {
+  async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`brands`, {
         params: {

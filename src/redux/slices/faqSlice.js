@@ -18,7 +18,7 @@ const initialState = {
 // TODO: fetch all the faqs
 export const fetchFaqs = createAsyncThunk(
   "fetchFaqs/faqs",
-  async ({ enqueueSnackbar, limit, page }, thunkApi) => {
+  async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`faq`, {
         params: {

@@ -18,7 +18,7 @@ const initialState = {
 // TODO: fetch all the team members
 export const fetchTeamMembers = createAsyncThunk(
   "fetchTeamMembers/teams",
-  async ({ enqueueSnackbar, limit, page }, thunkApi) => {
+  async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`users`, {
         params: {

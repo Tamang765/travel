@@ -18,7 +18,7 @@ const initialState = {
 // TODO: fetch all the categories
 export const fetchCategories = createAsyncThunk(
   "fetchCategories/categories",
-  async ({ enqueueSnackbar, limit, page }, thunkApi) => {
+  async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`categories`, {
         params: {

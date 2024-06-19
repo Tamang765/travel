@@ -8,42 +8,7 @@ import { fetchProducts } from "../../redux/slices/productSlice";
 import { Shadow } from "../../routers";
 import Form from "../../sections/entries/Products/Form";
 import EnhancedTable from "../../sections/entries/Products/Table";
-
-const headCells = [
-  {
-    id: "sku",
-    numeric: false,
-    disablePadding: false,
-    label: "SKU",
-  },
-
-  {
-    id: "name",
-    numeric: false,
-    disablePadding: false,
-    label: "Name",
-  },
-
-  {
-    id: "photo",
-    numeric: false,
-    disablePadding: false,
-    label: "Photo",
-  },
-
-  {
-    id: "date",
-    numeric: true,
-    disablePadding: false,
-    label: "Created Date",
-  },
-
-  {
-    id: "action",
-    disablePadding: false,
-    label: "Action",
-  },
-];
+import { headCells } from "../../sections/entries/Products/headCells";
 
 export default function Products() {
   // TODO: hooks
@@ -56,6 +21,8 @@ export default function Products() {
     page: 0,
     limit: 10,
   });
+  const [refresh, setRefresh] = useState(false);
+
   const [rows, setRows] = useState([]);
 
   // TODO: get the data from slice
@@ -64,7 +31,7 @@ export default function Products() {
   // TODO: fetching the products
   useEffect(() => {
     dispatch(fetchProducts({ enqueueSnackbar, ...pagination }));
-  }, [dispatch, enqueueSnackbar, pagination]);
+  }, [dispatch, enqueueSnackbar, pagination, refresh]);
 
   // TODO: set the rows
 
@@ -111,14 +78,16 @@ export default function Products() {
       <Shadow>
         <Card color="transparent" shadow={false}>
           <EnhancedTable
-            showSearch={false}
+            showSearch={true}
             title="Products"
             headCells={headCells}
             rows={rows}
-            showFilter={false}
+            showFilter={true}
             setOpenAdd={() => setOpenAdd((prev) => !prev)}
             page={pagination.page}
             rowsPerPage={pagination.limit}
+            setRefresh={setRefresh}
+            refresh={refresh}
           />
 
           {/* TODO: pagination */}

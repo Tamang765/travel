@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../../components/component/modals/AddModal";
 import { fetchTeamMembers } from "../../../redux/slices/teamSlice";
 import { Shadow } from "../../../routers";
-import EnhancedTable from "../../../sections/teams/AdminTable";
+import EnhancedTable from "../../../sections/customers/CustomerTable";
+import { headCells } from "../../../sections/customers/headCells";
 import TeamForm from "../../../sections/teams/TeamForm";
-import { headCells } from "../../../sections/teams/headCells";
 
 export default function Customers() {
   // TODO: hooks

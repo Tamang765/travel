@@ -9,6 +9,7 @@ import { useSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
 import Login from "../pages/LoginPage";
 import { fetchCategories } from "../redux/slices/categorySlice";
+import { fetchRoles } from "../redux/slices/roleSlice";
 import { useAuthContext } from "./useAuthContext";
 
 // ----------------------------------------------------------------------
@@ -30,7 +31,7 @@ export default function AuthGuard({ children }) {
 
   useEffect(() => {
     dispatch(fetchCategories({ enqueueSnackbar }));
-    // dispatch(fetchUserTypes({ enqueueSnackbar }));
+    // dispatch(fetchRoles({ enqueueSnackbar }));
   }, [dispatch, enqueueSnackbar]);
 
   // ===================
@@ -39,9 +40,7 @@ export default function AuthGuard({ children }) {
     return <LoadingScreen />;
   }
 
-  console.log(user, isAuthenticated, "user");
-
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated || !user?.id) {
     // TODO: change this to !isAuthenticated
     if (pathname !== requestedLocation) {
       setRequestedLocation(pathname);

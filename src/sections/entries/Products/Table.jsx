@@ -17,10 +17,10 @@ import { EditDialog } from "../../../components/component/modals/EditModal";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
+import { deleteProduct } from "../../../redux/slices/productSlice";
 import Form from "./Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
-import { deleteProduct } from "../../../redux/slices/productSlice";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -61,6 +61,8 @@ export default function EnhancedTable({
   page,
   rowsPerPage,
   setOpenAdd,
+  refresh,
+  setRefresh,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -167,6 +169,8 @@ export default function EnhancedTable({
           showFilter={showFilter}
           showPrint={showPrint}
           setOpenAdd={setOpenAdd}
+          setRefresh={setRefresh}
+          refresh={refresh}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -221,6 +225,19 @@ export default function EnhancedTable({
                             }}
                             id={labelId}
                           >
+                            <img
+                              src={row?.photo}
+                              alt={row?.photo}
+                              className="w-20 h-20 object-contain"
+                            />
+                          </TableCell>
+
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            id={labelId}
+                          >
                             <span
                               style={{
                                 color: colors.text,
@@ -251,19 +268,28 @@ export default function EnhancedTable({
                             }}
                             id={labelId}
                           >
-                            <img
-                              src={row?.photo}
-                              alt={row?.photo}
-                              className="w-20 h-20 object-contain"
-                            />
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row.brand?.name}
+                            </span>
                           </TableCell>
 
                           <TableCell
                             style={{
                               color: colors.text,
                             }}
+                            id={labelId}
                           >
-                            <span>{row?.createdDate}</span>
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row.category?.name}
+                            </span>
                           </TableCell>
 
                           <TableCell
