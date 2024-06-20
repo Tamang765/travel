@@ -16,7 +16,10 @@ import FormProvider from "../../../components/hook-form/FormProvider";
 import Iconify from "../../../components/iconify";
 import { Upload } from "../../../components/upload";
 import { fetchBrands } from "../../../redux/slices/brandSlice";
-import { fetchCategories } from "../../../redux/slices/categorySlice";
+import {
+  fetchCategories,
+  fetchMainCategories,
+} from "../../../redux/slices/categorySlice";
 import { fetchColors } from "../../../redux/slices/colorSlice";
 import {
   createProduct,
@@ -43,6 +46,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   ]);
   const [documents, setDocuments] = useState([]);
   const [galleries, setGalleries] = useState([]);
+  const [filteredSubCategoryData, setFilteredSubCategoryData] = useState([]);
 
   // TODO: get the data from slice
 
@@ -50,12 +54,14 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   const brands = useSelector((state) => state.brand.brands);
   const sizes = useSelector((state) => state.size.sizes);
   const categories = useSelector((state) => state.category.categories);
+  const mainCategories = useSelector((state) => state.category.mainCategories);
   const colors = useSelector((state) => state.color.colors);
 
   const Schema = Yup.object().shape({
     name: Yup.string().required("product's name is required"),
     sku: Yup.string().required("product's sku is required"),
-    category_id: Yup.string().required("product's category is required"),
+    main_category_id: Yup.string().required("who the product is intended for?"),
+    sub_category_id: Yup.string().required("select the product's category"),
     brand_id: Yup.string().required("product's brand is required"),
     description: Yup.string().required("product's description is required"),
   });
@@ -84,14 +90,16 @@ const Form = ({ handleClose, data, isEdit = false }) => {
     defaultValues,
   });
 
-  const { handleSubmit, reset } = methods;
+  const { handleSubmit, reset, watch, setValue } = methods;
+  const selectedMainCategory = watch("main_category_id");
 
   // TODO: useEffects, write the useEffect codes here
 
   // TODO: fetch the brand, categories, size and color
   useEffect(() => {
     dispatch(fetchBrands({ enqueueSnackbar, page: 0, limit: 100 }));
-    dispatch(fetchCategories({ enqueueSnackbar, page: 0, limit: 100 }));
+    dispatch(fetchCategories({ enqueueSnackbar, page: 0, limit: 1000 }));
+    dispatch(fetchMainCategories({ enqueueSnackbar }));
     dispatch(fetchSizes({ enqueueSnackbar, page: 0, limit: 100 }));
     dispatch(fetchColors({ enqueueSnackbar, page: 0, limit: 100 }));
   }, [dispatch, enqueueSnackbar]);
@@ -118,6 +126,20 @@ const Form = ({ handleClose, data, isEdit = false }) => {
       setVairants(newVariants);
     }
   }, [data?.variations]);
+
+  React.useEffect(() => {
+    if (selectedMainCategory) {
+      const filteredSubCategories = categories?.data
+        ?.filter((category) => category.parent_id === selectedMainCategory)
+        ?.map((category) => ({
+          label: category?.name,
+          value: category?.id,
+        }));
+
+      setFilteredSubCategoryData(filteredSubCategories);
+      setValue("sub_category_id", ""); // Clear sub-category selection when main category changes
+    }
+  }, [selectedMainCategory, categories, setValue]);
 
   // ======
 
@@ -173,6 +195,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
       trending: values.trending ? 1 : 0,
       new: values.new ? 1 : 0,
       featured: values.featured ? 1 : 0,
+      category_id: values?.sub_category_id,
     });
 
     if (photo) {
@@ -246,42 +269,12 @@ const Form = ({ handleClose, data, isEdit = false }) => {
           display="grid"
           gridTemplateColumns={{
             xs: "repeat(1, 1fr)",
-            sm: "repeat(4, 1fr)",
+            sm: "repeat(3, 1fr)",
           }}
         >
           <RHFTextField name={"name"} label={"Product's name *"} />
           <RHFTextField name={"sku"} label={"Product's sku *"} />
-          {/* TODO: category */}
-          <Autocomplete
-            defaultValue={{
-              label: data?.category?.name || "",
-              id: data?.category?.id || "",
-            }}
-            name="category_id"
-            disablePortal
-            id="combo-box-demo"
-            options={
-              categories?.data?.map((category) => ({
-                label: category?.name,
-                id: category?.id,
-              })) || []
-            }
-            renderInput={(params) => (
-              <RHFTextField
-                name={"category_id"}
-                {...params}
-                label="Search category *"
-              />
-            )}
-            onChange={(event, newValues) =>
-              methods.setValue("category_id", newValues ? newValues.id : null)
-            }
-            renderOption={(props, option) => (
-              <li {...props} key={option.id}>
-                {option.label}
-              </li>
-            )}
-          />
+
           {/* TODO: brand */}
           <Autocomplete
             defaultValue={{
@@ -306,6 +299,76 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             )}
             onChange={(event, newValues) =>
               methods.setValue("brand_id", newValues ? newValues.id : null)
+            }
+            renderOption={(props, option) => (
+              <li {...props} key={option.id}>
+                {option.label}
+              </li>
+            )}
+          />
+
+          {/* TODO: main category */}
+          <Autocomplete
+            defaultValue={{
+              label: data?.category?.name || "",
+              id: data?.category?.id || "",
+            }}
+            name="main_category_id"
+            disablePortal
+            id="combo-box-demo"
+            options={
+              mainCategories?.data?.map((category) => ({
+                label: category?.name,
+                id: category?.id,
+              })) || []
+            }
+            renderInput={(params) => (
+              <RHFTextField
+                name={"main_category_id"}
+                {...params}
+                label="Who is this product intended for? *"
+              />
+            )}
+            onChange={(event, newValues) =>
+              methods.setValue(
+                "main_category_id",
+                newValues ? newValues.id : null
+              )
+            }
+            renderOption={(props, option) => (
+              <li {...props} key={option.id}>
+                {option.label}
+              </li>
+            )}
+          />
+          {/* TODO: sub category */}
+          <Autocomplete
+            disabled={!selectedMainCategory}
+            defaultValue={{
+              label: data?.category?.name || "",
+              id: data?.category?.id || "",
+            }}
+            name="sub_category_id"
+            disablePortal
+            id="combo-box-demo"
+            options={
+              filteredSubCategoryData?.map((category) => ({
+                label: category?.label,
+                id: category?.value,
+              })) || []
+            }
+            renderInput={(params) => (
+              <RHFTextField
+                name={"sub_category_id"}
+                {...params}
+                label="Search category *"
+              />
+            )}
+            onChange={(event, newValues) =>
+              methods.setValue(
+                "sub_category_id",
+                newValues ? newValues.id : null
+              )
             }
             renderOption={(props, option) => (
               <li {...props} key={option.id}>
