@@ -9,37 +9,34 @@ import * as Yup from "yup";
 import { RHFSelect, RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
 import { Upload } from "../../../components/upload";
-import { categoryData } from "../../../data/categoryData";
 import {
   createCategory,
   updateCategory,
 } from "../../../redux/slices/categorySlice";
 
 const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
-  // TODO: hooks
-
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
-  // TODO: useStates
   const [photo, setPhoto] = useState(null);
+  const [mainCategoryData, setMainCategoryData] = useState([]);
+  const [filteredSubCategoryData, setFilteredSubCategoryData] = useState([]);
 
-  // TODO: get the data from slice
   const categories = useSelector((state) => state.category.categories);
-
-  const createCCLoading = useSelector((state) => state.category.isLoading);
+  const createCategoryLoading = useSelector(
+    (state) => state.category.isLoading
+  );
+  const mainCategories = useSelector((state) => state.category.mainCategories);
 
   const Schema = Yup.object().shape({
     name: Yup.string().required("Category name is required"),
   });
 
-  // TODO: default values in the form
   const defaultValues = useMemo(
     () => ({
       name: data?.name,
       photo: data?.photo,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [data]
   );
 
@@ -48,15 +45,32 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
     defaultValues,
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, watch, setValue } = methods;
+  const selectedMainCategory = watch("main_category_id");
 
-  // TODO: useEffects, write the useEffect codes here
+  React.useEffect(() => {
+    const mainCategory = mainCategories?.data?.map((category) => ({
+      label: category?.name,
+      value: category?.id,
+    }));
 
-  // ======
+    setMainCategoryData(mainCategory);
+  }, [mainCategories]);
 
-  // TODO: functions
+  React.useEffect(() => {
+    if (selectedMainCategory) {
+      const filteredSubCategories = categories?.data
+        ?.filter((category) => category.parent_id === selectedMainCategory)
+        ?.map((category) => ({
+          label: category?.name,
+          value: category?.id,
+        }));
 
-  // TODO: handle upload image
+      setFilteredSubCategoryData(filteredSubCategories);
+      setValue("sub_category_id", ""); // Clear sub-category selection when main category changes
+    }
+  }, [selectedMainCategory, categories, setValue]);
+
   const handleDropPhoto = useCallback((acceptedFiles) => {
     const newFile = acceptedFiles[0];
     if (newFile) {
@@ -72,14 +86,15 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
   const onCreateCategory = (values) => {
     const formData = new FormData();
     formData.append("name", values.name);
-    formData.append(
-      "parent_id",
-      categories?.data?.find((cat) => cat?.slug === values.parent_id)?.id
-    );
+    if (values.main_category_id || values.sub_category_id) {
+      formData.append(
+        "parent_id",
+        values.sub_category_id || values.main_category_id
+      );
+    }
     if (photo) {
       formData.append("photo", photo);
     }
-    // TODO: dispatch the action to create a category
     dispatch(
       createCategory({
         data: formData,
@@ -94,10 +109,16 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
   const onUpdateCategory = (values) => {
     const formData = new FormData();
     formData.append("name", values.name);
+
+    if (values.main_category_id || values.sub_category_id) {
+      formData.append(
+        "parent_id",
+        values.sub_category_id || values.main_category_id
+      );
+    }
     if (photo) {
       formData.append("photo", photo);
     }
-    // TODO: dispatch the action to update a brand
     dispatch(
       updateCategory({
         data: formData,
@@ -107,8 +128,6 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
       })
     );
   };
-
-  // TODO: console.logs
 
   return (
     <Box p={3}>
@@ -121,14 +140,23 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
           rowGap={3}
           columnGap={2}
           display="grid"
-          gridTemplateColumns={{
-            xs: "repeat(1, 1fr)",
-            sm: "repeat(1, 1fr)",
-          }}
+          gridTemplateColumns={{ xs: "repeat(1, 1fr)", sm: "repeat(1, 1fr)" }}
         >
           <RHFTextField name={"name"} label={"Category name *"} />
-          <RHFSelect name={"parent_id"} label="Select parent category *">
-            {categoryData?.map((category, index) => (
+          <RHFSelect name={"main_category_id"} label="Select main category">
+            {mainCategoryData?.map((category, index) => (
+              <MenuItem value={category?.value} key={index}>
+                <span>{category?.label}</span>
+              </MenuItem>
+            ))}
+          </RHFSelect>
+
+          <RHFSelect
+            name={"sub_category_id"}
+            label="Select sub-category"
+            disabled={!selectedMainCategory}
+          >
+            {filteredSubCategoryData?.map((category, index) => (
               <MenuItem value={category?.value} key={index}>
                 <span>{category?.label}</span>
               </MenuItem>
@@ -150,8 +178,8 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
 
         <Stack mt={2} alignItems={"end"}>
           <LoadingButton
-            loading={createCCLoading}
-            disabled={createCCLoading}
+            loading={createCategoryLoading}
+            disabled={createCategoryLoading}
             type="submit"
             variant="contained"
             className="!bg-primary w-fit"

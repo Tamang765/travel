@@ -1,7 +1,8 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 // @mui
-import { TableRow, TableCell } from '@mui/material';
-import EmptyContent from '../empty-content/EmptyContent';
+import { TableCell, TableRow } from "@mui/material";
+import { TitleMd } from "../design/Title";
+import EmptyContent from "../empty-content/EmptyContent";
 //
 
 // ----------------------------------------------------------------------
@@ -17,9 +18,9 @@ export default function TableNoData({ isNotFound, title }) {
       {isNotFound ? (
         <TableCell colSpan={12}>
           <EmptyContent
-            title="No Data Found"
+            title={<TitleMd>No Data Found</TitleMd>}
             sx={{
-              '& span.MuiBox-root': { height: 160 },
+              "& span.MuiBox-root": { height: 160 },
             }}
           />
         </TableCell>

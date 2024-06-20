@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Card, TablePagination } from "@mui/material";
 import moment from "moment";
 import { useSnackbar } from "notistack";
@@ -7,6 +8,7 @@ import { AddDialog } from "../../components/component/modals/AddModal";
 import {
   fetchCategories,
   fetchFilteredCategories,
+  fetchMainCategories,
 } from "../../redux/slices/categorySlice";
 import { Shadow } from "../../routers";
 import Form from "../../sections/entries/Categories/Form";
@@ -50,7 +52,7 @@ export default function Categories() {
   const [openAdd, setOpenAdd] = useState(false);
   const [pagination, setPagination] = useState({
     page: 0,
-    limit: 10,
+    limit: 10000,
   });
   const [rows, setRows] = useState([]);
   const [refresh, setRefresh] = useState(false);
@@ -79,14 +81,17 @@ export default function Categories() {
           enqueueSnackbar,
           ...pagination,
           search,
-          parent_id: categories?.data?.find((cat) => cat?.slug === activeTab)
-            ?.id,
+          parent_id: activeTab,
         })
       );
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, dispatch, enqueueSnackbar, pagination, refresh]);
+
+  useEffect(() => {
+    dispatch(fetchMainCategories({ enqueueSnackbar }));
+  }, []);
 
   // TODO: set the rows
 
@@ -119,6 +124,8 @@ export default function Categories() {
   };
 
   // TODO: console.logs
+
+  console.log(activeTab, "active aab");
 
   return (
     <>

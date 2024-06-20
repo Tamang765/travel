@@ -6,17 +6,10 @@ import {
   TableSortLabel,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import { useTheme } from "../../../providers/ThemeProvider";
+import { useTheme } from "../../../../providers/ThemeProvider";
 
 export function EnhancedTableHead(props) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
+  const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -26,12 +19,6 @@ export function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell
-          style={{
-            color: colors.text,
-          }}
-          padding="checkbox"
-        ></TableCell>
         {props.headCells.map((headCell) => (
           <TableCell
             style={{

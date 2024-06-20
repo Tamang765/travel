@@ -1,5 +1,5 @@
 import { Button } from "@material-tailwind/react";
-import { Collapse, IconButton, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,104 +8,48 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import { useSnackbar } from "notistack";
 import * as React from "react";
-import { useState } from "react";
 import { AiOutlineEdit } from "react-icons/ai";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { ConfirmDialog } from "../../../components/component/modals/ConfirmDialog";
-import { EditDialog } from "../../../components/component/modals/EditModal";
-import Iconify from "../../../components/iconify";
-import TableNoData from "../../../components/table/TableNoData";
-import TableSkeleton from "../../../components/table/TableSkeleton";
-import { useTheme } from "../../../providers/ThemeProvider";
-import { deleteCategory } from "../../../redux/slices/categorySlice";
-import Form from "./Form";
-import SubCategories from "./SubCategories/SubCategories";
+import { ConfirmDialog } from "../../../../components/component/modals/ConfirmDialog";
+import { EditDialog } from "../../../../components/component/modals/EditModal";
+import TableNoData from "../../../../components/table/TableNoData";
+import TableSkeleton from "../../../../components/table/TableSkeleton";
+import { useTheme } from "../../../../providers/ThemeProvider";
+import { deleteCategory } from "../../../../redux/slices/categorySlice";
+import Form from "../Form";
 import { EnhancedTableHead } from "./TableHeads";
-import { EnhancedTableToolbar } from "./TableToolbar";
 
-const tabData = [
-  {
-    label: "All",
-    value: "all",
-  },
-  {
-    label: "Home",
-    value: "home",
-  },
-  {
-    label: "Men",
-    value: "mens",
-  },
-  {
-    label: "Women",
-    value: "womens",
-  },
-  {
-    label: "Kids",
-    value: "kids",
-  },
-];
-
-export default function EnhancedTable({
-  title,
-  showFilter = true,
-  showSearch = true,
-  showAdd = true,
-  showPrint = false,
-  headCells,
-  rows,
-  page,
-  rowsPerPage,
-  setOpenAdd,
-  activeTab,
-  setActiveTab,
-  refresh,
-  setRefresh,
-  setSearch,
-  search,
-}) {
+export default function EnhancedTable({ headCells, rows }) {
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const { colors } = useTheme();
 
   // TODO: useStates
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("name");
-  const [selected, setSelected] = useState([]);
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("name");
+  const [selected, setSelected] = React.useState([]);
 
-  const [open, setOpen] = useState(false);
-  const [activeRow, setActiveRow] = useState("");
+  const [openEditModal, setOpenEditModal] = React.useState(false);
+  const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
 
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [openConfirmModal, setOpenConfirmModal] = useState(false);
-
-  const [dataToEdit, setDataToEdit] = useState();
-  const [tabData, setTabData] = useState([]);
+  const [dataToEdit, setDataToEdit] = React.useState();
 
   // ======
 
   // TODO: get the data from slice
 
   const deleteLoading = useSelector((state) => state.category.isLoading);
-  const fetchLoading = useSelector((state) => state.category.fetchLoading);
-  const mainCategories = useSelector((state) => state.category.mainCategories);
+  const fetchLoading = useSelector(
+    (state) => state.category.fetchSubCategoryLoading
+  );
 
   // TODO:================
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const visibleRows = React.useMemo(() => rows, [rows]);
-
-  // TODO: useEffects
-  React.useEffect(() => {
-    const data = mainCategories?.data?.map((category) => ({
-      label: category?.name,
-      value: category?.id,
-    }));
-    setTabData([{ label: "All", value: "all" }, ...data]);
-  }, [mainCategories]);
 
   // TODO: functions
 
@@ -124,11 +68,6 @@ export default function EnhancedTable({
     setSelected([]);
   };
 
-  const handleOpenCategories = (id) => {
-    setOpen((prev) => (id === activeRow ? !open : true));
-    setActiveRow(id);
-  };
-
   // TODO: delete the category
   const handleDelete = () => {
     dispatch(
@@ -145,39 +84,6 @@ export default function EnhancedTable({
   return (
     <>
       <Box sx={{ width: "100%" }}>
-        <EnhancedTableToolbar
-          title={title}
-          numSelected={selected.length}
-          showAdd={showAdd}
-          showSearch={showSearch}
-          showFilter={showFilter}
-          showPrint={showPrint}
-          setOpenAdd={setOpenAdd}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          refresh={refresh}
-          setRefresh={setRefresh}
-          setSearch={setSearch}
-          search={search}
-        />
-
-        {/* TODO: tabs */}
-        <div className="flex border-b border-gray-200 ml-4 overflow-scroll">
-          {tabData.map((tab) => (
-            <button
-              key={tab.value}
-              className={`px-4 py-2 -mb-px text-sm font-medium border-b-2 w-fit ${
-                activeTab === tab.value
-                  ? "border-black text-black"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-              onClick={() => setActiveTab(tab.value)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -208,22 +114,6 @@ export default function EnhancedTable({
                             selected={isItemSelected}
                             sx={{ cursor: "pointer" }}
                           >
-                            <TableCell>
-                              <IconButton
-                                size="small"
-                                color={open ? "inherit" : "default"}
-                                onClick={() => handleOpenCategories(row?.id)}
-                              >
-                                <Iconify
-                                  icon={
-                                    open && activeRow === row.id
-                                      ? "eva:arrow-ios-upward-fill"
-                                      : "eva:arrow-ios-downward-fill"
-                                  }
-                                />
-                              </IconButton>
-                            </TableCell>
-
                             <TableCell
                               style={{
                                 color: colors.text,
@@ -287,17 +177,6 @@ export default function EnhancedTable({
                               </Stack>
                             </TableCell>
                           </TableRow>
-
-                          <TableRow>
-                            <TableCell sx={{ py: 0 }} colSpan={12}>
-                              <Collapse
-                                in={open && activeRow === row.id}
-                                unmountOnExit
-                              >
-                                <SubCategories parent_id={row?.id} />
-                              </Collapse>
-                            </TableCell>
-                          </TableRow>
                         </>
                       ) : (
                         <TableSkeleton key={index} />
@@ -329,7 +208,7 @@ export default function EnhancedTable({
         />
       </EditDialog>
 
-      {/* TODO: delete role confirm modal */}
+      {/* TODO: delete confirm modal */}
       <ConfirmDialog
         handleClose={() => setOpenConfirmModal(false)}
         open={openConfirmModal}
