@@ -22,6 +22,7 @@ export default function Products() {
     limit: 10,
   });
   const [refresh, setRefresh] = useState(false);
+  const [search, setSearch] = useState("");
 
   const [rows, setRows] = useState([]);
 
@@ -30,7 +31,8 @@ export default function Products() {
 
   // TODO: fetching the products
   useEffect(() => {
-    dispatch(fetchProducts({ enqueueSnackbar, ...pagination }));
+    dispatch(fetchProducts({ enqueueSnackbar, ...pagination, search }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, enqueueSnackbar, pagination, refresh]);
 
   // TODO: set the rows
@@ -88,6 +90,8 @@ export default function Products() {
             rowsPerPage={pagination.limit}
             setRefresh={setRefresh}
             refresh={refresh}
+            search={search}
+            setSearch={setSearch}
           />
 
           {/* TODO: pagination */}

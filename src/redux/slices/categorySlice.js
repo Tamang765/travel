@@ -13,17 +13,55 @@ const initialState = {
       total: 0,
     },
   },
+
+  filteredCategories: {
+    data: [],
+    meta: {
+      total: 0,
+    },
+  },
 };
 
 // TODO: fetch all the categories
 export const fetchCategories = createAsyncThunk(
   "fetchCategories/categories",
-  async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
+  async ({ enqueueSnackbar, limit, page = 0, search }, thunkApi) => {
     try {
       const response = await axiosInstance.get(`categories`, {
         params: {
           page: page + 1,
           limit,
+          ...(search !== "" && {
+            search,
+          }),
+        },
+      });
+
+      return {
+        data: response.data.data.data,
+        meta: {
+          total: response.data.data.total,
+        },
+      };
+    } catch (error) {
+      return thunkApi.rejectWithValue({ error, enqueueSnackbar });
+    }
+  }
+);
+
+// / TODO: fetch all filtered categories
+export const fetchFilteredCategories = createAsyncThunk(
+  "fetchFilteredCategories/categories",
+  async ({ enqueueSnackbar, limit, page = 0, parent_id, search }, thunkApi) => {
+    try {
+      const response = await axiosInstance.get(`categories`, {
+        params: {
+          page: page + 1,
+          limit,
+          parent_id,
+          ...(search !== "" && {
+            search,
+          }),
         },
       });
 
@@ -42,7 +80,10 @@ export const fetchCategories = createAsyncThunk(
 // TODO: create category
 export const createCategory = createAsyncThunk(
   "createCategory/categories",
-  async ({ data, enqueueSnackbar, handleClose }, thunkApi) => {
+  async (
+    { data, enqueueSnackbar, handleClose, activeTab, setActiveTab },
+    thunkApi
+  ) => {
     try {
       const response = await axiosInstance.post(`categories`, data);
 
@@ -50,6 +91,8 @@ export const createCategory = createAsyncThunk(
         data: response.data.data,
         handleClose,
         enqueueSnackbar,
+        activeTab,
+        setActiveTab,
       };
     } catch (error) {
       return thunkApi.rejectWithValue({ error, enqueueSnackbar });
@@ -96,7 +139,7 @@ const categorySlice = createSlice({
   name: "category",
   initialState,
   extraReducers: (builder) => {
-    // TODO: create category
+    // TODO: get category
     builder.addCase(fetchCategories.pending, (state, _) => {
       state.fetchLoading = true;
     });
@@ -114,6 +157,24 @@ const categorySlice = createSlice({
       });
     });
 
+    // TODO: filtered category
+    builder.addCase(fetchFilteredCategories.pending, (state, _) => {
+      state.fetchLoading = true;
+    });
+
+    builder.addCase(fetchFilteredCategories.fulfilled, (state, action) => {
+      state.fetchLoading = false;
+      state.filteredCategories = action.payload;
+    });
+
+    builder.addCase(fetchFilteredCategories.rejected, (state, action) => {
+      state.isLoading = false;
+      state.fetchLoading = false;
+      action.payload.enqueueSnackbar(action.payload.error.message, {
+        variant: "error",
+      });
+    });
+
     // TODO: create category
     builder.addCase(createCategory.pending, (state, _) => {
       state.isLoading = true;
@@ -121,12 +182,20 @@ const categorySlice = createSlice({
 
     builder.addCase(createCategory.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.categories.data = [action.payload.data, ...state.categories.data];
+      if (action.payload.activeTab === "all") {
+        state.categories.data = [action.payload.data, ...state.categories.data];
+      } else {
+        state.filteredCategories.data = [
+          action.payload.data,
+          ...state.filteredCategories.data,
+        ];
+      }
       state.categories.meta.total = state.categories.meta.total + 1;
       action.payload.enqueueSnackbar("Category is created successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
+      action.payload.setActiveTab(action.payload.activeTab);
     });
 
     builder.addCase(createCategory.rejected, (state, action) => {

@@ -1,5 +1,5 @@
 import { Button } from "@material-tailwind/react";
-import { Stack, styled, Tooltip, tooltipClasses } from "@mui/material";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import Table from "@mui/material/Table";
@@ -22,44 +22,28 @@ import Form from "./Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
 
-const LightTooltip = styled(({ className, ...props }) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.white,
-    color: "rgba(0, 0, 0, 0.87)",
-    boxShadow: theme.shadows[1],
-    fontSize: 11,
+const tabData = [
+  {
+    label: "All",
+    value: "all",
   },
-}));
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+  {
+    label: "Home",
+    value: "home",
+  },
+  {
+    label: "Men",
+    value: "mens",
+  },
+  {
+    label: "Women",
+    value: "womens",
+  },
+  {
+    label: "Kids",
+    value: "kids",
+  },
+];
 
 export default function EnhancedTable({
   title,
@@ -72,6 +56,12 @@ export default function EnhancedTable({
   page,
   rowsPerPage,
   setOpenAdd,
+  activeTab,
+  setActiveTab,
+  refresh,
+  setRefresh,
+  setSearch,
+  search,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -98,22 +88,6 @@ export default function EnhancedTable({
   // TODO:================
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
-
-  // const visibleRows = React.useMemo(
-  //   () =>
-  //     stableSort(rows, getComparator(order, orderBy)).slice(
-  //       page * rowsPerPage,
-  //       page * rowsPerPage + rowsPerPage
-  //     ),
-
-  //   [order, orderBy, page, rowsPerPage, rows]
-  // );
-
-  // const visibleRows = React.useMemo(
-  //   () => rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-
-  //   [page, rowsPerPage, rows]
-  // );
 
   const visibleRows = React.useMemo(() => rows, [rows]);
 
@@ -178,7 +152,31 @@ export default function EnhancedTable({
           showFilter={showFilter}
           showPrint={showPrint}
           setOpenAdd={setOpenAdd}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          refresh={refresh}
+          setRefresh={setRefresh}
+          setSearch={setSearch}
+          search={search}
         />
+
+        {/* TODO: tabs */}
+        <div className="flex border-b border-gray-200">
+          {tabData.map((tab) => (
+            <button
+              key={tab.value}
+              className={`px-4 py-2 -mb-px text-sm font-medium border-b-2 ${
+                activeTab === tab.value
+                  ? "border-black text-black"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+              onClick={() => setActiveTab(tab.value)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
             <EnhancedTableHead

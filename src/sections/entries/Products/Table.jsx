@@ -63,6 +63,8 @@ export default function EnhancedTable({
   setOpenAdd,
   refresh,
   setRefresh,
+  search,
+  setSearch,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -171,6 +173,8 @@ export default function EnhancedTable({
           setOpenAdd={setOpenAdd}
           setRefresh={setRefresh}
           refresh={refresh}
+          setSearch={setSearch}
+          search={search}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">

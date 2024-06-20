@@ -4,7 +4,10 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import { fetchCategories } from "../../redux/slices/categorySlice";
+import {
+  fetchCategories,
+  fetchFilteredCategories,
+} from "../../redux/slices/categorySlice";
 import { Shadow } from "../../routers";
 import Form from "../../sections/entries/Categories/Form";
 import EnhancedTable from "../../sections/entries/Categories/Table";
@@ -50,19 +53,47 @@ export default function Categories() {
     limit: 10,
   });
   const [rows, setRows] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
 
   // TODO: get the data from slice
   const categories = useSelector((state) => state.category.categories);
+  const filteredCategories = useSelector(
+    (state) => state.category.filteredCategories
+  );
 
   // TODO: fetching the categories
   useEffect(() => {
-    dispatch(fetchCategories({ enqueueSnackbar, ...pagination }));
-  }, [dispatch, enqueueSnackbar, pagination]);
+    if (activeTab === "all") {
+      dispatch(
+        fetchCategories({
+          enqueueSnackbar,
+          ...pagination,
+          search,
+        })
+      );
+    } else {
+      dispatch(
+        fetchFilteredCategories({
+          enqueueSnackbar,
+          ...pagination,
+          search,
+          parent_id: categories?.data?.find((cat) => cat?.slug === activeTab)
+            ?.id,
+        })
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, dispatch, enqueueSnackbar, pagination, refresh]);
 
   // TODO: set the rows
 
   useEffect(() => {
-    const data = categories?.data?.map((category) => ({
+    const data = (
+      activeTab === "all" ? categories : filteredCategories
+    )?.data?.map((category) => ({
       id: category?.id,
       name: category?.name,
       slug: category?.slug,
@@ -72,7 +103,7 @@ export default function Categories() {
         .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
     }));
     setRows(data);
-  }, [categories]);
+  }, [activeTab, categories, filteredCategories]);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -102,13 +133,23 @@ export default function Categories() {
             setOpenAdd={() => setOpenAdd((prev) => !prev)}
             page={pagination.page}
             rowsPerPage={pagination.limit}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            refresh={refresh}
+            setRefresh={setRefresh}
+            search={search}
+            setSearch={setSearch}
           />
 
           {/* TODO: pagination */}
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={categories?.meta?.total}
+            count={
+              activeTab === "all"
+                ? categories?.meta?.total
+                : filteredCategories?.meta?.total
+            }
             rowsPerPage={pagination.limit}
             page={pagination.page}
             onPageChange={handleChangePage}
@@ -124,7 +165,11 @@ export default function Categories() {
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >
-        <Form handleClose={() => setOpenAdd(false)} />
+        {/* TODO: active tab is sent, when new category is created, it slide the tabs to newly added. */}
+        <Form
+          handleClose={() => setOpenAdd(false)}
+          setActiveTab={setActiveTab}
+        />
       </AddDialog>
     </>
   );

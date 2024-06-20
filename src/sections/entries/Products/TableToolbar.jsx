@@ -46,6 +46,8 @@ export function EnhancedTableToolbar({
   page,
   setRefresh,
   refresh,
+  search,
+  setSearch,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -124,6 +126,7 @@ export function EnhancedTableToolbar({
         limit,
         page,
         filter: formattedFilters,
+        search,
       })
     );
   };
@@ -171,6 +174,36 @@ export function EnhancedTableToolbar({
     }
   }, [categories, brands]);
 
+  // TODO: fetch the products when searached
+  useEffect(() => {
+    if (search) {
+      const debounce = setTimeout(() => {
+        dispatch(
+          fetchProducts({
+            enqueueSnackbar,
+            limit,
+            page,
+            filter: formattedFilters,
+            search,
+          })
+        );
+      }, [2000]);
+      return () => clearTimeout(debounce);
+    } else {
+      dispatch(
+        fetchProducts({
+          enqueueSnackbar,
+          limit,
+          page,
+          filter: formattedFilters,
+          search,
+        })
+      );
+    }
+  }, [dispatch, search, limit, page]);
+
+  // TODO: console.log
+
   return (
     <Box>
       <Stack
@@ -214,6 +247,8 @@ export function EnhancedTableToolbar({
           <div className="flex items-center gap-5">
             {showSearch && (
               <TextField
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 placeholder="search..."
                 size="small"
                 InputProps={{
@@ -253,7 +288,10 @@ export function EnhancedTableToolbar({
             <Button
               loading={fetchLoading}
               disabled={fetchLoading}
-              onClick={() => setRefresh((prev) => !prev)}
+              onClick={() => {
+                setRefresh((prev) => !prev);
+                setSearch("");
+              }}
               className="flex items-center !bg-secondary !text-sm !text-white p-2.5 px-3 rounded-lg"
             >
               <MdOutlineRefresh size={20} />

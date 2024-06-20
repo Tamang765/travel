@@ -1,20 +1,21 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoadingButton } from "@mui/lab";
-import { Box, Stack } from "@mui/material";
+import { Box, MenuItem, Stack } from "@mui/material";
 import { useSnackbar } from "notistack";
 import React, { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { RHFTextField } from "../../../components/hook-form";
+import { RHFSelect, RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
 import { Upload } from "../../../components/upload";
+import { categoryData } from "../../../data/categoryData";
 import {
   createCategory,
   updateCategory,
 } from "../../../redux/slices/categorySlice";
 
-const Form = ({ handleClose, data, isEdit = false }) => {
+const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
   // TODO: hooks
 
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   const [photo, setPhoto] = useState(null);
 
   // TODO: get the data from slice
+  const categories = useSelector((state) => state.category.categories);
 
   const createCCLoading = useSelector((state) => state.category.isLoading);
 
@@ -70,11 +72,23 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   const onCreateCategory = (values) => {
     const formData = new FormData();
     formData.append("name", values.name);
+    formData.append(
+      "parent_id",
+      categories?.data?.find((cat) => cat?.slug === values.parent_id)?.id
+    );
     if (photo) {
       formData.append("photo", photo);
     }
     // TODO: dispatch the action to create a category
-    dispatch(createCategory({ data: formData, enqueueSnackbar, handleClose }));
+    dispatch(
+      createCategory({
+        data: formData,
+        enqueueSnackbar,
+        handleClose,
+        setActiveTab,
+        activeTab: values.parent_id,
+      })
+    );
   };
 
   const onUpdateCategory = (values) => {
@@ -96,7 +110,6 @@ const Form = ({ handleClose, data, isEdit = false }) => {
 
   // TODO: console.logs
 
-
   return (
     <Box p={3}>
       <FormProvider
@@ -114,6 +127,13 @@ const Form = ({ handleClose, data, isEdit = false }) => {
           }}
         >
           <RHFTextField name={"name"} label={"Category name *"} />
+          <RHFSelect name={"parent_id"} label="Select parent category *">
+            {categoryData?.map((category, index) => (
+              <MenuItem value={category?.value} key={index}>
+                <span>{category?.label}</span>
+              </MenuItem>
+            ))}
+          </RHFSelect>
         </Box>
 
         <Box mt={3}>
