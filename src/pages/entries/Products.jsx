@@ -52,6 +52,8 @@ export default function Products() {
       gallery: product?.gallery,
       brand: product?.brand,
       category: product?.category,
+      sub_category: product?.sub_category,
+      sub_sub_category: product?.sub_sub_category,
       variations: product?.variations,
       createdDate: moment(product?.created_at)
         .format("Do MMMM, YYYY")

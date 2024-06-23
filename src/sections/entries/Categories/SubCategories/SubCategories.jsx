@@ -1,9 +1,7 @@
 import { Card } from "@mui/material";
 import moment from "moment";
-import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSubCategories } from "../../../../redux/slices/categorySlice";
+import { useSelector } from "react-redux";
 import EnhancedTable from "./Table";
 
 const headCells = [
@@ -36,49 +34,27 @@ const headCells = [
 ];
 
 export default function SubCategories({ parent_id }) {
-  // TODO: hooks
-  const dispatch = useDispatch();
-  const { enqueueSnackbar } = useSnackbar();
-
-  // TODO: useStates
-  const [pagination, setPagination] = useState({
-    page: 0,
-    limit: 100,
-  });
   const [rows, setRows] = useState([]);
 
   // TODO: get the data from slice
-  const subCategories = useSelector((state) => state.category.subCategories);
-
-  // TODO: fetching the categories
-  useEffect(() => {
-    dispatch(
-      fetchSubCategories({
-        enqueueSnackbar,
-        ...pagination,
-        parent_id,
-      })
-    );
-
-    console.log(parent_id, "parent iddddddd");
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const categories = useSelector((state) => state.category.categories);
 
   // TODO: set the rows
 
   useEffect(() => {
-    const data = subCategories?.data?.map((category) => ({
-      id: category?.id,
-      name: category?.name,
-      slug: category?.slug,
-      photo: category?.photo,
-      createdDate: moment(category?.created_at)
-        .format("Do MMMM, YYYY")
-        .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
-    }));
+    const data = categories?.data
+      ?.filter((cat) => cat?.parent_id === parent_id)
+      ?.map((category) => ({
+        id: category?.id,
+        name: category?.name,
+        slug: category?.slug,
+        photo: category?.photo,
+        createdDate: moment(category?.created_at)
+          .format("Do MMMM, YYYY")
+          .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
+      }));
     setRows(data);
-  }, [subCategories]);
+  }, [categories?.data, parent_id]);
 
   // TODO: console.logs
 

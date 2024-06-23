@@ -15,6 +15,8 @@ import {
 import FormProvider from "../../../components/hook-form/FormProvider";
 import { boolData } from "../../../data/bool";
 import { createFaq, updateFaq } from "../../../redux/slices/faqSlice";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const FaqForm = ({ handleClose, data, isEdit = false }) => {
   // TODO: hooks
@@ -115,6 +117,7 @@ const FaqForm = ({ handleClose, data, isEdit = false }) => {
             <span>Write answer *</span>
             <RHFEditor placeholder="Write anwser here..." name={"answer"} />
           </Stack>
+         
           <RHFTextField name={"order"} label={"Order to show in web site"} />
           <RHFSelect name={"is_published"} label="Publish FAQ?">
             {boolData?.map((type, index) => (

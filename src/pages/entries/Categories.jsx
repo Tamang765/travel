@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
 import {
   fetchCategories,
-  fetchFilteredCategories,
-  fetchMainCategories,
+  resetLoadings,
 } from "../../redux/slices/categorySlice";
 import { Shadow } from "../../routers";
 import Form from "../../sections/entries/Categories/Form";
@@ -52,53 +51,44 @@ export default function Categories() {
   const [openAdd, setOpenAdd] = useState(false);
   const [pagination, setPagination] = useState({
     page: 0,
-    limit: 10000,
+    limit: 10,
   });
   const [rows, setRows] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [filteredCategories, setFilteredCategories] = useState([]);
 
   // TODO: get the data from slice
   const categories = useSelector((state) => state.category.categories);
-  const filteredCategories = useSelector(
-    (state) => state.category.filteredCategories
-  );
+  const mainCategories = useSelector((state) => state.category.mainCategories);
 
   // TODO: fetching the categories
   useEffect(() => {
-    if (activeTab === "all") {
-      dispatch(
-        fetchCategories({
-          enqueueSnackbar,
-          ...pagination,
-          search,
-        })
-      );
-    } else {
-      dispatch(
-        fetchFilteredCategories({
-          enqueueSnackbar,
-          ...pagination,
-          search,
-          parent_id: activeTab,
-        })
-      );
-    }
-
+    dispatch(resetLoadings());
+    dispatch(
+      fetchCategories({
+        enqueueSnackbar,
+        search,
+      })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, dispatch, enqueueSnackbar, pagination, refresh]);
+  }, [dispatch, enqueueSnackbar, refresh]);
 
+  // TODO: initialize the selected category
   useEffect(() => {
-    dispatch(fetchMainCategories({ enqueueSnackbar }));
-  }, []);
+    setActiveTab(mainCategories?.[0]?.id);
+  }, [mainCategories]);
 
   // TODO: set the rows
 
   useEffect(() => {
-    const data = (
-      activeTab === "all" ? categories : filteredCategories
-    )?.data?.map((category) => ({
+    const filtered = categories?.data?.filter(
+      (cat) => cat?.parent_id === activeTab
+    );
+    setFilteredCategories(filtered);
+
+    const data = filtered?.map((category) => ({
       id: category?.id,
       name: category?.name,
       slug: category?.slug,
@@ -107,8 +97,9 @@ export default function Categories() {
         .format("Do MMMM, YYYY")
         .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
     }));
+
     setRows(data);
-  }, [activeTab, categories, filteredCategories]);
+  }, [activeTab, categories]);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -124,8 +115,6 @@ export default function Categories() {
   };
 
   // TODO: console.logs
-
-  console.log(activeTab, "active aab");
 
   return (
     <>
@@ -152,11 +141,7 @@ export default function Categories() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={
-              activeTab === "all"
-                ? categories?.meta?.total
-                : filteredCategories?.meta?.total
-            }
+            count={filteredCategories?.length}
             rowsPerPage={pagination.limit}
             page={pagination.page}
             onPageChange={handleChangePage}

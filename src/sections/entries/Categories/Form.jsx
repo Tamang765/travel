@@ -49,7 +49,7 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
   const selectedMainCategory = watch("main_category_id");
 
   React.useEffect(() => {
-    const mainCategory = mainCategories?.data?.map((category) => ({
+    const mainCategory = mainCategories?.map((category) => ({
       label: category?.name,
       value: category?.id,
     }));
@@ -101,7 +101,7 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
         enqueueSnackbar,
         handleClose,
         setActiveTab,
-        activeTab: values.parent_id,
+        activeTab: values.main_category_id,
       })
     );
   };

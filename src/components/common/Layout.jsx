@@ -47,13 +47,13 @@ export const Layout = ({ children }) => {
         <Header />
       </div>
       <main
-        onClick={() => {
-          setShowSideMenu((prev) => {
-            return prev.map((data) => {
-              return { ...data, show: false };
-            });
-          });
-        }}
+        // onClick={() => {
+        //   setShowSideMenu((prev) => {
+        //     return prev.map((data) => {
+        //       return { ...data, show: false };
+        //     });
+        //   });
+        // }}
         style={{
           backgroundColor: colors.bg,
         }}

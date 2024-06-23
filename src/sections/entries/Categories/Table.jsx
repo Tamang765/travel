@@ -24,29 +24,6 @@ import SubCategories from "./SubCategories/SubCategories";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
 
-const tabData = [
-  {
-    label: "All",
-    value: "all",
-  },
-  {
-    label: "Home",
-    value: "home",
-  },
-  {
-    label: "Men",
-    value: "mens",
-  },
-  {
-    label: "Women",
-    value: "womens",
-  },
-  {
-    label: "Kids",
-    value: "kids",
-  },
-];
-
 export default function EnhancedTable({
   title,
   showFilter = true,
@@ -65,6 +42,7 @@ export default function EnhancedTable({
   setSearch,
   search,
 }) {
+  console.log(rows, "row");
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -100,11 +78,12 @@ export default function EnhancedTable({
 
   // TODO: useEffects
   React.useEffect(() => {
-    const data = mainCategories?.data?.map((category) => ({
+    const data = mainCategories?.map((category) => ({
       label: category?.name,
       value: category?.id,
     }));
-    setTabData([{ label: "All", value: "all" }, ...data]);
+
+    setTabData(data);
   }, [mainCategories]);
 
   // TODO: functions
@@ -162,13 +141,13 @@ export default function EnhancedTable({
         />
 
         {/* TODO: tabs */}
-        <div className="flex border-b border-gray-200 ml-4 overflow-scroll">
+        <div className="flex border-b border-gray-200 overflow-scroll">
           {tabData.map((tab) => (
             <button
               key={tab.value}
               className={`px-4 py-2 -mb-px text-sm font-medium border-b-2 w-fit ${
                 activeTab === tab.value
-                  ? "border-black text-black"
+                  ? "border-black text-black border-b-4"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
               onClick={() => setActiveTab(tab.value)}
@@ -186,126 +165,130 @@ export default function EnhancedTable({
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={rows?.length}
               headCells={headCells}
             />
             <TableBody>
-              {(fetchLoading ? [...Array(5)] : visibleRows)?.map(
-                (row, index) => {
-                  const isItemSelected = isSelected(row?.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {(fetchLoading
+                ? [...Array(5)]
+                : visibleRows?.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+              )?.map((row, index) => {
+                const isItemSelected = isSelected(row?.name);
+                const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <>
-                      {row ? (
-                        <>
-                          <TableRow
-                            hover
-                            role="checkbox"
-                            aria-checked={isItemSelected}
-                            tabIndex={-1}
-                            // key={row.name}
-                            selected={isItemSelected}
-                            sx={{ cursor: "pointer" }}
-                          >
-                            <TableCell>
-                              <IconButton
-                                size="small"
-                                color={open ? "inherit" : "default"}
-                                onClick={() => handleOpenCategories(row?.id)}
-                              >
-                                <Iconify
-                                  icon={
-                                    open && activeRow === row.id
-                                      ? "eva:arrow-ios-upward-fill"
-                                      : "eva:arrow-ios-downward-fill"
-                                  }
-                                />
-                              </IconButton>
-                            </TableCell>
-
-                            <TableCell
-                              style={{
-                                color: colors.text,
-                              }}
-                              id={labelId}
+                return (
+                  <>
+                    {row ? (
+                      <>
+                        <TableRow
+                          hover
+                          role="checkbox"
+                          aria-checked={isItemSelected}
+                          tabIndex={-1}
+                          // key={row.name}
+                          selected={isItemSelected}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          <TableCell>
+                            <IconButton
+                              size="small"
+                              color={open ? "inherit" : "default"}
+                              onClick={() => handleOpenCategories(row?.id)}
                             >
-                              <span
-                                style={{
-                                  color: colors.text,
-                                }}
-                              >
-                                {row.name}
-                              </span>
-                            </TableCell>
-
-                            <TableCell
-                              style={{
-                                color: colors.text,
-                              }}
-                              id={labelId}
-                            >
-                              <img
-                                src={row?.photo}
-                                alt={row?.photo}
-                                className="w-20 h-20 object-contain"
+                              <Iconify
+                                icon={
+                                  open && activeRow === row.id
+                                    ? "eva:arrow-ios-upward-fill"
+                                    : "eva:arrow-ios-downward-fill"
+                                }
                               />
-                            </TableCell>
+                            </IconButton>
+                          </TableCell>
 
-                            <TableCell
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            id={labelId}
+                          >
+                            <span
                               style={{
                                 color: colors.text,
                               }}
                             >
-                              <span>{row?.createdDate}</span>
-                            </TableCell>
+                              {row.name}
+                            </span>
+                          </TableCell>
 
-                            <TableCell
-                              style={{
-                                color: colors.text,
-                              }}
-                            >
-                              <Stack flexDirection={"row"} gap={2}>
-                                <button
-                                  onClick={() => {
-                                    setOpenEditModal(true);
-                                    setDataToEdit(row);
-                                  }}
-                                  className="flex items-center bg-secondary text-sm text-white p-2 rounded-lg"
-                                >
-                                  <AiOutlineEdit size={20} />
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    setOpenConfirmModal(true);
-                                    setDataToEdit(row);
-                                  }}
-                                  className="flex items-center bg-red text-sm text-white p-2 rounded-lg"
-                                >
-                                  <MdOutlineDeleteOutline size={20} />
-                                </button>
-                              </Stack>
-                            </TableCell>
-                          </TableRow>
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            id={labelId}
+                          >
+                            <img
+                              src={row?.photo}
+                              alt={row?.photo}
+                              className="w-20 h-20 object-contain"
+                            />
+                          </TableCell>
 
-                          <TableRow>
-                            <TableCell sx={{ py: 0 }} colSpan={12}>
-                              <Collapse
-                                in={open && activeRow === row.id}
-                                unmountOnExit
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                          >
+                            <span>{row?.createdDate}</span>
+                          </TableCell>
+
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                          >
+                            <Stack flexDirection={"row"} gap={2}>
+                              <button
+                                onClick={() => {
+                                  setOpenEditModal(true);
+                                  setDataToEdit(row);
+                                }}
+                                className="flex items-center bg-secondary text-sm text-white p-2 rounded-lg"
                               >
-                                <SubCategories parent_id={row?.id} />
-                              </Collapse>
-                            </TableCell>
-                          </TableRow>
-                        </>
-                      ) : (
-                        <TableSkeleton key={index} />
-                      )}
-                    </>
-                  );
-                }
-              )}
+                                <AiOutlineEdit size={20} />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setOpenConfirmModal(true);
+                                  setDataToEdit(row);
+                                }}
+                                className="flex items-center bg-red text-sm text-white p-2 rounded-lg"
+                              >
+                                <MdOutlineDeleteOutline size={20} />
+                              </button>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+
+                        <TableRow>
+                          <TableCell sx={{ py: 0 }} colSpan={12}>
+                            <Collapse
+                              in={open && activeRow === row.id}
+                              unmountOnExit
+                            >
+                              <SubCategories parent_id={row?.id} />
+                            </Collapse>
+                          </TableCell>
+                        </TableRow>
+                      </>
+                    ) : (
+                      <TableSkeleton key={index} />
+                    )}
+                  </>
+                );
+              })}
 
               {!fetchLoading && (
                 <TableNoData isNotFound={visibleRows?.length === 0} />

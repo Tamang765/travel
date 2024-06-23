@@ -16,10 +16,7 @@ import FormProvider from "../../../components/hook-form/FormProvider";
 import Iconify from "../../../components/iconify";
 import { Upload } from "../../../components/upload";
 import { fetchBrands } from "../../../redux/slices/brandSlice";
-import {
-  fetchCategories,
-  fetchMainCategories,
-} from "../../../redux/slices/categorySlice";
+import { fetchCategories } from "../../../redux/slices/categorySlice";
 import { fetchColors } from "../../../redux/slices/colorSlice";
 import {
   createProduct,
@@ -47,6 +44,9 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   const [documents, setDocuments] = useState([]);
   const [galleries, setGalleries] = useState([]);
   const [filteredSubCategoryData, setFilteredSubCategoryData] = useState([]);
+  const [filteredSubSubCategoryData, setFilteredSubSubCategoryData] = useState(
+    []
+  );
 
   // TODO: get the data from slice
 
@@ -60,8 +60,11 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   const Schema = Yup.object().shape({
     name: Yup.string().required("product's name is required"),
     sku: Yup.string().required("product's sku is required"),
-    main_category_id: Yup.string().required("who the product is intended for?"),
+    category_id: Yup.string().required("who the product is intended for?"),
     sub_category_id: Yup.string().required("select the product's category"),
+    sub_sub_category_id: Yup.string().required(
+      "select the product's sub category"
+    ),
     brand_id: Yup.string().required("product's brand is required"),
     description: Yup.string().required("product's description is required"),
   });
@@ -73,6 +76,8 @@ const Form = ({ handleClose, data, isEdit = false }) => {
       sku: data?.sku || "",
       brand_id: data?.brand?.id || "",
       category_id: data?.category?.id || "",
+      sub_category_id: data?.sub_category?.id || "",
+      sub_sub_category_id: data?.sub_sub_category?.id || "",
       description: data?.description || "",
       status: data?.status || 0,
       featured: data?.featured || 0,
@@ -91,15 +96,15 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   });
 
   const { handleSubmit, reset, watch, setValue } = methods;
-  const selectedMainCategory = watch("main_category_id");
+  const selectedMainCategory = watch("category_id");
+  const selectedSubCategory = watch("sub_category_id");
 
   // TODO: useEffects, write the useEffect codes here
 
   // TODO: fetch the brand, categories, size and color
   useEffect(() => {
     dispatch(fetchBrands({ enqueueSnackbar, page: 0, limit: 100 }));
-    dispatch(fetchCategories({ enqueueSnackbar, page: 0, limit: 1000 }));
-    dispatch(fetchMainCategories({ enqueueSnackbar }));
+    dispatch(fetchCategories({ enqueueSnackbar }));
     dispatch(fetchSizes({ enqueueSnackbar, page: 0, limit: 100 }));
     dispatch(fetchColors({ enqueueSnackbar, page: 0, limit: 100 }));
   }, [dispatch, enqueueSnackbar]);
@@ -127,7 +132,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
     }
   }, [data?.variations]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedMainCategory) {
       const filteredSubCategories = categories?.data
         ?.filter((category) => category.parent_id === selectedMainCategory)
@@ -136,10 +141,25 @@ const Form = ({ handleClose, data, isEdit = false }) => {
           value: category?.id,
         }));
 
+      // setValue("sub_category_id", "");
       setFilteredSubCategoryData(filteredSubCategories);
-      setValue("sub_category_id", ""); // Clear sub-category selection when main category changes
     }
-  }, [selectedMainCategory, categories, setValue]);
+  }, [categories?.data, selectedMainCategory, setValue]);
+
+  useEffect(() => {
+    if (selectedSubCategory) {
+      const filteredSubCategories = categories?.data
+        ?.filter((category) => category.parent_id === selectedSubCategory)
+        ?.map((category) => ({
+          label: category?.name,
+          value: category?.id,
+        }));
+
+      // setValue("sub_sub_category_id", "");
+
+      setFilteredSubSubCategoryData(filteredSubCategories);
+    }
+  }, [categories?.data, selectedSubCategory, setValue]);
 
   // ======
 
@@ -195,7 +215,9 @@ const Form = ({ handleClose, data, isEdit = false }) => {
       trending: values.trending ? 1 : 0,
       new: values.new ? 1 : 0,
       featured: values.featured ? 1 : 0,
-      category_id: values?.sub_category_id,
+      category_id: values?.category_id,
+      sub_category_id: values?.sub_category_id,
+      sub_sub_category_id: values?.sub_sub_category_id,
     });
 
     if (photo) {
@@ -257,6 +279,8 @@ const Form = ({ handleClose, data, isEdit = false }) => {
 
   // console.log
 
+  console.log(watch(), data, data?.sub_category?.id, defaultValues, "data");
+
   return (
     <Box p={3}>
       <FormProvider
@@ -313,27 +337,24 @@ const Form = ({ handleClose, data, isEdit = false }) => {
               label: data?.category?.name || "",
               id: data?.category?.id || "",
             }}
-            name="main_category_id"
+            name="category_id"
             disablePortal
-            id="combo-box-demo"
+            id="combo-box-main-category"
             options={
-              mainCategories?.data?.map((category) => ({
+              mainCategories?.map((category) => ({
                 label: category?.name,
                 id: category?.id,
               })) || []
             }
             renderInput={(params) => (
               <RHFTextField
-                name={"main_category_id"}
+                name={"category_id"}
                 {...params}
                 label="Who is this product intended for? *"
               />
             )}
             onChange={(event, newValues) =>
-              methods.setValue(
-                "main_category_id",
-                newValues ? newValues.id : null
-              )
+              methods.setValue("category_id", newValues ? newValues.id : null)
             }
             renderOption={(props, option) => (
               <li {...props} key={option.id}>
@@ -341,16 +362,17 @@ const Form = ({ handleClose, data, isEdit = false }) => {
               </li>
             )}
           />
+
           {/* TODO: sub category */}
           <Autocomplete
             disabled={!selectedMainCategory}
             defaultValue={{
-              label: data?.category?.name || "",
-              id: data?.category?.id || "",
+              label: data?.sub_category?.name || "",
+              id: data?.sub_category?.id || "",
             }}
             name="sub_category_id"
             disablePortal
-            id="combo-box-demo"
+            id="combo-box-sub-category"
             options={
               filteredSubCategoryData?.map((category) => ({
                 label: category?.label,
@@ -367,6 +389,42 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             onChange={(event, newValues) =>
               methods.setValue(
                 "sub_category_id",
+                newValues ? newValues.id : null
+              )
+            }
+            renderOption={(props, option) => (
+              <li {...props} key={option.id}>
+                {option.label}
+              </li>
+            )}
+          />
+
+          {/* TODO: sub sub category */}
+          <Autocomplete
+            disabled={!selectedSubCategory}
+            defaultValue={{
+              label: data?.sub_sub_category?.name || "",
+              id: data?.sub_sub_category?.id || "",
+            }}
+            name="sub_sub_category_id"
+            disablePortal
+            id="combo-box-sub-sub-category"
+            options={
+              filteredSubSubCategoryData?.map((category) => ({
+                label: category?.label,
+                id: category?.value,
+              })) || []
+            }
+            renderInput={(params) => (
+              <RHFTextField
+                name={"sub_sub_category_id"}
+                {...params}
+                label="Search sub category *"
+              />
+            )}
+            onChange={(event, newValues) =>
+              methods.setValue(
+                "sub_sub_category_id",
                 newValues ? newValues.id : null
               )
             }
