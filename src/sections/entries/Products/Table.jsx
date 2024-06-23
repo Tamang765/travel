@@ -1,5 +1,5 @@
 import { Button } from "@material-tailwind/react";
-import { Stack } from "@mui/material";
+import { FormControlLabel, Stack, Switch } from "@mui/material";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import Table from "@mui/material/Table";
@@ -17,38 +17,35 @@ import { EditDialog } from "../../../components/component/modals/EditModal";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
-import { deleteProduct } from "../../../redux/slices/productSlice";
+import {
+  deleteProduct,
+  updateProductStatus,
+} from "../../../redux/slices/productSlice";
 import Form from "./Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
+const tabData = [
+  {
+    label: "All",
+    value: "all",
+  },
 
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
+  {
+    label: "Trending",
+    value: "trending",
+  },
 
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+  {
+    label: "Featured",
+    value: "featured",
+  },
+
+  {
+    label: "New",
+    value: "new",
+  },
+];
 
 export default function EnhancedTable({
   title,
@@ -65,6 +62,10 @@ export default function EnhancedTable({
   setRefresh,
   search,
   setSearch,
+  activeTab,
+  setActiveTab,
+  selectedFilters,
+  setSelectedFilters,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -147,13 +148,26 @@ export default function EnhancedTable({
     setSelected(newSelected);
   };
 
-  // TODO: delete the brand
+  // TODO: delete
   const handleDelete = () => {
     dispatch(
       deleteProduct({
         id: dataToEdit?.id,
         enqueueSnackbar,
         handleClose: () => setOpenConfirmModal(false),
+      })
+    );
+  };
+
+  // TODO: change the status
+  const handleChangeStatus = (row) => {
+    dispatch(
+      updateProductStatus({
+        slug: row?.slug,
+        enqueueSnackbar,
+        data: {
+          status: row?.status ? 0 : 1,
+        },
       })
     );
   };
@@ -175,7 +189,28 @@ export default function EnhancedTable({
           refresh={refresh}
           setSearch={setSearch}
           search={search}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          selectedFilters={selectedFilters}
+          setSelectedFilters={setSelectedFilters}
         />
+
+        {/* TODO: tabs */}
+        <div className="flex border-b border-gray-200 overflow-scroll">
+          {tabData.map((tab) => (
+            <button
+              key={tab.value}
+              className={`px-4 py-2 -mb-px text-sm font-medium border-b-4 w-fit ${
+                activeTab === tab.value
+                  ? "border-black text-black border-b-4"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+              onClick={() => setActiveTab(tab.value)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -272,13 +307,16 @@ export default function EnhancedTable({
                             }}
                             id={labelId}
                           >
-                            <span
-                              style={{
-                                color: colors.text,
-                              }}
-                            >
-                              {row.brand?.name}
-                            </span>
+                            <FormControlLabel
+                              control={
+                                <Switch
+                                  checked={row.status}
+                                  onChange={() => {
+                                    handleChangeStatus(row);
+                                  }}
+                                />
+                              }
+                            />
                           </TableCell>
 
                           <TableCell
@@ -292,7 +330,7 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.category?.name}
+                              {row.brand?.name}
                             </span>
                           </TableCell>
 
@@ -347,6 +385,8 @@ export default function EnhancedTable({
         maxWidth="lg"
       >
         <Form
+          refresh={refresh}
+          setRefresh={setRefresh}
           data={dataToEdit}
           isEdit={true}
           handleClose={() => setOpenEditModal(false)}

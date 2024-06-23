@@ -30,8 +30,9 @@ import { TitleMd, TitleSm } from "../../../routers";
 
 // TODO: menu options alias
 const alias = {
-  Category: "category_id",
+  Status: "status",
   Brand: "brand_id",
+  "Product for?": "category_id",
 };
 
 export function EnhancedTableToolbar({
@@ -48,6 +49,8 @@ export function EnhancedTableToolbar({
   refresh,
   search,
   setSearch,
+  selectedFilters,
+  setSelectedFilters,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -56,13 +59,13 @@ export function EnhancedTableToolbar({
   // TODO: use states
   const [anchorEl, setAnchorEl] = useState(null);
   const [submenuAnchorEl, setSubmenuAnchorEl] = useState({});
-  const [selectedFilters, setSelectedFilters] = useState({});
   const [filterMenus, setFilterMenus] = useState([]);
 
   // TODO: get the data from slice
 
   const fetchLoading = useSelector((state) => state.product.fetchLoading);
   const categories = useSelector((state) => state.category.categories);
+  const mainCategories = useSelector((state) => state.category.mainCategories);
   const brands = useSelector((state) => state.brand.brands);
 
   // TODO: functions
@@ -142,12 +145,14 @@ export function EnhancedTableToolbar({
     if (categories?.data?.length) {
       setFilterMenus((prev) => {
         // Filter out existing "Category" entries
-        const filteredPrev = prev.filter((menu) => menu.title !== "Category");
+        const filteredPrev = prev.filter(
+          (menu) => menu.title !== "Product for?"
+        );
         return [
           ...filteredPrev,
           {
-            title: "Category",
-            options: categories.data.map((cat) => ({
+            title: "Product for?",
+            options: mainCategories?.map((cat) => ({
               label: cat.name,
               value: cat.id,
             })),
@@ -172,6 +177,28 @@ export function EnhancedTableToolbar({
         ];
       });
     }
+
+    setFilterMenus((prev) => {
+      // Filter out existing "Brand" entries
+      const filteredPrev = prev.filter((menu) => menu.title !== "Status");
+      return [
+        ...filteredPrev,
+        {
+          title: "Status",
+          options: [
+            {
+              label: "Active",
+              value: 1,
+            },
+
+            {
+              label: "Inactive",
+              value: 0,
+            },
+          ],
+        },
+      ];
+    });
   }, [categories, brands]);
 
   // TODO: fetch the products when searached

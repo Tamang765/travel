@@ -21,17 +21,17 @@ export const headCells = [
   },
 
   {
+    id: "status",
+    numeric: false,
+    disablePadding: false,
+    label: "Status",
+  },
+
+  {
     id: "brand",
     numeric: false,
     disablePadding: false,
     label: "Brand",
-  },
-
-  {
-    id: "category",
-    numeric: false,
-    disablePadding: false,
-    label: "Category",
   },
 
   {

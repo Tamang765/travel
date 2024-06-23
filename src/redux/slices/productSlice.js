@@ -18,7 +18,11 @@ const initialState = {
 // TODO: fetch all the products
 export const fetchProducts = createAsyncThunk(
   "fetchProducts/products",
-  async ({ enqueueSnackbar, limit, page = 0, filter, search }, thunkApi) => {
+  async (
+    { enqueueSnackbar, limit, page = 0, filter, search, tabFilter },
+    thunkApi
+  ) => {
+    console.log(filter, "filter");
     try {
       const response = await axiosInstance.get(`products`, {
         params: {
@@ -28,14 +32,38 @@ export const fetchProducts = createAsyncThunk(
             filter.category_id && {
               category_id: filter.category_id,
             }),
+
           ...(filter &&
             filter.brand_id && {
               brand_id: filter.brand_id,
             }),
 
+          ...(filter &&
+            (filter.status === 1
+              ? {
+                  status: 1,
+                }
+              : filter.status === 0
+              ? {
+                  status: 0,
+                }
+              : null)),
+
           ...(search !== "" && {
             search,
           }),
+
+          ...(tabFilter && tabFilter === "trending"
+            ? {
+                trending: 1,
+              }
+            : tabFilter === "featured"
+            ? {
+                featured: 1,
+              }
+            : tabFilter === "new"
+            ? { new: 1 }
+            : null),
         },
       });
 
@@ -72,13 +100,31 @@ export const createProduct = createAsyncThunk(
 // TODO: update product
 export const updateProduct = createAsyncThunk(
   "updateProduct/products",
-  async ({ data, enqueueSnackbar, handleClose, id }, thunkApi) => {
+  async ({ data, enqueueSnackbar, handleClose, id, setRefresh }, thunkApi) => {
     try {
       const response = await axiosInstance.post(`products/${id}`, data);
 
       return {
         data: response.data.data,
         handleClose,
+        enqueueSnackbar,
+        setRefresh,
+      };
+    } catch (error) {
+      return thunkApi.rejectWithValue({ error, enqueueSnackbar });
+    }
+  }
+);
+
+// TODO: update productStatus
+export const updateProductStatus = createAsyncThunk(
+  "updateProductStatus/products",
+  async ({ data, enqueueSnackbar, slug }, thunkApi) => {
+    try {
+      const response = await axiosInstance.patch(`update-status/${slug}`, data);
+
+      return {
+        data: response.data.data,
         enqueueSnackbar,
       };
     } catch (error) {
@@ -148,6 +194,33 @@ const productslice = createSlice({
       });
     });
 
+    // TODO: update product status
+    builder.addCase(updateProductStatus.pending, (state, _) => {
+      state.isLoading = true;
+    });
+
+    builder.addCase(updateProductStatus.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.products.data = state.products.data.map((product) => {
+        if (product.id === action.payload.data.id) {
+          return action.payload.data;
+        } else {
+          return product;
+        }
+      });
+      action.payload.enqueueSnackbar("Product is updated successfully.", {
+        variant: "success",
+      });
+      action.payload.handleClose && action.payload.handleClose();
+    });
+
+    builder.addCase(updateProductStatus.rejected, (state, action) => {
+      state.isLoading = false;
+      action.payload.enqueueSnackbar(action.payload.error.message, {
+        variant: "error",
+      });
+    });
+
     // TODO: update product
     builder.addCase(updateProduct.pending, (state, _) => {
       state.isLoading = true;
@@ -165,6 +238,7 @@ const productslice = createSlice({
       action.payload.enqueueSnackbar("Product is updated successfully.", {
         variant: "success",
       });
+      action.payload.setRefresh && action.payload.setRefresh((prev) => !prev);
       action.payload.handleClose && action.payload.handleClose();
     });
 

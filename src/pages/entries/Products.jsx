@@ -19,10 +19,12 @@ export default function Products() {
   const [openAdd, setOpenAdd] = useState(false);
   const [pagination, setPagination] = useState({
     page: 0,
-    limit: 10,
+    limit: 5,
   });
   const [refresh, setRefresh] = useState(false);
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
+  const [selectedFilters, setSelectedFilters] = useState({});
 
   const [rows, setRows] = useState([]);
 
@@ -31,9 +33,16 @@ export default function Products() {
 
   // TODO: fetching the products
   useEffect(() => {
-    dispatch(fetchProducts({ enqueueSnackbar, ...pagination, search }));
+    dispatch(
+      fetchProducts({
+        enqueueSnackbar,
+        ...pagination,
+        search,
+        tabFilter: activeTab,
+      })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, enqueueSnackbar, pagination, refresh]);
+  }, [dispatch, enqueueSnackbar, pagination, refresh, activeTab]);
 
   // TODO: set the rows
 
@@ -82,6 +91,8 @@ export default function Products() {
       <Shadow>
         <Card color="transparent" shadow={false}>
           <EnhancedTable
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
             showSearch={true}
             title="Products"
             headCells={headCells}
@@ -94,6 +105,8 @@ export default function Products() {
             refresh={refresh}
             search={search}
             setSearch={setSearch}
+            selectedFilters={selectedFilters}
+            setSelectedFilters={setSelectedFilters}
           />
 
           {/* TODO: pagination */}
@@ -116,7 +129,11 @@ export default function Products() {
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >
-        <Form handleClose={() => setOpenAdd(false)} />
+        <Form
+          handleClose={() => setOpenAdd(false)}
+          refresh={refresh}
+          setRefresh={setRefresh}
+        />
       </AddDialog>
     </>
   );

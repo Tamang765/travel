@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { default as React } from "react";
+import { TitleMd } from "../../design/Title";
 import Iconify from "../../iconify";
 
 export function AddDialog({
@@ -23,7 +24,7 @@ export function AddDialog({
         <Stack flexDirection={"row"} justifyContent={"space-between"}>
           <DialogTitle>
             <Typography variant="button">
-              <p>{title}</p>
+              <TitleMd>{title}</TitleMd>
             </Typography>
           </DialogTitle>
           <Button onClick={handleClose}>

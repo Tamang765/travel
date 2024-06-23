@@ -25,7 +25,7 @@ import {
 import { fetchSizes } from "../../../redux/slices/sizeSlice";
 import { appendFormValuesToFormData } from "../../../utils/appendFormData";
 
-const Form = ({ handleClose, data, isEdit = false }) => {
+const Form = ({ handleClose, data, isEdit = false, refresh, setRefresh }) => {
   // TODO: hooks
 
   const dispatch = useDispatch();
@@ -273,13 +273,14 @@ const Form = ({ handleClose, data, isEdit = false }) => {
         enqueueSnackbar,
         handleClose,
         id: data?.slug,
+        setRefresh,
       })
     );
   };
 
   // console.log
 
-  console.log(watch(), data, data?.sub_category?.id, defaultValues, "data");
+  console.log(refresh, "refresh");
 
   return (
     <Box p={3}>
