@@ -6,7 +6,7 @@ import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { RHFTextField } from "../../../components/hook-form";
+import { RHFTextArea, RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
 import {
   createEmergencyContact,
@@ -28,16 +28,18 @@ const EmergencyContactForm = ({ handleClose, data, isEdit = false }) => {
   );
 
   const Schema = Yup.object().shape({
-    contact_person_name: Yup.string().required("name is required"),
-    contact_person_phone: Yup.string().required("phone is required"),
+    name: Yup.string().required("name is required"),
   });
 
   console.log(data, "data");
   // TODO: default values in the form
   const defaultValues = useMemo(
     () => ({
-      contact_person_name: data?.name,
-      contact_person_phone: data?.phone,
+      name: data?.name,
+      email: data?.email,
+      phone: data?.phone,
+      subject: data?.subject,
+      message: data?.message,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data]
@@ -93,14 +95,16 @@ const EmergencyContactForm = ({ handleClose, data, isEdit = false }) => {
             sm: "repeat(1, 1fr)",
           }}
         >
-          <RHFTextField
-            name={"contact_person_name"}
-            label={"Person's name *"}
-          />
+          <RHFTextField name={"name"} label={" Name *"} />
 
-          <RHFTextField
-            name={"contact_person_phone"}
-            label={"Phone number *"}
+          <RHFTextField name={"email"} label={"Email"} />
+          <RHFTextField name={"phone"} label={"Phone number *"} type="number" />
+          <RHFTextField name={"subject"} label={"Subject"} />
+          <RHFTextArea
+            name={"message"}
+            label={"Message"}
+            multiple={true}
+            rows={2}
           />
         </Box>
 
@@ -112,7 +116,7 @@ const EmergencyContactForm = ({ handleClose, data, isEdit = false }) => {
             variant="contained"
             className="!bg-primary w-fit"
           >
-            {isEdit ? "Update Emergency Contact" : "Create Emergency Contact"}
+            {isEdit ? "Update Contact" : "Create Contact"}
           </LoadingButton>
         </Stack>
       </FormProvider>

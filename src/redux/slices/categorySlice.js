@@ -70,7 +70,7 @@ export const updateCategory = createAsyncThunk(
   "updateCategory/categories",
   async ({ data, enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
-      const response = await axiosInstance.post(`categories/${id}`, data);
+      const response = await axiosInstance.patch(`categories/${id}`, data);
 
       return {
         data: response.data.data,

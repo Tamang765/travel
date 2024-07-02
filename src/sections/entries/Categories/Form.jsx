@@ -1,14 +1,14 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoadingButton } from "@mui/lab";
-import { Box, MenuItem, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { useSnackbar } from "notistack";
 import React, { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import slugify from "slugify";
 import * as Yup from "yup";
-import { RHFSelect, RHFTextField } from "../../../components/hook-form";
+import { RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
-import { Upload } from "../../../components/upload";
 import {
   createCategory,
   updateCategory,
@@ -86,15 +86,15 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
   const onCreateCategory = (values) => {
     const formData = new FormData();
     formData.append("name", values.name);
-    if (values.main_category_id || values.sub_category_id) {
-      formData.append(
-        "parent_id",
-        values.sub_category_id || values.main_category_id
-      );
+    if (values.name) {
+      const slug = slugify(values.name, {
+        lower: true,
+        remove: /[*+~.()'"!:@]/,
+        strict: true,
+      });
+      formData.append("slug", slug);
     }
-    if (photo) {
-      formData.append("photo", photo);
-    }
+
     dispatch(
       createCategory({
         data: formData,
@@ -107,24 +107,22 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
   };
 
   const onUpdateCategory = (values) => {
-    const formData = new FormData();
-    formData.append("name", values.name);
+    const slug = slugify(values.name, {
+      lower: true,
+      remove: /[*+~.()'"!:@]/,
+      strict: true,
+    });
+    const patchData = {
+      name: values.name,
+      slug: slug,
+    };
 
-    if (values.main_category_id || values.sub_category_id) {
-      formData.append(
-        "parent_id",
-        values.sub_category_id || values.main_category_id
-      );
-    }
-    if (photo) {
-      formData.append("photo", photo);
-    }
     dispatch(
       updateCategory({
-        data: formData,
+        data: patchData,
         enqueueSnackbar,
         handleClose,
-        id: data?.slug,
+        id: data?.id,
       })
     );
   };
@@ -143,7 +141,7 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
           gridTemplateColumns={{ xs: "repeat(1, 1fr)", sm: "repeat(1, 1fr)" }}
         >
           <RHFTextField name={"name"} label={"Category name *"} />
-          <RHFSelect name={"main_category_id"} label="Select main category">
+          {/* <RHFSelect name={"main_category_id"} label="Select main category">
             {mainCategoryData?.map((category, index) => (
               <MenuItem value={category?.value} key={index}>
                 <span>{category?.label}</span>
@@ -161,9 +159,9 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
                 <span>{category?.label}</span>
               </MenuItem>
             ))}
-          </RHFSelect>
+          </RHFSelect> */}
         </Box>
-
+        {/* 
         <Box mt={3}>
           <Upload
             isAvatar={false}
@@ -174,7 +172,7 @@ const Form = ({ handleClose, data, isEdit = false, setActiveTab }) => {
             maxSize={1}
             onDrop={handleDropPhoto}
           />
-        </Box>
+        </Box> */}
 
         <Stack mt={2} alignItems={"end"}>
           <LoadingButton

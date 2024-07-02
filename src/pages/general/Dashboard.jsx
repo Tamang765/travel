@@ -53,12 +53,12 @@ export default function Dashboard() {
               <LineChart />
               <div className="grid grid-cols-2 gap-5">
                 <RadialBar
-                  title="Total Bookings"
+                  title="Total orders"
                   caption="Projects where development work is on completion"
                   data={70}
                 />
                 <RadialBar
-                  title="Pending Bookings"
+                  title="Pending orders"
                   caption="Projects where development work is on completion"
                   data={50}
                 />
@@ -100,7 +100,7 @@ export const HomeImg = () => {
 export const RecentUser = () => {
   return (
     <Shadow>
-      <TitleSm>Recent riders </TitleSm>
+      <TitleSm>Recent Orders </TitleSm>
       <Caption>Projects where development work is on completion</Caption>
       <UserProfile />
       <UserProfile />

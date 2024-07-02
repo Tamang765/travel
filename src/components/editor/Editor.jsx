@@ -86,6 +86,7 @@ export default function Editor({
         placeholder={placeholder}
         {...other}
         theme="snow"
+      
       />
 
       {/* </StyledEditor> */}

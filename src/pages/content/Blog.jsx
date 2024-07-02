@@ -7,9 +7,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
 import { fetchProducts } from "../../redux/slices/productSlice";
 import { Shadow } from "../../routers";
+import EnhancedTable from "../../sections/content/Products/Table";
+import { headCells } from "../../sections/content/Products/headCells";
 import Form from "../../sections/entries/Products/Form";
-import EnhancedTable from "../../sections/entries/Products/Table";
-import { headCells } from "../../sections/entries/Products/headCells";
 
 // TODO: menu options alias
 const alias = {
@@ -147,7 +147,7 @@ export default function Products() {
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             showSearch={true}
-            title="Products"
+            title="Blogs"
             headCells={headCells}
             rows={rows}
             showFilter={true}
@@ -179,7 +179,7 @@ export default function Products() {
       {/* TODO: add products */}
       <AddDialog
         maxWidth="lg"
-        title={"Add new vehicle"}
+        title={"Add new Blog"}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >

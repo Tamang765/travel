@@ -3,19 +3,25 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 // slices
 import authSlice from "./slices/authSlice";
-import brandSlice from "./slices/brandSlice";
+import exclusiveSlice from "./slices/exclusiveSlice";
+import inclusiveSlice from "./slices/inclusiveSlice";
+import locationSlice from "./slices/locationSlice";
+
 import categorySlice from "./slices/categorySlice";
 import colorSlice from "./slices/colorSlice";
+import customerSlice from "./slices/customerSlice";
 import emergencyContactSlice from "./slices/emergencyContactSlice";
 import faqSlice from "./slices/faqSlice";
+import packagesSlice from "./slices/packageSlice";
+import pageSlice from "./slices/pageSlice";
 import productSlice from "./slices/productSlice";
 import referSlice from "./slices/referSlice";
 import roleSlice from "./slices/roleSlice";
 import sizeSlice from "./slices/sizeSlice";
+
 import teamSlice from "./slices/teamSlice";
 import userSlice from "./slices/userSlice";
 import userTypeSlice from "./slices/userTypeSlice";
-import customerSlice from "./slices/customerSlice";
 
 // ----------------------------------------------------------------------
 
@@ -68,8 +74,24 @@ export const colorPersistConfig = {
   keyPrefix: "redux-",
 };
 
-export const brandPersistConfig = {
-  key: "brand",
+export const inclusivePersistConfig = {
+  key: "inclusive",
+  storage,
+  keyPrefix: "redux-",
+};
+
+export const exclusivePersistConfig = {
+  key: "exclusive",
+  storage,
+  keyPrefix: "redux-",
+};
+export const pagePersistConfig = {
+  key: "page",
+  storage,
+  keyPrefix: "redux-",
+};
+export const packagePersistConfig = {
+  key: "package",
   storage,
   keyPrefix: "redux-",
 };
@@ -110,6 +132,12 @@ export const customerPersistConfig = {
   keyPrefix: "redux-",
 };
 
+export const locationPersistConfig = {
+  key: "customer",
+  storage,
+  keyPrefix: "redux-",
+};
+
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authSlice),
   user: persistReducer(userPersistConfig, userSlice),
@@ -119,8 +147,14 @@ const rootReducer = combineReducers({
   faq: persistReducer(faqPersistConfig, faqSlice),
   category: persistReducer(categoryPersistConfig, categorySlice),
   size: persistReducer(sizePersistConfig, sizeSlice),
+  page: persistReducer(pagePersistConfig, pageSlice),
+
   color: persistReducer(colorPersistConfig, colorSlice),
-  brand: persistReducer(brandPersistConfig, brandSlice),
+  inclusive: persistReducer(inclusivePersistConfig, inclusiveSlice),
+  exclusive: persistReducer(exclusivePersistConfig, exclusiveSlice),
+  packages: persistReducer(packagePersistConfig, packagesSlice),
+  locations: persistReducer(locationPersistConfig, locationSlice),
+
   customer: persistReducer(customerPersistConfig, customerSlice),
   product: persistReducer(productPersistConfig, productSlice),
   setting: persistReducer(settingsPersistConfig, referSlice),

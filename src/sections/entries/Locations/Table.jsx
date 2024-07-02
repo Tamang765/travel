@@ -1,6 +1,7 @@
 import { Button } from "@material-tailwind/react";
-import { Collapse, IconButton, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
+import Checkbox from "@mui/material/Checkbox";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,21 +9,46 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import { useSnackbar } from "notistack";
 import * as React from "react";
-import { useState } from "react";
 import { AiOutlineEdit } from "react-icons/ai";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { ConfirmDialog } from "../../../components/component/modals/ConfirmDialog";
 import { EditDialog } from "../../../components/component/modals/EditModal";
-import Iconify from "../../../components/iconify";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
-import { deleteCategory } from "../../../redux/slices/categorySlice";
+import { deleteLocation } from "../../../redux/slices/locationSlice";
 import Form from "./Form";
-import SubCategories from "./SubCategories/SubCategories";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === "desc"
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
 
 export default function EnhancedTable({
   title,
@@ -35,56 +61,55 @@ export default function EnhancedTable({
   page,
   rowsPerPage,
   setOpenAdd,
-  activeTab,
-  setActiveTab,
+  search,
+  setSearch,
   refresh,
   setRefresh,
-  setSearch,
-  search,
+  exclusive = false,
 }) {
-  console.log(rows, "row");
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const { colors } = useTheme();
 
   // TODO: useStates
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("name");
-  const [selected, setSelected] = useState([]);
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("name");
+  const [selected, setSelected] = React.useState([]);
 
-  const [open, setOpen] = useState(false);
-  const [activeRow, setActiveRow] = useState("");
+  const [openEditModal, setOpenEditModal] = React.useState(false);
+  const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
 
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [openConfirmModal, setOpenConfirmModal] = useState(false);
-
-  const [dataToEdit, setDataToEdit] = useState();
-  const [tabData, setTabData] = useState([]);
+  const [dataToEdit, setDataToEdit] = React.useState();
 
   // ======
 
   // TODO: get the data from slice
 
-  const deleteLoading = useSelector((state) => state.category.isLoading);
-  const fetchLoading = useSelector((state) => state.category.fetchLoading);
-  const mainCategories = useSelector((state) => state.category.mainCategories);
+  const deleteLoading = useSelector((state) => state.inclusive.isLoading);
+  const fetchLoading = useSelector((state) => state.inclusive.fetchLoading);
 
   // TODO:================
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  // const visibleRows = React.useMemo(
+  //   () =>
+  //     stableSort(rows, getComparator(order, orderBy)).slice(
+  //       page * rowsPerPage,
+  //       page * rowsPerPage + rowsPerPage
+  //     ),
+
+  //   [order, orderBy, page, rowsPerPage, rows]
+  // );
+
+  // const visibleRows = React.useMemo(
+  //   () => rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+
+  //   [page, rowsPerPage, rows]
+  // );
+
   const visibleRows = React.useMemo(() => rows, [rows]);
-
-  // TODO: useEffects
-  React.useEffect(() => {
-    const data = mainCategories?.map((category) => ({
-      label: category?.name,
-      value: category?.id,
-    }));
-
-    setTabData(data);
-  }, [mainCategories]);
 
   // TODO: functions
 
@@ -103,15 +128,30 @@ export default function EnhancedTable({
     setSelected([]);
   };
 
-  const handleOpenCategories = (id) => {
-    setOpen((prev) => (id === activeRow ? !open : true));
-    setActiveRow(id);
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+
+    setSelected(newSelected);
   };
 
-  // TODO: delete the category
+  // TODO: delete the brand
   const handleDelete = () => {
     dispatch(
-      deleteCategory({
+      deleteLocation({
         id: dataToEdit?.id,
         enqueueSnackbar,
         handleClose: () => setOpenConfirmModal(false),
@@ -120,6 +160,8 @@ export default function EnhancedTable({
   };
 
   // ============
+
+  console.log(rows);
 
   return (
     <>
@@ -132,31 +174,11 @@ export default function EnhancedTable({
           showFilter={showFilter}
           showPrint={showPrint}
           setOpenAdd={setOpenAdd}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          search={search}
+          setSearch={setSearch}
           refresh={refresh}
           setRefresh={setRefresh}
-          setSearch={setSearch}
-          search={search}
         />
-
-        {/* TODO: tabs */}
-        <div className="flex border-b border-gray-200 overflow-scroll">
-          {tabData.map((tab) => (
-            <button
-              key={tab.value}
-              className={`px-4 py-2 -mb-px text-sm font-medium border-b-4 w-fit ${
-                activeTab === tab.value
-                  ? "border-black text-black border-b-4"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-              onClick={() => setActiveTab(tab.value)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -165,24 +187,18 @@ export default function EnhancedTable({
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows?.length}
+              rowCount={rows.length}
               headCells={headCells}
             />
             <TableBody>
-              {(fetchLoading
-                ? [...Array(3)]
-                : visibleRows?.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-              )?.map((row, index) => {
-                const isItemSelected = isSelected(row?.name);
-                const labelId = `enhanced-table-checkbox-${index}`;
+              {(fetchLoading ? [...Array(5)] : visibleRows)?.map(
+                (row, index) => {
+                  const isItemSelected = isSelected(row?.name);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <>
-                    {row ? (
-                      <>
+                  return (
+                    <>
+                      {row ? (
                         <TableRow
                           hover
                           role="checkbox"
@@ -192,20 +208,22 @@ export default function EnhancedTable({
                           selected={isItemSelected}
                           sx={{ cursor: "pointer" }}
                         >
-                          <TableCell>
-                            {/* <IconButton
-                              size="small"
-                              color={open ? "inherit" : "default"}
-                              onClick={() => handleOpenCategories(row?.id)}
-                            >
-                              <Iconify
-                                icon={
-                                  open && activeRow === row.id
-                                    ? "eva:arrow-ios-upward-fill"
-                                    : "eva:arrow-ios-downward-fill"
-                                }
-                              />
-                            </IconButton> */}
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            padding="checkbox"
+                          >
+                            <Checkbox
+                              style={{
+                                color: colors.text,
+                              }}
+                              checked={isItemSelected}
+                              onClick={(event) => handleClick(event, row.name)}
+                              inputProps={{
+                                "aria-labelledby": labelId,
+                              }}
+                            />
                           </TableCell>
 
                           <TableCell
@@ -222,7 +240,6 @@ export default function EnhancedTable({
                               {row.name}
                             </span>
                           </TableCell>
-
 
                           <TableCell
                             style={{
@@ -259,24 +276,13 @@ export default function EnhancedTable({
                             </Stack>
                           </TableCell>
                         </TableRow>
-{/* 
-                        <TableRow>
-                          <TableCell sx={{ py: 0 }} colSpan={12}>
-                            <Collapse
-                              in={open && activeRow === row.id}
-                              unmountOnExit
-                            >
-                              <SubCategories parent_id={row?.id} />
-                            </Collapse>
-                          </TableCell>
-                        </TableRow> */}
-                      </>
-                    ) : (
-                      <TableSkeleton key={index} />
-                    )}
-                  </>
-                );
-              })}
+                      ) : (
+                        <TableSkeleton key={index} />
+                      )}
+                    </>
+                  );
+                }
+              )}
 
               {!fetchLoading && (
                 <TableNoData isNotFound={visibleRows?.length === 0} />
@@ -289,7 +295,7 @@ export default function EnhancedTable({
       {/* TODO: edit role modal */}
       <EditDialog
         open={openEditModal}
-        title={`Edit category (${dataToEdit?.name})`}
+        title={`Edit ${title}  (${dataToEdit?.name})`}
         handleClose={() => setOpenEditModal(false)}
         maxWidth="sm"
       >
@@ -297,14 +303,16 @@ export default function EnhancedTable({
           data={dataToEdit}
           isEdit={true}
           handleClose={() => setOpenEditModal(false)}
+          title={`${title}`}
+          exclusive={exclusive}
         />
       </EditDialog>
 
-      {/* TODO: delete role confirm modal */}
+      {/* TODO: delete confirm modal */}
       <ConfirmDialog
         handleClose={() => setOpenConfirmModal(false)}
         open={openConfirmModal}
-        title={`Are you sure, you want to delete category (${dataToEdit?.name})?`}
+        title={`Are you sure, you want to delete ${title}(${dataToEdit?.name})?`}
         action={
           <Button
             loading={deleteLoading}

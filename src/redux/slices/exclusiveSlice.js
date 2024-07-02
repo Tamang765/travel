@@ -7,7 +7,7 @@ import axiosInstance from "../../utils/axios";
 const initialState = {
   isLoading: false,
   fetchLoading: false,
-  brands: {
+  exclusive: {
     data: [],
     meta: {
       total: 0,
@@ -15,12 +15,12 @@ const initialState = {
   },
 };
 
-// TODO: fetch all the brands
-export const fetchBrands = createAsyncThunk(
-  "fetchBrands/brands",
+// TODO: fetch all the exclusive
+export const fetchExclusive = createAsyncThunk(
+  "fetchExclusive/exclusive",
   async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
-      const response = await axiosInstance.get(`brands`, {
+      const response = await axiosInstance.get(`exclusives`, {
         params: {
           page: page + 1,
           limit,
@@ -28,9 +28,9 @@ export const fetchBrands = createAsyncThunk(
       });
 
       return {
-        data: response.data.data.data,
+        data: response.data.data,
         meta: {
-          total: response.data.data.total,
+          total: response.data.data.length,
         },
       };
     } catch (error) {
@@ -39,12 +39,12 @@ export const fetchBrands = createAsyncThunk(
   }
 );
 
-// TODO: create brand
-export const createBrand = createAsyncThunk(
-  "createBrand/brands",
+// TODO: create exclusive
+export const createExclusive = createAsyncThunk(
+  "createExclusive/exclusive",
   async ({ data, enqueueSnackbar, handleClose }, thunkApi) => {
     try {
-      const response = await axiosInstance.post(`brands`, data);
+      const response = await axiosInstance.post(`exclusives`, data);
 
       return {
         data: response.data.data,
@@ -57,12 +57,12 @@ export const createBrand = createAsyncThunk(
   }
 );
 
-// TODO: update brand
-export const updateBrand = createAsyncThunk(
-  "updateBrand/brands",
+// TODO: update exclusive
+export const updateExclusive = createAsyncThunk(
+  "updateExclusive/exclusive",
   async ({ data, enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
-      const response = await axiosInstance.post(`brands/${id}`, data);
+      const response = await axiosInstance.patch(`exclusives/${id}`, data);
 
       return {
         data: response.data.data,
@@ -75,12 +75,12 @@ export const updateBrand = createAsyncThunk(
   }
 );
 
-// TODO: delete brand
-export const deleteBrand = createAsyncThunk(
-  "deleteBrand/brands",
+// TODO: delete exclusive
+export const deleteExclusive = createAsyncThunk(
+  "deleteExclusive/exclusive",
   async ({ enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
-      await axiosInstance.delete(`brands/${id}`);
+      await axiosInstance.delete(`exclusives/${id}`);
       return {
         data: id,
         handleClose,
@@ -92,21 +92,21 @@ export const deleteBrand = createAsyncThunk(
   }
 );
 
-const brandSlice = createSlice({
-  name: "brand",
+const exclusiveslice = createSlice({
+  name: "exclusive",
   initialState,
   extraReducers: (builder) => {
-    // TODO: create brand
-    builder.addCase(fetchBrands.pending, (state, _) => {
+    // TODO: create exclusive
+    builder.addCase(fetchExclusive.pending, (state, _) => {
       state.fetchLoading = true;
     });
 
-    builder.addCase(fetchBrands.fulfilled, (state, action) => {
+    builder.addCase(fetchExclusive.fulfilled, (state, action) => {
       state.fetchLoading = false;
-      state.brands = action.payload;
+      state.exclusive = action.payload;
     });
 
-    builder.addCase(fetchBrands.rejected, (state, action) => {
+    builder.addCase(fetchExclusive.rejected, (state, action) => {
       state.isLoading = false;
       state.fetchLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
@@ -114,72 +114,72 @@ const brandSlice = createSlice({
       });
     });
 
-    // TODO: create brand
-    builder.addCase(createBrand.pending, (state, _) => {
+    // TODO: create exclusive
+    builder.addCase(createExclusive.pending, (state, _) => {
       state.isLoading = true;
     });
 
-    builder.addCase(createBrand.fulfilled, (state, action) => {
+    builder.addCase(createExclusive.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.brands.data = [action.payload.data, ...state.brands.data];
-      state.brands.meta.total = state.brands.meta.total + 1;
-      action.payload.enqueueSnackbar("Brand is created successfully.", {
+      state.exclusive.data = [action.payload.data, ...state.exclusive.data];
+      state.exclusive.meta.total = state.exclusive.meta.total + 1;
+      action.payload.enqueueSnackbar("Exclusive is created successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
     });
 
-    builder.addCase(createBrand.rejected, (state, action) => {
+    builder.addCase(createExclusive.rejected, (state, action) => {
       state.isLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
         variant: "error",
       });
     });
 
-    // TODO: update brand
-    builder.addCase(updateBrand.pending, (state, _) => {
+    // TODO: update exclusive
+    builder.addCase(updateExclusive.pending, (state, _) => {
       state.isLoading = true;
     });
 
-    builder.addCase(updateBrand.fulfilled, (state, action) => {
+    builder.addCase(updateExclusive.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.brands.data = state.brands.data.map((brand) => {
-        if (brand.id === action.payload.data.id) {
+      state.exclusive.data = state.exclusive.data.map((exclusive) => {
+        if (exclusive.id === action.payload.data.id) {
           return action.payload.data;
         } else {
-          return brand;
+          return exclusive;
         }
       });
-      action.payload.enqueueSnackbar("Brand is updated successfully.", {
+      action.payload.enqueueSnackbar("Exclusive is updated successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
     });
 
-    builder.addCase(updateBrand.rejected, (state, action) => {
+    builder.addCase(updateExclusive.rejected, (state, action) => {
       state.isLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
         variant: "error",
       });
     });
 
-    // TODO: delete brand
-    builder.addCase(deleteBrand.pending, (state, _) => {
+    // TODO: delete exclusive
+    builder.addCase(deleteExclusive.pending, (state, _) => {
       state.isLoading = true;
     });
 
-    builder.addCase(deleteBrand.fulfilled, (state, action) => {
+    builder.addCase(deleteExclusive.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.brands.data = state.brands.data.filter(
-        (brand) => brand.id !== action.payload.data
+      state.exclusive.data = state.exclusive.data.filter(
+        (exclusive) => exclusive.id !== action.payload.data
       );
-      action.payload.enqueueSnackbar("Brand is deleted successfully.", {
+      action.payload.enqueueSnackbar("Exclusive is deleted successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
     });
 
-    builder.addCase(deleteBrand.rejected, (state, action) => {
+    builder.addCase(deleteExclusive.rejected, (state, action) => {
       state.isLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
         variant: "error",
@@ -188,4 +188,4 @@ const brandSlice = createSlice({
   },
 });
 
-export default brandSlice.reducer;
+export default exclusiveslice.reducer;

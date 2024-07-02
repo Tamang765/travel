@@ -8,16 +8,20 @@ import Products from "../pages/entries/Products";
 import { Layout } from "../routers";
 import {
   Admins,
+  Blogs,
   Brands,
   Categories,
   Colors,
   Customers,
   EmergencyContacts,
+  Exclusive,
   Faqs,
   LandingPage,
+  Locations,
   LoginPage,
   MyProfile,
   Notifications,
+  Packages,
   Page404,
   Settings,
   Sizes,
@@ -144,9 +148,25 @@ export default function Router() {
                 </Layout>
               ),
             },
+            {
+              path: "exclusive",
+              element: (
+                <Layout>
+                  <Exclusive />
+                </Layout>
+              ),
+            },
+            {
+              path: "packages",
+              element: (
+                <Layout>
+                  <Packages />
+                </Layout>
+              ),
+            },
 
             {
-              path: "colors",
+              path: "Faq",
               element: (
                 <Layout>
                   <Colors />
@@ -164,16 +184,37 @@ export default function Router() {
             },
 
             {
-              path: "sizes",
+              path: "pages",
               element: (
                 <Layout>
                   <Sizes />
                 </Layout>
               ),
             },
+
+            {
+              path: "locations",
+              element: (
+                <Layout>
+                  <Locations />
+                </Layout>
+              ),
+            },
           ],
         },
-
+        {
+          path: "/admin/content",
+          children: [
+            {
+              path: "blogs",
+              element: (
+                <Layout>
+                  <Blogs />
+                </Layout>
+              ),
+            },
+          ],
+        },
         // TODO: Settings
         {
           path: "/admin/settings",
@@ -220,7 +261,7 @@ export default function Router() {
             },
 
             {
-              path: "sizes",
+              path: "pages",
               element: (
                 <Layout>
                   <Sizes />

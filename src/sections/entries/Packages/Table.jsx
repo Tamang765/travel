@@ -17,7 +17,7 @@ import { EditDialog } from "../../../components/component/modals/EditModal";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
-import { deletePage } from "../../../redux/slices/pageSlice";
+import { deletePackages } from "../../../redux/slices/packageSlice";
 import Form from "./Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
@@ -148,7 +148,7 @@ export default function EnhancedTable({
   // TODO: delete the size
   const handleDelete = () => {
     dispatch(
-      deletePage({
+      deletePackages({
         id: dataToEdit?.id,
         enqueueSnackbar,
         handleClose: () => setOpenConfirmModal(false),
@@ -158,7 +158,6 @@ export default function EnhancedTable({
 
   // ============
 
-  console.log(rows);
   return (
     <>
       <Box sx={{ width: "100%" }}>
@@ -219,7 +218,6 @@ export default function EnhancedTable({
                               }}
                             />
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,
@@ -231,7 +229,7 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.name}
+                              {row.page_id}
                             </span>
                           </TableCell>
 
@@ -246,10 +244,9 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row?.title}
+                              {row?.highlights}
                             </span>
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,
@@ -261,10 +258,9 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row?.meta_title}
+                              {row?.overview}
                             </span>
-                          </TableCell>
-
+                          </TableCell>{" "}
                           <TableCell
                             style={{
                               color: colors.text,
@@ -276,10 +272,9 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row?.meta_description}
+                              {row?.locations}
                             </span>
-                          </TableCell>
-
+                          </TableCell>{" "}
                           <TableCell
                             style={{
                               color: colors.text,
@@ -291,10 +286,9 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row?.meta_keywords}
+                              {row?.route_map}
                             </span>
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,
@@ -306,10 +300,51 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row?.slug}
+                              {row?.equipments}
                             </span>
                           </TableCell>
-
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            id={labelId}
+                          >
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row?.inclusives}
+                            </span>
+                          </TableCell>
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            id={labelId}
+                          >
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row?.exclusives}
+                            </span>
+                          </TableCell>
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            id={labelId}
+                          >
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row?.note}
+                            </span>
+                          </TableCell>
                           <TableCell
                             style={{
                               color: colors.text,
@@ -317,7 +352,6 @@ export default function EnhancedTable({
                           >
                             <span>{row?.createdDate}</span>
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,

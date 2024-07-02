@@ -7,7 +7,7 @@ import axiosInstance from "../../utils/axios";
 const initialState = {
   isLoading: false,
   fetchLoading: false,
-  faqs: {
+  inclusive: {
     data: [],
     meta: {
       total: 0,
@@ -15,18 +15,18 @@ const initialState = {
   },
 };
 
-// TODO: fetch all the faqs
-export const fetchFaqs = createAsyncThunk(
-  "fetchFaqs/faqs",
+// TODO: fetch all the inclusive
+export const fetchInclusive = createAsyncThunk(
+  "fetchInclusive/inclusive",
   async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
-      const response = await axiosInstance.get(`faqs`, {
+      const response = await axiosInstance.get(`inclusives`, {
         params: {
           page: page + 1,
           limit,
         },
       });
-      console.log(response);
+
       return {
         data: response.data.data,
         meta: {
@@ -39,12 +39,12 @@ export const fetchFaqs = createAsyncThunk(
   }
 );
 
-// TODO: create faq
-export const createFaq = createAsyncThunk(
-  "createFaq/faqs",
+// TODO: create inclusive
+export const createInclusive = createAsyncThunk(
+  "createInclusive/inclusive",
   async ({ data, enqueueSnackbar, handleClose }, thunkApi) => {
     try {
-      const response = await axiosInstance.post(`faqs`, data);
+      const response = await axiosInstance.post(`inclusives`, data);
 
       return {
         data: response.data.data,
@@ -57,12 +57,12 @@ export const createFaq = createAsyncThunk(
   }
 );
 
-// TODO: update faq
-export const updateFaq = createAsyncThunk(
-  "updateFaq/faqs",
+// TODO: update inclusive
+export const updateInclusive = createAsyncThunk(
+  "updateInclusive/inclusive",
   async ({ data, enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
-      const response = await axiosInstance.patch(`faqs/${id}`, data);
+      const response = await axiosInstance.patch(`inclusives/${id}`, data);
 
       return {
         data: response.data.data,
@@ -75,12 +75,12 @@ export const updateFaq = createAsyncThunk(
   }
 );
 
-// TODO: delete faq
-export const deleteFaq = createAsyncThunk(
-  "deleteFaq/faqs",
+// TODO: delete inclusive
+export const deleteInclusive = createAsyncThunk(
+  "deleteInclusive/inclusive",
   async ({ enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
-      await axiosInstance.delete(`faqs/${id}`);
+      await axiosInstance.delete(`inclusives/${id}`);
       return {
         data: id,
         handleClose,
@@ -92,21 +92,21 @@ export const deleteFaq = createAsyncThunk(
   }
 );
 
-const faqslice = createSlice({
-  name: "faq",
+const inclusivelice = createSlice({
+  name: "inclusive",
   initialState,
   extraReducers: (builder) => {
-    // TODO: create faq
-    builder.addCase(fetchFaqs.pending, (state, _) => {
+    // TODO: create inclusive
+    builder.addCase(fetchInclusive.pending, (state, _) => {
       state.fetchLoading = true;
     });
 
-    builder.addCase(fetchFaqs.fulfilled, (state, action) => {
+    builder.addCase(fetchInclusive.fulfilled, (state, action) => {
       state.fetchLoading = false;
-      state.faqs = action.payload;
+      state.inclusive = action.payload;
     });
 
-    builder.addCase(fetchFaqs.rejected, (state, action) => {
+    builder.addCase(fetchInclusive.rejected, (state, action) => {
       state.isLoading = false;
       state.fetchLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
@@ -114,72 +114,72 @@ const faqslice = createSlice({
       });
     });
 
-    // TODO: create faq
-    builder.addCase(createFaq.pending, (state, _) => {
+    // TODO: create inclusive
+    builder.addCase(createInclusive.pending, (state, _) => {
       state.isLoading = true;
     });
 
-    builder.addCase(createFaq.fulfilled, (state, action) => {
+    builder.addCase(createInclusive.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.faqs.data = [action.payload.data, ...state.faqs.data];
-      state.faqs.meta.total = state.faqs.meta.total + 1;
-      action.payload.enqueueSnackbar("FAQ is created successfully.", {
+      state.inclusive.data = [action.payload.data, ...state.inclusive.data];
+      state.inclusive.meta.total = state.inclusive.meta.total + 1;
+      action.payload.enqueueSnackbar("Inclusive is created successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
     });
 
-    builder.addCase(createFaq.rejected, (state, action) => {
+    builder.addCase(createInclusive.rejected, (state, action) => {
       state.isLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
         variant: "error",
       });
     });
 
-    // TODO: update faq
-    builder.addCase(updateFaq.pending, (state, _) => {
+    // TODO: update inclusive
+    builder.addCase(updateInclusive.pending, (state, _) => {
       state.isLoading = true;
     });
 
-    builder.addCase(updateFaq.fulfilled, (state, action) => {
+    builder.addCase(updateInclusive.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.faqs.data = state.faqs.data.map((faq) => {
-        if (faq.id === action.payload.data.id) {
+      state.inclusive.data = state.inclusive.data.map((inclusive) => {
+        if (inclusive.id === action.payload.data.id) {
           return action.payload.data;
         } else {
-          return faq;
+          return inclusive;
         }
       });
-      action.payload.enqueueSnackbar("FAQ is updated successfully.", {
+      action.payload.enqueueSnackbar("Inclusive is updated successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
     });
 
-    builder.addCase(updateFaq.rejected, (state, action) => {
+    builder.addCase(updateInclusive.rejected, (state, action) => {
       state.isLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
         variant: "error",
       });
     });
 
-    // TODO: delete faq
-    builder.addCase(deleteFaq.pending, (state, _) => {
+    // TODO: delete inclusive
+    builder.addCase(deleteInclusive.pending, (state, _) => {
       state.isLoading = true;
     });
 
-    builder.addCase(deleteFaq.fulfilled, (state, action) => {
+    builder.addCase(deleteInclusive.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.faqs.data = state.faqs.data.filter(
-        (faq) => faq.id !== action.payload.data
+      state.inclusive.data = state.inclusive.data.filter(
+        (inclusive) => inclusive.id !== action.payload.data
       );
-      action.payload.enqueueSnackbar("FAQ is deleted successfully.", {
+      action.payload.enqueueSnackbar("Inclusive is deleted successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
     });
 
-    builder.addCase(deleteFaq.rejected, (state, action) => {
+    builder.addCase(deleteInclusive.rejected, (state, action) => {
       state.isLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
         variant: "error",
@@ -188,4 +188,4 @@ const faqslice = createSlice({
   },
 });
 
-export default faqslice.reducer;
+export default inclusivelice.reducer;

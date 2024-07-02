@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import { fetchEmergencyContacts } from "../../redux/slices/emergencyContactSlice";
+import { fetchContacts } from "../../redux/slices/emergencyContactSlice";
 import { Shadow } from "../../routers";
 import EmergencyContactForm from "../../sections/supports/EmergencyContacts/EmergencyContactForm";
 import EnhancedTable from "../../sections/supports/EmergencyContacts/EmergencyContactTable";
@@ -53,12 +53,12 @@ export default function EmergencyContacts() {
 
   // TODO: get the data from slice
   const emergencyContacts = useSelector(
-    (state) => state.emergencyContact.emergencyContacts
+    (state) => state.emergencyContact.contacts
   );
 
   // TODO: fetching the emergeEmergencyContacts
   useEffect(() => {
-    dispatch(fetchEmergencyContacts({ enqueueSnackbar, ...pagination }));
+    dispatch(fetchContacts({ enqueueSnackbar, ...pagination }));
   }, [dispatch, enqueueSnackbar, pagination]);
 
   // TODO: set the rows
@@ -121,7 +121,7 @@ export default function EmergencyContacts() {
       {/* TODO: add emergencyContacts */}
       <AddDialog
         maxWidth="sm"
-        title={"Add new emergency contact"}
+        title={"Add new contact"}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >

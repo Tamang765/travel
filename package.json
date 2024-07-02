@@ -55,12 +55,13 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "sass": "^1.62.1",
+    "slugify": "^1.6.6",
     "stylis-plugin-rtl": "^2.1.1",
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=3002 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

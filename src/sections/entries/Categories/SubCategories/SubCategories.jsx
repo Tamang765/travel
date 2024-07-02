@@ -12,12 +12,7 @@ const headCells = [
     label: "NAME",
   },
 
-  {
-    id: "photo",
-    numeric: true,
-    disablePadding: false,
-    label: "Photo",
-  },
+
 
   {
     id: "date",

@@ -34,7 +34,7 @@ export default function RHFEditor({ name, placeholder, helperText, ...other }) {
 
   return (
     <Controller
-      name={name}
+      name={name || ""}
       control={control}
       render={({ field, fieldState: { error } }) => {
         return (

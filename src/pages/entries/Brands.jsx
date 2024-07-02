@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import { fetchBrands } from "../../redux/slices/brandSlice";
+import { fetchInclusive } from "../../redux/slices/inclusiveSlice";
 import { Shadow } from "../../routers";
 import Form from "../../sections/entries/Brands/Form";
 import EnhancedTable from "../../sections/entries/Brands/Table";
@@ -17,12 +17,12 @@ const headCells = [
     label: "Name",
   },
 
-  {
-    id: "photo",
-    numeric: false,
-    disablePadding: false,
-    label: "Photo",
-  },
+  // {
+  //   id: "photo",
+  //   numeric: false,
+  //   disablePadding: false,
+  //   label: "Photo",
+  // },
 
   {
     id: "date",
@@ -50,29 +50,51 @@ export default function Brands() {
     limit: 10,
   });
   const [rows, setRows] = useState([]);
+  const [search, setSearch] = useState("");
+  const [refresh, setRefresh] = useState(false);
 
   // TODO: get the data from slice
-  const brands = useSelector((state) => state.brand.brands);
+  const inclusives = useSelector((state) => state.inclusive.inclusive);
 
   // TODO: fetching the brands
+  // TODO: fetch the colors when searached
   useEffect(() => {
-    dispatch(fetchBrands({ enqueueSnackbar, ...pagination }));
-  }, [dispatch, enqueueSnackbar, pagination]);
+    if (search) {
+      const debounce = setTimeout(() => {
+        dispatch(
+          fetchInclusive({
+            enqueueSnackbar,
+            limit: pagination.limit,
+            page: pagination.page,
+            search,
+          })
+        );
+      }, [2000]);
+      return () => clearTimeout(debounce);
+    } else {
+      dispatch(
+        fetchInclusive({
+          enqueueSnackbar,
+          limit: pagination.limit,
+          page: pagination.page,
+          search,
+        })
+      );
+    }
+  }, [dispatch, search, pagination.limit, pagination.page, enqueueSnackbar]);
 
   // TODO: set the rows
 
   useEffect(() => {
-    const data = brands?.data?.map((brand) => ({
+    const data = inclusives?.data?.map((brand) => ({
       id: brand?.id,
-      slug: brand?.slug,
       name: brand?.name,
-      photo: brand?.photo,
       createdDate: moment(brand?.created_at)
         .format("Do MMMM, YYYY")
         .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
     }));
     setRows(data);
-  }, [brands]);
+  }, [inclusives]);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -95,20 +117,25 @@ export default function Brands() {
         <Card color="transparent" shadow={false}>
           <EnhancedTable
             showSearch={false}
-            title="Brands"
+            title="Inclusive"
+            
             headCells={headCells}
             rows={rows}
             showFilter={false}
             setOpenAdd={() => setOpenAdd((prev) => !prev)}
             page={pagination.page}
             rowsPerPage={pagination.limit}
+            search={search}
+            setSearch={setSearch}
+            refresh={refresh}
+            setRefresh={setRefresh}
           />
 
           {/* TODO: pagination */}
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={brands?.meta?.total}
+            count={inclusives?.meta?.total}
             rowsPerPage={pagination.limit}
             page={pagination.page}
             onPageChange={handleChangePage}
@@ -120,11 +147,11 @@ export default function Brands() {
       {/* TODO: add brands */}
       <AddDialog
         maxWidth="sm"
-        title={"Add new brand"}
+        title={"Add new Inclusive"}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >
-        <Form handleClose={() => setOpenAdd(false)} />
+        <Form handleClose={() => setOpenAdd(false)} title={"Inclusive"} />
       </AddDialog>
     </>
   );

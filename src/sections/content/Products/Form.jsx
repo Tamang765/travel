@@ -1,12 +1,12 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoadingButton } from "@mui/lab";
-import { Autocomplete, Box, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { useSnackbar } from "notistack";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { RHFEditor, RHFTextField } from "../../../components/hook-form";
+import { RHFTextArea, RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
 import { Upload } from "../../../components/upload";
 import { fetchCategories } from "../../../redux/slices/categorySlice";
@@ -16,7 +16,6 @@ import { updateProduct } from "../../../redux/slices/productSlice";
 import { fetchSizes } from "../../../redux/slices/sizeSlice";
 import { createVehicle } from "../../../redux/slices/vehicleSlice";
 import { appendFormValuesToFormData } from "../../../utils/appendFormData";
-import DynamicForm from "./DynamicForm";
 
 const Form = ({ handleClose, data, isEdit = false, refresh, setRefresh }) => {
   // TODO: hooks
@@ -46,13 +45,13 @@ const Form = ({ handleClose, data, isEdit = false, refresh, setRefresh }) => {
   const colors = useSelector((state) => state.color.colors);
 
   const Schema = Yup.object().shape({
-    // name: Yup.string().required("vehicle's name is required"),
-    // title: Yup.string().required("vehicle's title is required"),
+    name: Yup.string().required("vehicle's name is required"),
+    title: Yup.string().required("vehicle's title is required"),
 
-    // type: Yup.string().required("vehicle's type is required"),
-    // capacity: Yup.string().required("vehicle's capacity is required"),
-    // price: Yup.string().required("vehicle's price is required"),
-    // description: Yup.string().required("vehicle's description is required"),
+    type: Yup.string().required("vehicle's type is required"),
+    capacity: Yup.string().required("vehicle's capacity is required"),
+    price: Yup.string().required("vehicle's price is required"),
+    description: Yup.string().required("vehicle's description is required"),
     // image: Yup.string().required("vehicle's image is required"),
   });
 
@@ -211,47 +210,23 @@ const Form = ({ handleClose, data, isEdit = false, refresh, setRefresh }) => {
             sm: "repeat(3, 1fr)",
           }}
         >
-          <Autocomplete
-            defaultValue={{
-              label: data?.category?.name || "",
-              id: data?.category?.id || "",
-            }}
-            name="category_id"
-            disablePortal
-            id="combo-box-main-category"
-            options={
-              categories?.data?.map((page) => ({
-                label: page?.name,
-                id: page?.id,
-              })) || []
-            }
-            renderInput={(params) => (
-              <RHFTextField name={"page_id"} {...params} label="Category *" />
-            )}
-            onChange={(event, newValues) =>
-              methods.setValue("page_id", newValues ? newValues.id : null)
-            }
-            renderOption={(props, option) => (
-              <li {...props} key={option.id}>
-                {option.label}
-              </li>
-            )}
+          <RHFTextField name={"name"} label={"Vehicle's name *"} />
+          <RHFTextField name={"type"} label={"Vehicle's type *"} />
+          <RHFTextField name={"capacity"} label={"Vehicle's capacity *"} />
+          <RHFTextField
+            name={"price"}
+            label={"Vehicle's price *"}
+            type="number"
           />
-          {/* <RHFEditor
-            placeholder="Write description here..."
-            name={"description"}
-          /> */}
 
-          <RHFTextField name={"name"} label={"Blog's name *"} />
-          <RHFTextField name={"title"} label={"Blog's title *"} />
+          <RHFTextArea
+            name={"description"}
+            label={"Vehicle's description *"}
+            multiple={true}
+            rows={2}
+            className=""
+          />
         </Box>
-        <Stack mt={5}>
-          <RHFEditor placeholder="Write anwser here..." name={"description"} />
-        </Stack>
-        <Stack my={5}>
-          <span>Content</span>
-          <DynamicForm />
-        </Stack>
 
         <Box mt={3}>
           <Stack flexDirection={"row"} gap={3}>
@@ -275,7 +250,7 @@ const Form = ({ handleClose, data, isEdit = false, refresh, setRefresh }) => {
             variant="contained"
             className="!bg-primary w-fit"
           >
-            {isEdit ? "Update blog" : "Create blog"}
+            {isEdit ? "Update vehicle" : "Create vehicle"}
           </LoadingButton>
         </Stack>
       </FormProvider>

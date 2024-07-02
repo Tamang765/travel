@@ -80,8 +80,8 @@ export function AuthProvider({ children }) {
 
       if (token) {
         setSession(token);
-        const response = await axiosInstance.get("auth-user");
-        const user = response.data.data;
+        const response = await axiosInstance.get("user");
+        const user = response.data;
 
         dispatch({
           type: "INITIAL",

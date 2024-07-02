@@ -4,37 +4,25 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import { fetchFaqs } from "../../redux/slices/faqSlice";
+import { fetchExclusive } from "../../redux/slices/exclusiveSlice";
 import { Shadow } from "../../routers";
-import Form from "../../sections/entries/Colors/Form";
-import EnhancedTable from "../../sections/entries/Colors/Table";
+import Form from "../../sections/entries/Brands/Form";
+import EnhancedTable from "../../sections/entries/Brands/Table";
 
 const headCells = [
+  {
+    id: "name",
+    numeric: false,
+    disablePadding: false,
+    label: "Name",
+  },
+
   // {
-  //   id: "name",
+  //   id: "photo",
   //   numeric: false,
   //   disablePadding: false,
-  //   label: "Name",
+  //   label: "Photo",
   // },
-
-  {
-    id: "question",
-    numeric: false,
-    disablePadding: false,
-    label: "Question",
-  },
-  {
-    id: "answer",
-    numeric: false,
-    disablePadding: false,
-    label: "Answer",
-  },
-  {
-    id: "package",
-    numeric: false,
-    disablePadding: false,
-    label: "Package",
-  },
 
   {
     id: "date",
@@ -50,7 +38,7 @@ const headCells = [
   },
 ];
 
-export default function Colors() {
+export default function Exclusive() {
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -62,20 +50,19 @@ export default function Colors() {
     limit: 10,
   });
   const [rows, setRows] = useState([]);
-  const [refresh, setRefresh] = useState(false);
   const [search, setSearch] = useState("");
+  const [refresh, setRefresh] = useState(false);
 
   // TODO: get the data from slice
-  const colors = useSelector((state) => state.color.colors);
-  const faqs = useSelector((state) => state.faq.faqs);
+  const exclusives = useSelector((state) => state.exclusive.exclusive);
 
-  // TODO: fetching the colors
+  // TODO: fetching the brands
   // TODO: fetch the colors when searached
   useEffect(() => {
     if (search) {
       const debounce = setTimeout(() => {
         dispatch(
-          fetchFaqs({
+          fetchExclusive({
             enqueueSnackbar,
             limit: pagination.limit,
             page: pagination.page,
@@ -86,7 +73,7 @@ export default function Colors() {
       return () => clearTimeout(debounce);
     } else {
       dispatch(
-        fetchFaqs({
+        fetchExclusive({
           enqueueSnackbar,
           limit: pagination.limit,
           page: pagination.page,
@@ -95,20 +82,19 @@ export default function Colors() {
       );
     }
   }, [dispatch, search, pagination.limit, pagination.page, enqueueSnackbar]);
+
   // TODO: set the rows
 
   useEffect(() => {
-    const data = faqs?.data?.map((faq) => ({
-      id: faq?.id,
-      answer: faq?.answer,
-      question: faq?.question,
-      package_id: faq?.package_id,
-      createdDate: moment(faq?.created_at)
+    const data = exclusives?.data?.map((brand) => ({
+      id: brand?.id,
+      name: brand?.name,
+      createdDate: moment(brand?.created_at)
         .format("Do MMMM, YYYY")
         .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
     }));
     setRows(data);
-  }, [faqs]);
+  }, [exclusives]);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -124,32 +110,32 @@ export default function Colors() {
   };
 
   // TODO: console.logs
-  console.log(faqs, "rows");
 
   return (
     <>
       <Shadow>
         <Card color="transparent" shadow={false}>
           <EnhancedTable
-            showSearch={true}
-            title="Faq"
+            showSearch={false}
+            title="Exclusive"
+            exclusive
             headCells={headCells}
             rows={rows}
             showFilter={false}
             setOpenAdd={() => setOpenAdd((prev) => !prev)}
             page={pagination.page}
             rowsPerPage={pagination.limit}
-            setRefresh={setRefresh}
-            refresh={refresh}
-            setSearch={setSearch}
             search={search}
+            setSearch={setSearch}
+            refresh={refresh}
+            setRefresh={setRefresh}
           />
 
           {/* TODO: pagination */}
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={colors?.meta?.total}
+            count={exclusives?.meta?.total}
             rowsPerPage={pagination.limit}
             page={pagination.page}
             onPageChange={handleChangePage}
@@ -158,14 +144,18 @@ export default function Colors() {
         </Card>
       </Shadow>
 
-      {/* TODO: add color */}
+      {/* TODO: add brands */}
       <AddDialog
         maxWidth="sm"
-        title={"Add new FAQ"}
+        title={"Add new Exclusive"}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >
-        <Form handleClose={() => setOpenAdd(false)} />
+        <Form
+          handleClose={() => setOpenAdd(false)}
+          title="Exclusive"
+          exclusive
+        />
       </AddDialog>
     </>
   );

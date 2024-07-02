@@ -1,14 +1,15 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoadingButton } from "@mui/lab";
-import { Box, Stack } from "@mui/material";
+import { Autocomplete, Box, Stack } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
-import { createColor, updateColor } from "../../../redux/slices/colorSlice";
+import { createFaq, updateFaq } from "../../../redux/slices/faqSlice";
+import { fetchPackages } from "../../../redux/slices/packageSlice";
 
 const Form = ({ handleClose, data, isEdit = false }) => {
   // TODO: hooks
@@ -21,15 +22,20 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   // TODO: get the data from slice
 
   const createColorLoading = useSelector((state) => state.color.isLoading);
+  const packages = useSelector((state) => state.packages.packages);
 
   const Schema = Yup.object().shape({
-    name: Yup.string().required("name is required"),
+    question: Yup.string().required("question is required"),
+    answer: Yup.string().required("answer is required"),
+    package_id: Yup.string().required("package is required"),
   });
 
   // TODO: default values in the form
   const defaultValues = useMemo(
     () => ({
-      name: data?.color,
+      package_id: data?.package_id,
+      question: data?.question,
+      answer: data?.answer,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data]
@@ -43,24 +49,27 @@ const Form = ({ handleClose, data, isEdit = false }) => {
   const { handleSubmit } = methods;
 
   // TODO: useEffects, write the useEffect codes here
+  useEffect(() => {
+    dispatch(fetchPackages({ enqueueSnackbar, page: 0, limit: 100 }));
+  }, [dispatch, enqueueSnackbar]);
 
   // ======
 
   // TODO: functions
 
-  const onCreateColor = (values) => {
+  const onCreateFaq = (values) => {
     // TODO: dispatch the action to create a brand
-    dispatch(createColor({ data: values, enqueueSnackbar, handleClose }));
+    dispatch(createFaq({ data: values, enqueueSnackbar, handleClose }));
   };
 
-  const onUpdateColor = (values) => {
+  const onUpdateFaq = (values) => {
     // TODO: dispatch the action to update a brand
     dispatch(
-      updateColor({
+      updateFaq({
         data: values,
         enqueueSnackbar,
         handleClose,
-        id: data?.slug,
+        id: data?.id,
       })
     );
   };
@@ -71,7 +80,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
     <Box p={3}>
       <FormProvider
         methods={methods}
-        onSubmit={handleSubmit(isEdit ? onUpdateColor : onCreateColor)}
+        onSubmit={handleSubmit(isEdit ? onUpdateFaq : onCreateFaq)}
       >
         <Stack flexDirection={"row"} justifyContent={"center"} mb={2}></Stack>
         <Box
@@ -83,7 +92,37 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             sm: "repeat(1, 1fr)",
           }}
         >
-          <RHFTextField name={"name"} label={"Color *"} />
+          <Autocomplete
+            defaultValue={{
+              label: data?.package_id || "",
+              id: data?.package_id || "",
+            }}
+            name="package_id"
+            id="combo-box-main-category"
+            options={
+              packages?.data?.data?.map((page) => ({
+                label: page?.overview,
+                id: page?.id,
+              })) || []
+            }
+            renderInput={(params) => (
+              <RHFTextField
+                name={"package_id"}
+                {...params}
+                label="Package id *"
+              />
+            )}
+            onChange={(event, newValues) =>
+              methods.setValue("package_id", newValues ? newValues.id : null)
+            }
+            renderOption={(props, option) => (
+              <li {...props} key={option.id}>
+                {option.label}
+              </li>
+            )}
+          />
+          <RHFTextField name={"question"} label={"Question *"} />
+          <RHFTextField name={"answer"} label={"Answer *"} />
         </Box>
 
         <Stack mt={2} alignItems={"end"}>
@@ -94,7 +133,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             variant="contained"
             className="!bg-primary w-fit"
           >
-            {isEdit ? "Update Color" : "Create Color"}
+            {isEdit ? "Update Faq" : "Create Faq"}
           </LoadingButton>
         </Stack>
       </FormProvider>

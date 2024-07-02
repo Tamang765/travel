@@ -7,7 +7,7 @@ import axiosInstance from "../../utils/axios";
 const initialState = {
   isLoading: false,
   fetchLoading: false,
-  emergencyContacts: {
+  contacts: {
     data: [],
     meta: {
       total: 0,
@@ -15,12 +15,12 @@ const initialState = {
   },
 };
 
-// TODO: fetch all the emergencyContacts
-export const fetchEmergencyContacts = createAsyncThunk(
-  "fetchEmergencyContacts/emergencyContacts",
+// TODO: fetch all the contacts
+export const fetchContacts = createAsyncThunk(
+  "fetchContacts/contacts",
   async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
-      const response = await axiosInstance.get(`users/emergency-contacts`, {
+      const response = await axiosInstance.get(`contacts`, {
         params: {
           page: page + 1,
           limit,
@@ -41,11 +41,11 @@ export const fetchEmergencyContacts = createAsyncThunk(
 
 // TODO: create emergencyContact
 export const createEmergencyContact = createAsyncThunk(
-  "createEmergencyContact/emergencyContacts",
+  "createEmergencyContact/contacts",
   async ({ data, enqueueSnackbar, handleClose }, thunkApi) => {
     try {
       const response = await axiosInstance.post(
-        `users/emergency-contacts`,
+        `contacts`,
         data
       );
 
@@ -62,11 +62,11 @@ export const createEmergencyContact = createAsyncThunk(
 
 // TODO: update emergencyContact
 export const updateEmergencyContact = createAsyncThunk(
-  "updateEmergencyContact/emergencyContacts",
+  "updateEmergencyContact/contacts",
   async ({ data, enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
       const response = await axiosInstance.patch(
-        `users/emergency-contacts/${id}`,
+        `contacts/${id}`,
         data
       );
 
@@ -83,7 +83,7 @@ export const updateEmergencyContact = createAsyncThunk(
 
 // TODO: delete emergencyContact
 export const deleteEmergencyContact = createAsyncThunk(
-  "deleteEmergencyContact/emergencyContacts",
+  "deleteEmergencyContact/contacts",
   async ({ enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
       await axiosInstance.delete(`users/emergency-contacts/${id}`);
@@ -98,21 +98,21 @@ export const deleteEmergencyContact = createAsyncThunk(
   }
 );
 
-const emergencyContactslice = createSlice({
+const contactslice = createSlice({
   name: "emergencyContact",
   initialState,
   extraReducers: (builder) => {
     // TODO: create emergencyContact
-    builder.addCase(fetchEmergencyContacts.pending, (state, _) => {
+    builder.addCase(fetchContacts.pending, (state, _) => {
       state.fetchLoading = true;
     });
 
-    builder.addCase(fetchEmergencyContacts.fulfilled, (state, action) => {
+    builder.addCase(fetchContacts.fulfilled, (state, action) => {
       state.fetchLoading = false;
-      state.emergencyContacts = action.payload;
+      state.contacts = action.payload;
     });
 
-    builder.addCase(fetchEmergencyContacts.rejected, (state, action) => {
+    builder.addCase(fetchContacts.rejected, (state, action) => {
       state.isLoading = false;
       state.fetchLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
@@ -127,12 +127,12 @@ const emergencyContactslice = createSlice({
 
     builder.addCase(createEmergencyContact.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.emergencyContacts.data = [
+      state.contacts.data = [
         action.payload.data,
-        ...state.emergencyContacts.data,
+        ...state.contacts.data,
       ];
-      state.emergencyContacts.meta.total =
-        state.emergencyContacts.meta.total + 1;
+      state.contacts.meta.total =
+        state.contacts.meta.total + 1;
       action.payload.enqueueSnackbar(
         "Emergency contact is created successfully.",
         {
@@ -156,7 +156,7 @@ const emergencyContactslice = createSlice({
 
     builder.addCase(updateEmergencyContact.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.emergencyContacts.data = state.emergencyContacts.data.map(
+      state.contacts.data = state.contacts.data.map(
         (emergencyContact) => {
           if (emergencyContact.id === action.payload.data.id) {
             return action.payload.data;
@@ -188,7 +188,7 @@ const emergencyContactslice = createSlice({
 
     builder.addCase(deleteEmergencyContact.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.emergencyContacts.data = state.emergencyContacts.data.filter(
+      state.contacts.data = state.contacts.data.filter(
         (emergencyContact) => emergencyContact.id !== action.payload.data
       );
       action.payload.enqueueSnackbar(
@@ -209,4 +209,4 @@ const emergencyContactslice = createSlice({
   },
 });
 
-export default emergencyContactslice.reducer;
+export default contactslice.reducer;

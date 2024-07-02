@@ -7,7 +7,7 @@ import axiosInstance from "../../utils/axios";
 const initialState = {
   isLoading: false,
   fetchLoading: false,
-  faqs: {
+  location: {
     data: [],
     meta: {
       total: 0,
@@ -15,18 +15,18 @@ const initialState = {
   },
 };
 
-// TODO: fetch all the faqs
-export const fetchFaqs = createAsyncThunk(
-  "fetchFaqs/faqs",
+// TODO: fetch all the location
+export const fetchLocation = createAsyncThunk(
+  "fetchLocation/location",
   async ({ enqueueSnackbar, limit, page = 0 }, thunkApi) => {
     try {
-      const response = await axiosInstance.get(`faqs`, {
+      const response = await axiosInstance.get(`locations`, {
         params: {
           page: page + 1,
           limit,
         },
       });
-      console.log(response);
+
       return {
         data: response.data.data,
         meta: {
@@ -39,12 +39,12 @@ export const fetchFaqs = createAsyncThunk(
   }
 );
 
-// TODO: create faq
-export const createFaq = createAsyncThunk(
-  "createFaq/faqs",
+// TODO: create location
+export const createLocation = createAsyncThunk(
+  "createLocation/location",
   async ({ data, enqueueSnackbar, handleClose }, thunkApi) => {
     try {
-      const response = await axiosInstance.post(`faqs`, data);
+      const response = await axiosInstance.post(`locations`, data);
 
       return {
         data: response.data.data,
@@ -57,12 +57,12 @@ export const createFaq = createAsyncThunk(
   }
 );
 
-// TODO: update faq
-export const updateFaq = createAsyncThunk(
-  "updateFaq/faqs",
+// TODO: update location
+export const updateLocation = createAsyncThunk(
+  "updateLocation/location",
   async ({ data, enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
-      const response = await axiosInstance.patch(`faqs/${id}`, data);
+      const response = await axiosInstance.patch(`locations/${id}`, data);
 
       return {
         data: response.data.data,
@@ -75,12 +75,12 @@ export const updateFaq = createAsyncThunk(
   }
 );
 
-// TODO: delete faq
-export const deleteFaq = createAsyncThunk(
-  "deleteFaq/faqs",
+// TODO: delete location
+export const deleteLocation = createAsyncThunk(
+  "deleteLocation/location",
   async ({ enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
-      await axiosInstance.delete(`faqs/${id}`);
+      await axiosInstance.delete(`locations/${id}`);
       return {
         data: id,
         handleClose,
@@ -92,21 +92,21 @@ export const deleteFaq = createAsyncThunk(
   }
 );
 
-const faqslice = createSlice({
-  name: "faq",
+const locationslice = createSlice({
+  name: "location",
   initialState,
   extraReducers: (builder) => {
-    // TODO: create faq
-    builder.addCase(fetchFaqs.pending, (state, _) => {
+    // TODO: create location
+    builder.addCase(fetchLocation.pending, (state, _) => {
       state.fetchLoading = true;
     });
 
-    builder.addCase(fetchFaqs.fulfilled, (state, action) => {
+    builder.addCase(fetchLocation.fulfilled, (state, action) => {
       state.fetchLoading = false;
-      state.faqs = action.payload;
+      state.location = action.payload;
     });
 
-    builder.addCase(fetchFaqs.rejected, (state, action) => {
+    builder.addCase(fetchLocation.rejected, (state, action) => {
       state.isLoading = false;
       state.fetchLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
@@ -114,72 +114,72 @@ const faqslice = createSlice({
       });
     });
 
-    // TODO: create faq
-    builder.addCase(createFaq.pending, (state, _) => {
+    // TODO: create location
+    builder.addCase(createLocation.pending, (state, _) => {
       state.isLoading = true;
     });
 
-    builder.addCase(createFaq.fulfilled, (state, action) => {
+    builder.addCase(createLocation.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.faqs.data = [action.payload.data, ...state.faqs.data];
-      state.faqs.meta.total = state.faqs.meta.total + 1;
-      action.payload.enqueueSnackbar("FAQ is created successfully.", {
+      state.location.data = [action.payload.data, ...state.location.data];
+      state.location.meta.total = state.location.meta.total + 1;
+      action.payload.enqueueSnackbar("Location is created successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
     });
 
-    builder.addCase(createFaq.rejected, (state, action) => {
+    builder.addCase(createLocation.rejected, (state, action) => {
       state.isLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
         variant: "error",
       });
     });
 
-    // TODO: update faq
-    builder.addCase(updateFaq.pending, (state, _) => {
+    // TODO: update location
+    builder.addCase(updateLocation.pending, (state, _) => {
       state.isLoading = true;
     });
 
-    builder.addCase(updateFaq.fulfilled, (state, action) => {
+    builder.addCase(updateLocation.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.faqs.data = state.faqs.data.map((faq) => {
-        if (faq.id === action.payload.data.id) {
+      state.location.data = state.location.data.map((location) => {
+        if (location.id === action.payload.data.id) {
           return action.payload.data;
         } else {
-          return faq;
+          return location;
         }
       });
-      action.payload.enqueueSnackbar("FAQ is updated successfully.", {
+      action.payload.enqueueSnackbar("Location is updated successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
     });
 
-    builder.addCase(updateFaq.rejected, (state, action) => {
+    builder.addCase(updateLocation.rejected, (state, action) => {
       state.isLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
         variant: "error",
       });
     });
 
-    // TODO: delete faq
-    builder.addCase(deleteFaq.pending, (state, _) => {
+    // TODO: delete location
+    builder.addCase(deleteLocation.pending, (state, _) => {
       state.isLoading = true;
     });
 
-    builder.addCase(deleteFaq.fulfilled, (state, action) => {
+    builder.addCase(deleteLocation.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.faqs.data = state.faqs.data.filter(
-        (faq) => faq.id !== action.payload.data
+      state.location.data = state.location.data.filter(
+        (location) => location.id !== action.payload.data
       );
-      action.payload.enqueueSnackbar("FAQ is deleted successfully.", {
+      action.payload.enqueueSnackbar("Location is deleted successfully.", {
         variant: "success",
       });
       action.payload.handleClose && action.payload.handleClose();
     });
 
-    builder.addCase(deleteFaq.rejected, (state, action) => {
+    builder.addCase(deleteLocation.rejected, (state, action) => {
       state.isLoading = false;
       action.payload.enqueueSnackbar(action.payload.error.message, {
         variant: "error",
@@ -188,4 +188,4 @@ const faqslice = createSlice({
   },
 });
 
-export default faqslice.reducer;
+export default locationslice.reducer;

@@ -65,14 +65,30 @@ export const Roles = Loadable(lazy(() => import("../pages/users/roles/Roles")));
 
 // TODO: entries
 export const Brands = Loadable(lazy(() => import("../pages/entries/Brands")));
+export const Exclusive = Loadable(
+  lazy(() => import("../pages/entries/Exclusive"))
+);
 
 export const Colors = Loadable(lazy(() => import("../pages/entries/Colors")));
 
 export const Sizes = Loadable(lazy(() => import("../pages/entries/Sizes")));
-
+export const Packages = Loadable(
+  lazy(() => import("../pages/entries/Packages"))
+);
+export const Locations = Loadable(
+  lazy(() => import("../pages/entries/Location"))
+);
 export const Categories = Loadable(
   lazy(() => import("../pages/entries/Categories"))
 );
+
+
+// TODO: content section
+
+export const Blogs = Loadable(
+  lazy(() => import("../pages/content/Blog"))
+);
+
 
 // TODO: settings
 export const Settings = Loadable(

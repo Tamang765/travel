@@ -55,26 +55,35 @@ const menu = [
     icon: <FaProductHunt size={35} color="#ddd" />,
     childrens: [
       {
-        title: "Brands",
+        title: "Categories",
+        path: path(ROOTS_DASHBOARD, "/entries/categories"),
+        icon: <MdCategory size={20} />,
+      },
+      {
+        title: "Inclusive",
         path: path(ROOTS_DASHBOARD, "/entries/brands"),
         icon: <SiBrandfolder size={20} />,
       },
 
       {
-        title: "Categories",
-        path: path(ROOTS_DASHBOARD, "/entries/categories"),
+        title: "Exclusive",
+        path: path(ROOTS_DASHBOARD, "/entries/exclusive"),
         icon: <MdCategory size={20} />,
       },
-
       {
-        title: "Sizes",
-        path: path(ROOTS_DASHBOARD, "/entries/sizes"),
+        title: "Pages",
+        path: path(ROOTS_DASHBOARD, "/entries/pages"),
         icon: <IoMdResize size={20} />,
+      },
+      {
+        title: "Packages",
+        path: path(ROOTS_DASHBOARD, "/entries/packages"),
+        icon: <MdOutlineInvertColors size={20} />,
       },
 
       {
-        title: "Colors",
-        path: path(ROOTS_DASHBOARD, "/entries/colors"),
+        title: "Faq",
+        path: path(ROOTS_DASHBOARD, "/entries/faq"),
         icon: <MdOutlineInvertColors size={20} />,
       },
 
@@ -83,6 +92,33 @@ const menu = [
         path: path(ROOTS_DASHBOARD, "/entries/products"),
         icon: <FaProductHunt size={20} />,
       },
+      {
+        title: "Location",
+        path: path(ROOTS_DASHBOARD, "/entries/locations"),
+        icon: <FaProductHunt size={20} />,
+      },
+    ],
+  },
+  {
+    title: "Contents",
+    icon: <HiOutlineUsers size={35} color="#ddd" />,
+    childrens: [
+      // {
+      //   title: "Admins",
+      //   path: path(ROOTS_DASHBOARD, "/users/admins"),
+      //   icon: <HiOutlineUsers size={20} />,
+      // },
+      {
+        title: "Blogs",
+        path: path(ROOTS_DASHBOARD, "/content/blogs"),
+        icon: <HiOutlineUsers size={20} />,
+      },
+
+      // {
+      //   title: "Roles",
+      //   path: path(ROOTS_DASHBOARD, "/users/roles"),
+      //   icon: <MdOutlineAdminPanelSettings size={20} />,
+      // },
     ],
   },
 

@@ -4,38 +4,67 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import { fetchFaqs } from "../../redux/slices/faqSlice";
+import { fetchPackages } from "../../redux/slices/packageSlice";
 import { Shadow } from "../../routers";
-import Form from "../../sections/entries/Colors/Form";
-import EnhancedTable from "../../sections/entries/Colors/Table";
+import Form from "../../sections/entries/Packages/Form";
+import EnhancedTable from "../../sections/entries/Packages/Table";
 
 const headCells = [
-  // {
-  //   id: "name",
-  //   numeric: false,
-  //   disablePadding: false,
-  //   label: "Name",
-  // },
+  {
+    id: "page_id",
+    numeric: false,
+    disablePadding: false,
+    label: "Page ID",
+  },
+  {
+    id: "highlights",
+    numeric: false,
+    disablePadding: false,
+    label: "Highlights",
+  },
+  {
+    id: "overview",
+    numeric: false,
+    disablePadding: false,
+    label: "Overview",
+  },
+  {
+    id: "location",
+    numeric: false,
+    disablePadding: false,
+    label: "Location",
+  },
+  {
+    id: "route_map",
+    numeric: false,
+    disablePadding: false,
+    label: "Route Map",
+  },
 
   {
-    id: "question",
-    numeric: false,
+    id: "equipments",
+    numeric: true,
     disablePadding: false,
-    label: "Question",
+    label: "Equipments",
   },
   {
-    id: "answer",
-    numeric: false,
+    id: "inclusives",
+    numeric: true,
     disablePadding: false,
-    label: "Answer",
+    label: "Inclusives",
   },
   {
-    id: "package",
-    numeric: false,
+    id: "exclusives",
+    numeric: true,
     disablePadding: false,
-    label: "Package",
+    label: "Exclusives",
   },
-
+  {
+    id: "note",
+    numeric: true,
+    disablePadding: false,
+    label: "Note",
+  },
   {
     id: "date",
     numeric: true,
@@ -50,7 +79,7 @@ const headCells = [
   },
 ];
 
-export default function Colors() {
+export default function Packages() {
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -61,54 +90,38 @@ export default function Colors() {
     page: 0,
     limit: 10,
   });
-  const [rows, setRows] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const [search, setSearch] = useState("");
+
+  const [rows, setRows] = useState([]);
 
   // TODO: get the data from slice
-  const colors = useSelector((state) => state.color.colors);
-  const faqs = useSelector((state) => state.faq.faqs);
-
-  // TODO: fetching the colors
-  // TODO: fetch the colors when searached
+  const packages = useSelector((state) => state.packages.packages);
+  // TODO: fetching the packages
   useEffect(() => {
-    if (search) {
-      const debounce = setTimeout(() => {
-        dispatch(
-          fetchFaqs({
-            enqueueSnackbar,
-            limit: pagination.limit,
-            page: pagination.page,
-            search,
-          })
-        );
-      }, [2000]);
-      return () => clearTimeout(debounce);
-    } else {
-      dispatch(
-        fetchFaqs({
-          enqueueSnackbar,
-          limit: pagination.limit,
-          page: pagination.page,
-          search,
-        })
-      );
-    }
-  }, [dispatch, search, pagination.limit, pagination.page, enqueueSnackbar]);
+    dispatch(fetchPackages({ enqueueSnackbar, ...pagination }));
+  }, [dispatch, enqueueSnackbar, pagination, refresh]);
+
   // TODO: set the rows
 
   useEffect(() => {
-    const data = faqs?.data?.map((faq) => ({
-      id: faq?.id,
-      answer: faq?.answer,
-      question: faq?.question,
-      package_id: faq?.package_id,
-      createdDate: moment(faq?.created_at)
+    const data = packages?.data?.data?.map((size) => ({
+      id: size?.id,
+      page_id: size?.page_id,
+      highlights: size?.highlights,
+      overview: size?.overview,
+      locations: size?.locations,
+      route_map: size?.route_map,
+      equipments: size?.equipments,
+      inclusives: size?.inclusives,
+      exclusives: size?.exclusives,
+      note: size?.note,
+
+      createdDate: moment(size?.created_at)
         .format("Do MMMM, YYYY")
         .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
     }));
     setRows(data);
-  }, [faqs]);
+  }, [packages]);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -124,15 +137,14 @@ export default function Colors() {
   };
 
   // TODO: console.logs
-  console.log(faqs, "rows");
 
   return (
     <>
       <Shadow>
         <Card color="transparent" shadow={false}>
           <EnhancedTable
-            showSearch={true}
-            title="Faq"
+            showSearch={false}
+            title="Packages"
             headCells={headCells}
             rows={rows}
             showFilter={false}
@@ -141,15 +153,13 @@ export default function Colors() {
             rowsPerPage={pagination.limit}
             setRefresh={setRefresh}
             refresh={refresh}
-            setSearch={setSearch}
-            search={search}
           />
 
           {/* TODO: pagination */}
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={colors?.meta?.total}
+            count={packages?.meta?.total}
             rowsPerPage={pagination.limit}
             page={pagination.page}
             onPageChange={handleChangePage}
@@ -158,10 +168,10 @@ export default function Colors() {
         </Card>
       </Shadow>
 
-      {/* TODO: add color */}
+      {/* TODO: add sizes */}
       <AddDialog
         maxWidth="sm"
-        title={"Add new FAQ"}
+        title={"Add new Packages"}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >

@@ -2,20 +2,17 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { LoadingButton } from "@mui/lab";
 import { Box, Stack } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import slugify from "slugify";
 import * as Yup from "yup";
 import { RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
 import {
-  createExclusive,
-  updateExclusive,
-} from "../../../redux/slices/exclusiveSlice";
-import {
-  createInclusive,
-  updateInclusive,
-} from "../../../redux/slices/inclusiveSlice";
+  createLocation,
+  updateLocation,
+} from "../../../redux/slices/locationSlice";
 
 const Form = ({
   handleClose,
@@ -30,7 +27,6 @@ const Form = ({
   const { enqueueSnackbar } = useSnackbar();
 
   // TODO: useStates
-  const [photo, setPhoto] = useState(null);
 
   // TODO: get the data from slice
 
@@ -68,80 +64,51 @@ const Form = ({
 
   // TODO: functions
 
-  // TODO: handle upload image
-  const handleDropPhoto = useCallback((acceptedFiles) => {
-    const newFile = acceptedFiles[0];
-    if (newFile) {
-      setPhoto(
-        Object.assign(newFile, {
-          preview: URL.createObjectURL(newFile),
+  // const onCreateInclusive = (values) => {
+  //   // TODO: dispatch the action to create a brand
+  //   const formData = new FormData();
+
+  //   formData.append("name", values.name);
+
+  //   dispatch(createInclusive({ data: formData, enqueueSnackbar, handleClose }));
+  // };
+
+  const onCreateLocation = (values) => {
+    // TODO: dispatch the action to create a size
+    if (values?.name) {
+      const slug = slugify(values.name, {
+        lower: true,
+        remove: /[*+~.()'"!:@]/,
+        strict: true,
+      });
+      dispatch(
+        createLocation({
+          data: { ...values, slug },
+          enqueueSnackbar,
+          handleClose,
         })
       );
-      setPhoto(acceptedFiles[0]);
     }
-  }, []);
-
-  const onCreateInclusive = (values) => {
-    // TODO: dispatch the action to create a brand
-    const formData = new FormData();
-
-    formData.append("name", values.name);
-
-    dispatch(createInclusive({ data: formData, enqueueSnackbar, handleClose }));
-  };
-  const onCreateExclusive = (values) => {
-    // TODO: dispatch the action to create a brand
-    const formData = new FormData();
-
-    formData.append("name", values.name);
-
-    dispatch(
-      createExclusive({
-        data: formData,
-        enqueueSnackbar,
-        handleClose,
-        id: data?.id,
-      })
-    );
   };
 
-  const onUpdateInclusive = (values) => {
+  const onUpdateLocation = (values) => {
     // TODO: dispatch the action to update a brand
-    const patchData = { name: values.name };
 
-    if (exclusive) {
+    if (values?.name) {
+      const slug = slugify(values.name, {
+        lower: true,
+        remove: /[*+~.()'"!:@]/,
+        strict: true,
+      });
       dispatch(
-        updateExclusive({
-          data: patchData,
+        updateLocation({
+          data: { ...values, slug },
           enqueueSnackbar,
           handleClose,
           id: data?.id,
         })
       );
-      return;
     }
-
-    dispatch(
-      updateInclusive({
-        data: patchData,
-        enqueueSnackbar,
-        handleClose,
-        id: data?.id,
-      })
-    );
-  };
-  const onUpdateExclusive = (values) => {
-    // TODO: dispatch the action to update a brand
-    const patchData = { name: values.name };
-
-    dispatch(
-      updateExclusive({
-        data: patchData,
-        enqueueSnackbar,
-        handleClose,
-        id: data?.id,
-      })
-    );
   };
 
   // TODO: console.logs
@@ -150,15 +117,7 @@ const Form = ({
     <Box p={3}>
       <FormProvider
         methods={methods}
-        onSubmit={handleSubmit(
-          isEdit
-            ? exclusive
-              ? onUpdateExclusive
-              : onUpdateInclusive
-            : exclusive
-            ? onCreateExclusive
-            : onCreateInclusive
-        )}
+        onSubmit={handleSubmit(isEdit ? onUpdateLocation : onCreateLocation)}
       >
         <Stack flexDirection={"row"} justifyContent={"center"} mb={2}></Stack>
         <Box

@@ -17,7 +17,8 @@ import { EditDialog } from "../../../components/component/modals/EditModal";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
-import { deleteBrand } from "../../../redux/slices/brandSlice";
+import { deleteExclusive } from "../../../redux/slices/exclusiveSlice";
+import { deleteInclusive } from "../../../redux/slices/inclusiveSlice";
 import Form from "./Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
@@ -61,6 +62,11 @@ export default function EnhancedTable({
   page,
   rowsPerPage,
   setOpenAdd,
+  search,
+  setSearch,
+  refresh,
+  setRefresh,
+  exclusive = false,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -81,8 +87,8 @@ export default function EnhancedTable({
 
   // TODO: get the data from slice
 
-  const deleteLoading = useSelector((state) => state.brand.isLoading);
-  const fetchLoading = useSelector((state) => state.brand.fetchLoading);
+  const deleteLoading = useSelector((state) => state.inclusive.isLoading);
+  const fetchLoading = useSelector((state) => state.inclusive.fetchLoading);
 
   // TODO:================
 
@@ -145,8 +151,18 @@ export default function EnhancedTable({
 
   // TODO: delete the brand
   const handleDelete = () => {
+    if (exclusive) {
+      dispatch(
+        deleteExclusive({
+          id: dataToEdit?.id,
+          enqueueSnackbar,
+          handleClose: () => setOpenConfirmModal(false),
+        })
+      );
+      return;
+    }
     dispatch(
-      deleteBrand({
+      deleteInclusive({
         id: dataToEdit?.id,
         enqueueSnackbar,
         handleClose: () => setOpenConfirmModal(false),
@@ -155,6 +171,8 @@ export default function EnhancedTable({
   };
 
   // ============
+
+  console.log(rows);
 
   return (
     <>
@@ -167,6 +185,10 @@ export default function EnhancedTable({
           showFilter={showFilter}
           showPrint={showPrint}
           setOpenAdd={setOpenAdd}
+          search={search}
+          setSearch={setSearch}
+          refresh={refresh}
+          setRefresh={setRefresh}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -234,19 +256,6 @@ export default function EnhancedTable({
                             style={{
                               color: colors.text,
                             }}
-                            id={labelId}
-                          >
-                            <img
-                              src={row?.photo}
-                              alt={row?.photo}
-                              className="w-20 h-20 object-contain"
-                            />
-                          </TableCell>
-
-                          <TableCell
-                            style={{
-                              color: colors.text,
-                            }}
                           >
                             <span>{row?.createdDate}</span>
                           </TableCell>
@@ -297,7 +306,7 @@ export default function EnhancedTable({
       {/* TODO: edit role modal */}
       <EditDialog
         open={openEditModal}
-        title={`Edit brand (${dataToEdit?.name})`}
+        title={`Edit ${title}  (${dataToEdit?.name})`}
         handleClose={() => setOpenEditModal(false)}
         maxWidth="sm"
       >
@@ -305,6 +314,8 @@ export default function EnhancedTable({
           data={dataToEdit}
           isEdit={true}
           handleClose={() => setOpenEditModal(false)}
+          title={`${title}`}
+          exclusive={exclusive}
         />
       </EditDialog>
 
@@ -312,7 +323,7 @@ export default function EnhancedTable({
       <ConfirmDialog
         handleClose={() => setOpenConfirmModal(false)}
         open={openConfirmModal}
-        title={`Are you sure, you want to delete brand(${dataToEdit?.name})?`}
+        title={`Are you sure, you want to delete ${title}(${dataToEdit?.name})?`}
         action={
           <Button
             loading={deleteLoading}

@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import { fetchSizes } from "../../redux/slices/sizeSlice";
+import { fetchPages } from "../../redux/slices/pageSlice";
 import { Shadow } from "../../routers";
 import Form from "../../sections/entries/Sizes/Form";
 import EnhancedTable from "../../sections/entries/Sizes/Table";
@@ -16,19 +16,36 @@ const headCells = [
     disablePadding: false,
     label: "Name",
   },
-
   {
-    id: "category",
-    numeric: true,
+    id: "title",
+    numeric: false,
     disablePadding: false,
-    label: "Category",
+    label: "Title",
+  },
+  {
+    id: "meta_title",
+    numeric: false,
+    disablePadding: false,
+    label: "Meta Title",
+  },
+  {
+    id: "meta_description",
+    numeric: false,
+    disablePadding: false,
+    label: "Meta Description",
+  },
+  {
+    id: "meta_keywords",
+    numeric: false,
+    disablePadding: false,
+    label: "Meta Keywords",
   },
 
   {
-    id: "note",
+    id: "slug",
     numeric: true,
     disablePadding: false,
-    label: "Note",
+    label: "Slug",
   },
 
   {
@@ -61,28 +78,30 @@ export default function Sizes() {
   const [rows, setRows] = useState([]);
 
   // TODO: get the data from slice
-  const sizes = useSelector((state) => state.size.sizes);
-
-  // TODO: fetching the sizes
+  const pages = useSelector((state) => state.page.pages);
+  // TODO: fetching the pages
   useEffect(() => {
-    dispatch(fetchSizes({ enqueueSnackbar, ...pagination }));
+    dispatch(fetchPages({ enqueueSnackbar, ...pagination }));
   }, [dispatch, enqueueSnackbar, pagination, refresh]);
 
   // TODO: set the rows
 
   useEffect(() => {
-    const data = sizes?.data?.map((size) => ({
+    const data = pages?.data?.data?.map((size) => ({
       id: size?.id,
       slug: size?.slug,
       name: size?.name,
-      category: size?.category,
-      note: size?.note,
+      title: size?.title,
+      meta_title: size?.meta_title,
+      meta_description: size?.meta_description,
+      meta_keywords: size?.meta_keywords,
+
       createdDate: moment(size?.created_at)
         .format("Do MMMM, YYYY")
         .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
     }));
     setRows(data);
-  }, [sizes]);
+  }, [pages]);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -105,7 +124,7 @@ export default function Sizes() {
         <Card color="transparent" shadow={false}>
           <EnhancedTable
             showSearch={false}
-            title="Sizes"
+            title="Pages"
             headCells={headCells}
             rows={rows}
             showFilter={false}
@@ -120,7 +139,7 @@ export default function Sizes() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={sizes?.meta?.total}
+            count={pages?.meta?.total}
             rowsPerPage={pagination.limit}
             page={pagination.page}
             onPageChange={handleChangePage}
@@ -132,7 +151,7 @@ export default function Sizes() {
       {/* TODO: add sizes */}
       <AddDialog
         maxWidth="sm"
-        title={"Add new size"}
+        title={"Add new Page"}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >

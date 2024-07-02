@@ -1,15 +1,15 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoadingButton } from "@mui/lab";
-import { Autocomplete, Box, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import slugify from "slugify";
 import * as Yup from "yup";
 import { RHFTextArea, RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
-import { fetchCategories } from "../../../redux/slices/categorySlice";
-import { createSize, updateSize } from "../../../redux/slices/sizeSlice";
+import { createPage, updatePage } from "../../../redux/slices/pageSlice";
 
 const Form = ({ handleClose, data, isEdit = false }) => {
   // TODO: hooks
@@ -26,15 +26,21 @@ const Form = ({ handleClose, data, isEdit = false }) => {
 
   const Schema = Yup.object().shape({
     name: Yup.string().required("size's name is required"),
-    category_id: Yup.string().required("please select category"),
+    meta_title: Yup.string().required("Meta title is required"),
+    meta_description: Yup.string().required("Meta title is required"),
+    meta_keywords: Yup.string().required("Meta title is required"),
+    title: Yup.string().required("Meta title is required"),
   });
 
   // TODO: default values in the form
   const defaultValues = useMemo(
     () => ({
       name: data?.name,
-      note: data?.note,
-      category_id: data?.category?.id,
+      title: data?.title,
+      meta_title: data?.meta_title,
+      meta_description: data?.meta_description,
+      meta_keywords: data?.meta_keywords,
+      slug: data?.slug,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data]
@@ -49,30 +55,34 @@ const Form = ({ handleClose, data, isEdit = false }) => {
 
   // TODO: useEffects, write the useEffect codes here
 
-  // TODO: fetch the categories of the s for auto complete
-  useEffect(() => {
-    dispatch(fetchCategories({ enqueueSnackbar, page: 0, limit: 100 }));
-  }, [dispatch, enqueueSnackbar]);
-
   // TODO: set the size options
 
   // ======
 
   // TODO: functions
 
-  const onCreateSize = (values) => {
+  const onCreatePage = (values) => {
     // TODO: dispatch the action to create a size
-    dispatch(createSize({ data: values, enqueueSnackbar, handleClose }));
+    if (values?.name) {
+      const slug = slugify(values.name, {
+        lower: true,
+        remove: /[*+~.()'"!:@]/,
+        strict: true,
+      });
+      dispatch(
+        createPage({ data: { ...values, slug }, enqueueSnackbar, handleClose })
+      );
+    }
   };
 
-  const onUpdateSize = (values) => {
+  const onUpdatePage = (values) => {
     // TODO: dispatch the action to update a size
     dispatch(
-      updateSize({
+      updatePage({
         data: values,
         enqueueSnackbar,
         handleClose,
-        id: data?.slug,
+        id: data?.id,
       })
     );
   };
@@ -83,7 +93,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
     <Box p={3}>
       <FormProvider
         methods={methods}
-        onSubmit={handleSubmit(isEdit ? onUpdateSize : onCreateSize)}
+        onSubmit={handleSubmit(isEdit ? onUpdatePage : onCreatePage)}
       >
         <Stack flexDirection={"row"} justifyContent={"center"} mb={2}></Stack>
         <Box
@@ -95,43 +105,16 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             sm: "repeat(1, 1fr)",
           }}
         >
-          <RHFTextField name={"name"} label={" size's name *"} />
-
-          {/* TODO: category */}
-          <Autocomplete
-            defaultValue={{
-              label: data?.category?.name || "",
-              id: data?.category?.id || "",
-            }}
-            name="category_id"
-            disablePortal
-            id="combo-box-demo"
-            options={
-              categories?.data?.map((category) => ({
-                label: category?.name,
-                id: category?.id,
-              })) || []
-            }
-            renderInput={(params) => (
-              <RHFTextField
-                name={"category_id"}
-                {...params}
-                label="Search category *"
-              />
-            )}
-            onChange={(event, newValues) =>
-              methods.setValue("category_id", newValues ? newValues.id : null)
-            }
-            renderOption={(props, option) => (
-              <li {...props} key={option.id}>
-                {option.label}
-              </li>
-            )}
+          <RHFTextField name={"name"} label={" page name *"} />
+          <RHFTextField name={"title"} label={" page title *"} />
+          <RHFTextField name={"meta_title"} label={" page meta title *"} />
+          <RHFTextField
+            name={"meta_keywords"}
+            label={" page meta keywords *"}
           />
-
           <RHFTextArea
-            name={"note"}
-            label={"Please enter note"}
+            name={"meta_description"}
+            label={" page meta description *"}
             multiple={true}
             rows={2}
           />
@@ -145,7 +128,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             variant="contained"
             className="!bg-primary w-fit"
           >
-            {isEdit ? "Update Size" : "Create Size"}
+            {isEdit ? "Update Page" : "Create Page"}
           </LoadingButton>
         </Stack>
       </FormProvider>

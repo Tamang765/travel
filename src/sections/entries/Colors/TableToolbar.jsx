@@ -1,8 +1,21 @@
-import { IconButton } from "@material-tailwind/react";
-import { alpha, Toolbar, Typography } from "@mui/material";
-import { AiOutlineEdit, AiOutlinePlus, AiOutlinePrinter } from "react-icons/ai";
-import { MdFilterList, MdOutlineDeleteOutline } from "react-icons/md";
-import { SearchAwaiting } from "../../../pages/frontdesk/awaiting/SearchAwaiting";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button } from "@material-tailwind/react";
+import {
+  alpha,
+  Box,
+  Divider,
+  InputAdornment,
+  Stack,
+  TextField,
+} from "@mui/material";
+import {
+  AiOutlineEdit,
+  AiOutlinePlus,
+  AiOutlinePrinter,
+  AiOutlineSearch,
+} from "react-icons/ai";
+import { MdOutlineDeleteOutline, MdOutlineRefresh } from "react-icons/md";
+import { useSelector } from "react-redux";
 import { TitleMd } from "../../../routers";
 
 export function EnhancedTableToolbar({
@@ -10,85 +23,105 @@ export function EnhancedTableToolbar({
   title,
   showAdd,
   showSearch,
-  showFilter,
-  showPrint,
   setOpenAdd,
+  setRefresh,
+  search,
+  setSearch,
 }) {
+  // TODO: hooks
+
+  // TODO: get the data from slice
+
+  const fetchLoading = useSelector((state) => state.product.fetchLoading);
+
+  // TODO: console.log
+
   return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          <TitleMd> {title}</TitleMd>
-        </Typography>
-      )}
+    <Box>
+      <Stack
+        flexDirection={"row"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        sx={{
+          py: 2,
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 },
+          ...(numSelected > 0 && {
+            bgcolor: (theme) =>
+              alpha(
+                theme.palette.primary.main,
+                theme.palette.action.activatedOpacity
+              ),
+          }),
+        }}
+      >
+        {numSelected > 0 ? (
+          <p>{numSelected} selected</p>
+        ) : (
+          <p>
+            <TitleMd>{title}</TitleMd>
+          </p>
+        )}
 
-      {numSelected > 0 ? (
-        <>
+        {numSelected > 0 ? (
           <div className="flex items-center gap-5">
-            <IconButton variant="gradient" color="green">
+            <button className="flex items-center bg-secondary text-sm text-white p-2 rounded-lg">
               <AiOutlineEdit size={20} />
-            </IconButton>
-            <IconButton variant="gradient" color="red">
+            </button>
+            <button className="flex items-center bg-red text-sm text-white p-2 rounded-lg">
               <MdOutlineDeleteOutline size={20} />
-            </IconButton>
-            <IconButton variant="gradient">
+            </button>
+            <button className="flex items-center bg-secondary text-sm text-white p-2 rounded-lg">
               <AiOutlinePrinter size={20} />
-            </IconButton>
+            </button>
           </div>
-        </>
-      ) : (
-        <>
+        ) : (
           <div className="flex items-center gap-5">
-            {showSearch && <SearchAwaiting />}
-            {showAdd && (
-              <button
-                onClick={setOpenAdd}
-                className="flex items-center bg-primary text-sm text-white p-2.5 px-6 rounded-lg"
-              >
-                <AiOutlinePlus size={18} className="mr-4" />
-                Add
-              </button>
-            )}
-            {showFilter && (
-              <IconButton variant="outlined" color="gray">
-                <MdFilterList size={20} />
-              </IconButton>
+            {showSearch && (
+              <TextField
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="search..."
+                size="small"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <AiOutlineSearch
+                        size={20}
+                        className="text-xl cursor-pointer"
+                      />
+                    </InputAdornment>
+                  ),
+                }}
+              />
             )}
 
-            {showPrint && (
-              <button className="flex items-center bg-primary text-sm text-white p-2.5 px-6 rounded-lg">
-                <AiOutlinePrinter size={20} />
-              </button>
+            {showAdd && (
+              <Button
+                onClick={setOpenAdd}
+                className="flex items-center !bg-primary !text-sm !text-white p-2.5 px-3 rounded-lg"
+              >
+                <AiOutlinePlus size={15} className="mr-1" />
+                Add
+              </Button>
             )}
+
+            <Button
+              loading={fetchLoading}
+              disabled={fetchLoading}
+              onClick={() => {
+                setRefresh((prev) => !prev);
+                setSearch("");
+              }}
+              className="flex items-center !bg-secondary !text-sm !text-white p-2.5 px-3 rounded-lg"
+            >
+              <MdOutlineRefresh size={20} />
+            </Button>
           </div>
-        </>
-      )}
-    </Toolbar>
+        )}
+      </Stack>
+
+      <Divider />
+    </Box>
   );
 }

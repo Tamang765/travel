@@ -17,7 +17,7 @@ import { EditDialog } from "../../../components/component/modals/EditModal";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
-import { deleteColor } from "../../../redux/slices/colorSlice";
+import { deleteFaq } from "../../../redux/slices/faqSlice";
 import Form from "./Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
@@ -58,9 +58,11 @@ export default function EnhancedTable({
   showPrint = false,
   headCells,
   rows,
-  page,
-  rowsPerPage,
+  refresh,
+  setRefresh,
   setOpenAdd,
+  search,
+  setSearch,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -145,7 +147,7 @@ export default function EnhancedTable({
   // TODO: delete the colors
   const handleDelete = () => {
     dispatch(
-      deleteColor({
+      deleteFaq({
         id: dataToEdit?.id,
         enqueueSnackbar,
         handleClose: () => setOpenConfirmModal(false),
@@ -166,6 +168,10 @@ export default function EnhancedTable({
           showFilter={showFilter}
           showPrint={showPrint}
           setOpenAdd={setOpenAdd}
+          setRefresh={setRefresh}
+          refresh={refresh}
+          search={search}
+          setSearch={setSearch}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -225,10 +231,9 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.name}
+                              {row.question}
                             </span>
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,
@@ -240,7 +245,21 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.code}
+                              {row.answer}
+                            </span>
+                          </TableCell>
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            id={labelId}
+                          >
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row.package_id}
                             </span>
                           </TableCell>
 
@@ -298,7 +317,7 @@ export default function EnhancedTable({
       {/* TODO: edit role modal */}
       <EditDialog
         open={openEditModal}
-        title={`Edit color ${dataToEdit?.color}`}
+        title={`Edit Faq`}
         handleClose={() => setOpenEditModal(false)}
         maxWidth="sm"
       >
@@ -313,7 +332,7 @@ export default function EnhancedTable({
       <ConfirmDialog
         handleClose={() => setOpenConfirmModal(false)}
         open={openConfirmModal}
-        title={`Are you sure, you want to delete color(${dataToEdit?.color})?`}
+        title={`Are you sure, you want to delete faq?`}
         action={
           <Button
             loading={deleteLoading}

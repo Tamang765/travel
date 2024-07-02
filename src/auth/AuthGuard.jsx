@@ -9,7 +9,6 @@ import { useSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
 import Login from "../pages/LoginPage";
 import { fetchCategories } from "../redux/slices/categorySlice";
-import { fetchRoles } from "../redux/slices/roleSlice";
 import { useAuthContext } from "./useAuthContext";
 
 // ----------------------------------------------------------------------
