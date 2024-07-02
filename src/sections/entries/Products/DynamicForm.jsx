@@ -1,6 +1,6 @@
 import { Box, IconButton, TextField } from "@mui/material";
 import React, { useState } from "react";
-import { RHFEditor } from "../../../components/hook-form";
+import { RHFEditor, RHFTextField } from "../../../components/hook-form";
 
 const DynamicForm = () => {
   const [inputFields, setInputFields] = useState([
@@ -8,9 +8,9 @@ const DynamicForm = () => {
   ]);
 
   const handleChangeInput = (index, event) => {
-    console.log(event.target);
+    const { name, value } = event.target;
     const values = [...inputFields];
-    values[index][event.target.name] = event.target.value;
+    values[index][name] = value;
     setInputFields(values);
   };
 
@@ -29,44 +29,34 @@ const DynamicForm = () => {
 
   console.log(inputFields);
   return (
-    <div className="w-full flex">
+    <div className="w-full flex flex-col mt-3">
       {inputFields.map((inputField, index) => (
-        <div key={index} className="flex flex-col w-full gap-2 ">
-          <TextField
+        <div key={index} className="flex flex-col w-full gap-2  ">
+          <RHFTextField
             fullWidth
             name="sectionTitle"
             label="Section Title"
             variant="outlined"
             size="small"
-            value={inputField.firstName}
-            onChange={(event) => handleChangeInput(index, event)}
-          />
-          {/* <TextField
-            fullWidth
-            name="sectionDescription"
-            label="Section Description"
-            variant="outlined"
-            size="small"
-            value={inputField.lastName}
-            onChange={(event) => handleChangeInput(index, event)}
-            maxRows={4}
-            multiline
-          /> */}
-          <RHFEditor
-            name={"sectionDescription"}
-            placeholder="Write anwser here..."
-            value={inputField.lastName}
+            value={inputField.sectionTitle}
             onChange={(event) => handleChangeInput(index, event)}
           />
 
-          <Box
-            sx={{
-              position: "absolute",
-              right: "0",
-              transform: "translateY(-10px)",
-              //   background: "yellow",
-            }}
-          >
+          <RHFEditor
+            name={"sectionDescription"}
+            placeholder="Write anwser here..."
+            value={inputField.sectionDescription}
+            onChange={(event) =>
+              handleChangeInput(index, {
+                target: {
+                  name: "sectionDescription",
+                  value: event,
+                },
+              })
+            }
+          />
+
+          <Box>
             <IconButton onClick={() => handleRemoveFields(index)}>-</IconButton>
             <IconButton onClick={() => handleAddFields()}>+</IconButton>
           </Box>
