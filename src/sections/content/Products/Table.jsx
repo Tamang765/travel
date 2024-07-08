@@ -1,5 +1,5 @@
 import { Button } from "@material-tailwind/react";
-import { FormControlLabel, Stack, Switch } from "@mui/material";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import Table from "@mui/material/Table";
@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import { useSnackbar } from "notistack";
 import * as React from "react";
 import { AiOutlineEdit } from "react-icons/ai";
+import { FaEye } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { ConfirmDialog } from "../../../components/component/modals/ConfirmDialog";
@@ -17,35 +18,11 @@ import { EditDialog } from "../../../components/component/modals/EditModal";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
-import {
-  deleteProduct,
-  updateProductStatus,
-} from "../../../redux/slices/productSlice";
-import Form from "./Form";
+import { deleteBlog } from "../../../redux/slices/blogSlice";
+import { updateProductStatus } from "../../../redux/slices/productSlice";
+import Form from "../../entries/Products/Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
-
-const tabData = [
-  {
-    label: "All",
-    value: "all",
-  },
-
-  {
-    label: "Trending",
-    value: "trending",
-  },
-
-  {
-    label: "Featured",
-    value: "featured",
-  },
-
-  {
-    label: "New",
-    value: "new",
-  },
-];
 
 export default function EnhancedTable({
   title,
@@ -62,8 +39,6 @@ export default function EnhancedTable({
   setRefresh,
   search,
   setSearch,
-  activeTab,
-  setActiveTab,
   selectedFilters,
   setSelectedFilters,
   handleFilter,
@@ -81,6 +56,8 @@ export default function EnhancedTable({
   const [openEditModal, setOpenEditModal] = React.useState(false);
   const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
 
+  // TODO: for view
+  const [openViewModal, setOpenViewModal] = React.useState(false);
   const [dataToEdit, setDataToEdit] = React.useState();
 
   // ======
@@ -152,7 +129,7 @@ export default function EnhancedTable({
   // TODO: delete
   const handleDelete = () => {
     dispatch(
-      deleteProduct({
+      deleteBlog({
         id: dataToEdit?.id,
         enqueueSnackbar,
         handleClose: () => setOpenConfirmModal(false),
@@ -190,29 +167,11 @@ export default function EnhancedTable({
           refresh={refresh}
           setSearch={setSearch}
           search={search}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
           selectedFilters={selectedFilters}
           setSelectedFilters={setSelectedFilters}
           handleFilter={handleFilter}
         />
 
-        {/* TODO: tabs */}
-        <div className="flex border-b border-gray-200 overflow-scroll">
-          {tabData.map((tab) => (
-            <button
-              key={tab.value}
-              className={`px-4 py-2 -mb-px text-sm font-medium border-b-4 w-fit ${
-                activeTab === tab.value
-                  ? "border-black text-black border-b-4"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-              onClick={() => setActiveTab(tab.value)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -267,8 +226,8 @@ export default function EnhancedTable({
                             id={labelId}
                           >
                             <img
-                              src={row?.photo}
-                              alt={row?.photo}
+                              src={row?.image}
+                              alt={row?.image}
                               className="w-20 h-20 object-contain"
                             />
                           </TableCell>
@@ -284,7 +243,7 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.sku}
+                              {row.title}
                             </span>
                           </TableCell>
 
@@ -299,26 +258,8 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.name}
+                              {row.slug}
                             </span>
-                          </TableCell>
-
-                          <TableCell
-                            style={{
-                              color: colors.text,
-                            }}
-                            id={labelId}
-                          >
-                            <FormControlLabel
-                              control={
-                                <Switch
-                                  checked={row.status}
-                                  onChange={() => {
-                                    handleChangeStatus(row);
-                                  }}
-                                />
-                              }
-                            />
                           </TableCell>
 
                           <TableCell
@@ -332,7 +273,7 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.brand?.name}
+                              {row.createdDate}
                             </span>
                           </TableCell>
 
@@ -342,6 +283,15 @@ export default function EnhancedTable({
                             }}
                           >
                             <Stack flexDirection={"row"} gap={2}>
+                              <button
+                                onClick={() => {
+                                  setOpenViewModal(true);
+                                  setDataToEdit(row);
+                                }}
+                                className="flex items-center bg-secondary text-sm text-white p-2 rounded-lg"
+                              >
+                                <FaEye size={20} />
+                              </button>
                               <button
                                 onClick={() => {
                                   setOpenEditModal(true);
@@ -382,7 +332,7 @@ export default function EnhancedTable({
       {/* TODO: edit role modal */}
       <EditDialog
         open={openEditModal}
-        title={`Edit product (${(dataToEdit?.name, dataToEdit?.sku)})`}
+        title={`Edit blog (${(dataToEdit?.title, dataToEdit?.id)})`}
         handleClose={() => setOpenEditModal(false)}
         maxWidth="lg"
       >
@@ -395,11 +345,27 @@ export default function EnhancedTable({
         />
       </EditDialog>
 
+      {/* TODO: view role modal */}
+      <EditDialog
+        open={openViewModal}
+        title={`View blog (${(dataToEdit?.title, dataToEdit?.id)})`}
+        handleClose={() => setOpenViewModal(false)}
+        maxWidth="lg"
+      >
+        <Form
+          refresh={refresh}
+          setRefresh={setRefresh}
+          data={dataToEdit}
+          isView
+          handleClose={() => setOpenViewModal(false)}
+        />
+      </EditDialog>
+
       {/* TODO: delete confirm modal */}
       <ConfirmDialog
         handleClose={() => setOpenConfirmModal(false)}
         open={openConfirmModal}
-        title={`Are you sure, you want to delete product(${dataToEdit?.name})?`}
+        title={`Are you sure, you want to delete blog(${dataToEdit?.title})?`}
         action={
           <Button
             loading={deleteLoading}

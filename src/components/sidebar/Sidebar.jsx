@@ -29,7 +29,7 @@ export const Sidebar = ({ showSideMenu, setShowSideMenu }) => {
               src={LogoImg}
               alt="LogoImg"
               onClick={goHome}
-              className="w-20"
+              className="w-80 aspect-square object-cover"
             />
           </div>
         </div>

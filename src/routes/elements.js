@@ -82,13 +82,16 @@ export const Categories = Loadable(
   lazy(() => import("../pages/entries/Categories"))
 );
 
+export const Vehicles = Loadable(
+  lazy(() => import("../pages/entries/Vehicles"))
+);
 
 // TODO: content section
 
-export const Blogs = Loadable(
-  lazy(() => import("../pages/content/Blog"))
-);
+export const Blogs = Loadable(lazy(() => import("../pages/content/Blog")));
 
+export const Facts = Loadable(lazy(() => import("../pages/content/Facts")));
+export const Gallery = Loadable(lazy(() => import("../pages/content/Gallery")));
 
 // TODO: settings
 export const Settings = Loadable(

@@ -7,6 +7,7 @@ import exclusiveSlice from "./slices/exclusiveSlice";
 import inclusiveSlice from "./slices/inclusiveSlice";
 import locationSlice from "./slices/locationSlice";
 
+import blogSlice from "./slices/blogSlice";
 import categorySlice from "./slices/categorySlice";
 import colorSlice from "./slices/colorSlice";
 import customerSlice from "./slices/customerSlice";
@@ -18,6 +19,9 @@ import productSlice from "./slices/productSlice";
 import referSlice from "./slices/referSlice";
 import roleSlice from "./slices/roleSlice";
 import sizeSlice from "./slices/sizeSlice";
+import factSlice from "./slices/factSlice";
+import vehicleSlice from "./slices/vehicleSlice";
+
 
 import teamSlice from "./slices/teamSlice";
 import userSlice from "./slices/userSlice";
@@ -138,6 +142,22 @@ export const locationPersistConfig = {
   keyPrefix: "redux-",
 };
 
+export const blogPersistConfig = {
+  key: "blog",
+  storage,
+  keyPrefix: "redux-",
+};
+
+export const factPersistConfig = {
+  key: "fact",
+  storage,
+  keyPrefix: "redux-",
+};
+export const vehiclePersistConfig = {
+  key: "vehicle",
+  storage,
+  keyPrefix: "redux-",
+};
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authSlice),
   user: persistReducer(userPersistConfig, userSlice),
@@ -158,6 +178,11 @@ const rootReducer = combineReducers({
   customer: persistReducer(customerPersistConfig, customerSlice),
   product: persistReducer(productPersistConfig, productSlice),
   setting: persistReducer(settingsPersistConfig, referSlice),
+  blog: persistReducer(blogPersistConfig, blogSlice),
+  fact: persistReducer(factPersistConfig, factSlice),
+  vehicle: persistReducer(vehiclePersistConfig, vehicleSlice),
+
+
   emergencyContact: persistReducer(
     emergencyContactPersistConfig,
     emergencyContactSlice

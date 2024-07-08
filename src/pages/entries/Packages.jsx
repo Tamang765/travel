@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
 import { fetchPackages } from "../../redux/slices/packageSlice";
 import { Shadow } from "../../routers";
+
+import FormFaq from "../../sections/entries/Colors/Form";
 import Form from "../../sections/entries/Packages/Form";
 import EnhancedTable from "../../sections/entries/Packages/Table";
 
@@ -86,6 +88,12 @@ export default function Packages() {
 
   // TODO: useStates
   const [openAdd, setOpenAdd] = useState(false);
+  const [optionForm, setOptionForm] = useState({
+    title: "Package",
+    isOpen: true,
+    id: null,
+  });
+
   const [pagination, setPagination] = useState({
     page: 0,
     limit: 10,
@@ -171,11 +179,43 @@ export default function Packages() {
       {/* TODO: add sizes */}
       <AddDialog
         maxWidth="sm"
-        title={"Add new Packages"}
+        title={`Create ${optionForm?.title}`}
         open={openAdd}
-        handleClose={() => setOpenAdd(false)}
+        handleClose={() => {
+          setOpenAdd(false);
+          setOptionForm({
+            title: "Package",
+            isOpen: true,
+            id: null,
+          });
+        }}
       >
-        <Form handleClose={() => setOpenAdd(false)} />
+        {optionForm.isOpen ? (
+          <Form
+            handleClose={() => {
+              setOpenAdd(false);
+              setOptionForm({
+                title: "Package",
+                isOpen: true,
+                id: null,
+              });
+            }}
+            setvalue={setOptionForm}
+          />
+        ) : (
+          <FormFaq
+            handleClose={() => {
+              setOpenAdd(false);
+              setOptionForm({
+                title: "Package",
+                isOpen: true,
+                id: null,
+              });
+            }}
+            setOption={setOptionForm}
+            option={optionForm}
+          />
+        )}
       </AddDialog>
     </>
   );

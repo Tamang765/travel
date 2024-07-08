@@ -5,11 +5,11 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import { fetchBlogs } from "../../redux/slices/blogSlice";
+import { fetchFacts } from "../../redux/slices/factSlice";
 import { Shadow } from "../../routers";
-import EnhancedTable from "../../sections/content/Products/Table";
-import { headCells } from "../../sections/content/Products/headCells";
-import Form from "../../sections/entries/Products/Form";
+import EnhancedTable from "../../sections/content/Facts/Table";
+import { headCells } from "../../sections/content/Facts/headCells";
+import Form from "../../sections/entries/Facts/Form";
 
 // TODO: menu options alias
 const alias = {
@@ -37,7 +37,7 @@ export default function Products() {
   const [rows, setRows] = useState([]);
 
   // TODO: get the data from slice
-  const blogs = useSelector((state) => state.blog.blogs);
+  const facts = useSelector((state) => state.fact.facts);
 
   const formattedFilters = Object.entries(selectedFilters).reduce(
     (acc, [key, { value }]) => {
@@ -52,7 +52,7 @@ export default function Products() {
     if (search) {
       const debounce = setTimeout(() => {
         dispatch(
-          fetchBlogs({
+          fetchFacts({
             enqueueSnackbar,
             limit: pagination.limit,
             page: pagination.page,
@@ -65,7 +65,7 @@ export default function Products() {
       return () => clearTimeout(debounce);
     } else {
       dispatch(
-        fetchBlogs({
+        fetchFacts({
           enqueueSnackbar,
           limit: pagination.limit,
           page: pagination.page,
@@ -85,23 +85,30 @@ export default function Products() {
   ]);
 
   // TODO: set the rows
+  console.log(facts);
 
   useEffect(() => {
-    const data = blogs?.data?.data?.map((blog) => ({
-      id: blog?.id,
-      slug: blog?.slug,
-      title: blog?.title,
-      image: blog?.image,
-      description: blog?.description,
-      content: blog?.content,
-      category_id: blog?.category_id,
+    const data = facts?.data?.map((fact) => ({
+      id: fact?.id,
+      package_id: fact?.package_id,
+      start_end_point: fact?.start_end_point,
+      activity: fact?.activity,
+      accomodation: fact?.accomodation,
 
-      createdDate: moment(blog?.created_at)
+      altitude: fact?.altitude,
+      best_season: fact?.best_season,
+      country: fact?.country,
+      duration: fact?.duration,
+      difficulty: fact?.difficulty,
+      category_id: fact?.category_id,
+      meals: fact?.meals,
+
+      createdDate: moment(fact?.created_at)
         .format("Do MMMM, YYYY")
         .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
     }));
     setRows(data);
-  }, [blogs]);
+  }, [facts]);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -119,7 +126,7 @@ export default function Products() {
   // TODO: filter the data
   const handleFilter = () => {
     dispatch(
-      fetchBlogs({
+      facts({
         enqueueSnackbar,
         limit: pagination.limit,
         page: pagination.page,
@@ -128,15 +135,14 @@ export default function Products() {
       })
     );
   };
-
   // TODO: console.logs
-  console.log(blogs);
+  console.log(facts);
   return (
     <>
       <Shadow>
         <Card color="transparent" shadow={false}>
           <EnhancedTable
-            title="Blogs"
+            title="Facts"
             headCells={headCells}
             rows={rows}
             showFilter={true}
@@ -156,7 +162,7 @@ export default function Products() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={blogs?.meta?.total}
+            count={facts?.meta?.total}
             rowsPerPage={pagination.limit}
             page={pagination.page}
             onPageChange={handleChangePage}
@@ -168,7 +174,7 @@ export default function Products() {
       {/* TODO: add products */}
       <AddDialog
         maxWidth="lg"
-        title={"Add new Blog"}
+        title={"Add new Fact"}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >

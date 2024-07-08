@@ -5,20 +5,20 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import { fetchBlogs } from "../../redux/slices/blogSlice";
+import { fetchVehicles } from "../../redux/slices/vehicleSlice";
 import { Shadow } from "../../routers";
-import EnhancedTable from "../../sections/content/Products/Table";
-import { headCells } from "../../sections/content/Products/headCells";
-import Form from "../../sections/entries/Products/Form";
+import Form from "../../sections/entries/Vehicle/Form";
+import EnhancedTable from "../../sections/entries/Vehicle/Table";
+import { headCells } from "../../sections/entries/Vehicle/headCells";
 
 // TODO: menu options alias
 const alias = {
   Status: "status",
   Brand: "brand_id",
-  "Product for?": "category_id",
+  "Vehicle for?": "category_id",
 };
 
-export default function Products() {
+export default function Vehicles() {
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -37,7 +37,7 @@ export default function Products() {
   const [rows, setRows] = useState([]);
 
   // TODO: get the data from slice
-  const blogs = useSelector((state) => state.blog.blogs);
+  const vehicles = useSelector((state) => state.vehicle.vehicles);
 
   const formattedFilters = Object.entries(selectedFilters).reduce(
     (acc, [key, { value }]) => {
@@ -47,12 +47,12 @@ export default function Products() {
     {}
   );
 
-  // TODO: fetch the products when searached
+  // TODO: fetch the vehicles when searached
   useEffect(() => {
     if (search) {
       const debounce = setTimeout(() => {
         dispatch(
-          fetchBlogs({
+          fetchVehicles({
             enqueueSnackbar,
             limit: pagination.limit,
             page: pagination.page,
@@ -65,7 +65,7 @@ export default function Products() {
       return () => clearTimeout(debounce);
     } else {
       dispatch(
-        fetchBlogs({
+        fetchVehicles({
           enqueueSnackbar,
           limit: pagination.limit,
           page: pagination.page,
@@ -87,21 +87,22 @@ export default function Products() {
   // TODO: set the rows
 
   useEffect(() => {
-    const data = blogs?.data?.data?.map((blog) => ({
-      id: blog?.id,
-      slug: blog?.slug,
-      title: blog?.title,
-      image: blog?.image,
-      description: blog?.description,
-      content: blog?.content,
-      category_id: blog?.category_id,
+    const data = vehicles?.data?.map((vehicle) => ({
+      id: vehicle?.id,
+      slug: vehicle?.slug,
+      name: vehicle?.name,
+      type: vehicle?.type,
+      image: vehicle?.image,
+      capacity: vehicle?.capacity,
+      price: vehicle?.price,
+      description: vehicle?.description,
 
-      createdDate: moment(blog?.created_at)
+      createdDate: moment(vehicle?.created_at)
         .format("Do MMMM, YYYY")
         .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
     }));
     setRows(data);
-  }, [blogs]);
+  }, [vehicles]);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -119,7 +120,7 @@ export default function Products() {
   // TODO: filter the data
   const handleFilter = () => {
     dispatch(
-      fetchBlogs({
+      fetchVehicles({
         enqueueSnackbar,
         limit: pagination.limit,
         page: pagination.page,
@@ -130,13 +131,16 @@ export default function Products() {
   };
 
   // TODO: console.logs
-  console.log(blogs);
+
   return (
     <>
       <Shadow>
         <Card color="transparent" shadow={false}>
           <EnhancedTable
-            title="Blogs"
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            showSearch={true}
+            title="Vehicles"
             headCells={headCells}
             rows={rows}
             showFilter={true}
@@ -156,7 +160,7 @@ export default function Products() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={blogs?.meta?.total}
+            count={vehicles?.meta?.total}
             rowsPerPage={pagination.limit}
             page={pagination.page}
             onPageChange={handleChangePage}
@@ -165,10 +169,10 @@ export default function Products() {
         </Card>
       </Shadow>
 
-      {/* TODO: add products */}
+      {/* TODO: add vehicles */}
       <AddDialog
         maxWidth="lg"
-        title={"Add new Blog"}
+        title={"Add new vehicle"}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >

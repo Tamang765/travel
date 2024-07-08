@@ -10,58 +10,61 @@ import { RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
 import { fetchExclusive } from "../../../redux/slices/exclusiveSlice";
 import { fetchInclusive } from "../../../redux/slices/inclusiveSlice";
+import { fetchLocation } from "../../../redux/slices/locationSlice";
 import {
   createPackages,
   updatePackages,
 } from "../../../redux/slices/packageSlice";
 import { fetchPages } from "../../../redux/slices/pageSlice";
 
-const Form = ({ handleClose, data, isEdit = false }) => {
-  // TODO: hooks
-
+const Form = ({ handleClose, data, isEdit = false, setvalue }) => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
-  // TODO: useStates
-
-  // TODO: get the data from slice
-  // TODO: get the data from slice
   const pages = useSelector((state) => state.page.pages);
   const exclusives = useSelector((state) => state.exclusive.exclusive);
   const inclusives = useSelector((state) => state.inclusive.inclusive);
+  const locations = useSelector((state) => state.locations.location);
 
   const createSizeLoading = useSelector((state) => state.size.isLoading);
 
   const Schema = Yup.object().shape({
-    title: Yup.string().required("title is required"),
-
     overview: Yup.string().required("overview is required"),
-    locations: Yup.string().required("locations is required"),
     route_map: Yup.string().required("route_map is required"),
     equipments: Yup.string().required("equipments is required"),
     inclusives: Yup.array().required("inclusives is required"),
     exclusives: Yup.array().required("exclusives is required"),
-
     highlights: Yup.string().required("Highlights is required"),
     note: Yup.string().required("Note is required"),
+    locations: Yup.array().required("Locations is required"),
   });
 
-  // TODO: default values in the form
+  // Parse locations string into an array
+  const parsedLocations = useMemo(() => {
+    if (data?.locations) {
+      return data.locations
+        .replace(/"/g, "")
+        .split(", ")
+        .map((location) => ({ label: location }));
+    }
+    return [];
+  }, [data?.locations]);
+
   const defaultValues = useMemo(
     () => ({
-      overview: data?.overview,
+      page_id: data?.page_id,
       title: data?.title,
-      locations: data?.locations,
+      overview: data?.overview,
+
+      locations: parsedLocations,
       route_map: data?.route_map,
       equipments: data?.equipments,
-      inclusives: data?.inclusives,
-      exclusives: data?.exclusives,
+      inclusives: data && JSON.parse(data?.inclusives),
+      exclusives: data && JSON.parse(data?.exclusives),
       highlights: data?.highlights,
-
       note: data?.note,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data]
+    [data, parsedLocations]
   );
 
   const methods = useForm({
@@ -71,52 +74,38 @@ const Form = ({ handleClose, data, isEdit = false }) => {
 
   const { handleSubmit } = methods;
 
-  // TODO: useEffects, write the useEffect codes here
-  // TODO: fetch the brand, categories, size and color
   useEffect(() => {
     dispatch(fetchPages({ enqueueSnackbar, page: 0, limit: 100 }));
-    dispatch(
-      fetchExclusive({
-        enqueueSnackbar,
-        limit: 100,
-        page: 0,
-      })
-    );
-    dispatch(
-      fetchInclusive({
-        enqueueSnackbar,
-        limit: 100,
-        page: 0,
-      })
-    );
+    dispatch(fetchLocation({ enqueueSnackbar, page: 0, limit: 100 }));
+    dispatch(fetchExclusive({ enqueueSnackbar, limit: 100, page: 0 }));
+    dispatch(fetchInclusive({ enqueueSnackbar, limit: 100, page: 0 }));
   }, [dispatch, enqueueSnackbar]);
-  // TODO: set the size options
 
-  // ======
-
-  // TODO: functions
-
-  const onCreatePackages = (values) => {
+  const onCreatePackages = async (values) => {
     const inclusives = JSON.stringify(
       values?.inclusives?.map((inclusive) => inclusive.id) || []
     );
     const exclusives = JSON.stringify(
       values?.exclusives?.map((exclusive) => exclusive.id) || []
     );
+    const locations =
+      values?.locations?.map((location) => location.label) || [];
+    const result = `"${locations.join('", "')}"`;
 
-    // TODO: dispatch the action to create a size
-
-    dispatch(
+    const res = await dispatch(
       createPackages({
-        data: { ...values, exclusives, inclusives },
+        data: { ...values, exclusives, inclusives, locations: result },
         enqueueSnackbar,
-        handleClose,
       })
     );
+    setvalue({
+      title: "Faq",
+      isOpen: false,
+      id: res?.payload?.data?.id,
+    });
   };
 
   const onUpdatePage = (values) => {
-    // TODO: dispatch the action to update a size
     dispatch(
       updatePackages({
         data: values,
@@ -127,7 +116,6 @@ const Form = ({ handleClose, data, isEdit = false }) => {
     );
   };
 
-  // TODO: console.logs
   return (
     <Box p={3}>
       <FormProvider
@@ -144,8 +132,6 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             sm: "repeat(1, 1fr)",
           }}
         >
-          <RHFTextField name={"title"} label={" Title *"} />
-
           <Autocomplete
             defaultValue={{
               label: data?.category?.name || "",
@@ -174,18 +160,40 @@ const Form = ({ handleClose, data, isEdit = false }) => {
           />
           <RHFTextField name={"highlights"} label={" Highlights *"} />
           <RHFTextField name={"overview"} label={" Overview *"} />
-          <RHFTextField name={"locations"} label={" Locations *"} />
+          <Autocomplete
+            name="locations"
+            defaultValue={defaultValues?.locations}
+            id="combo-box-main-category"
+            multiple
+            options={
+              locations?.data?.map((page) => ({
+                label: page?.name,
+                id: page?.id,
+              })) || []
+            }
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => (
+              <RHFTextField
+                name={"locations"}
+                {...params}
+                label="Locations *"
+              />
+            )}
+            onChange={(event, newValues) =>
+              methods.setValue("locations", newValues ? newValues : null)
+            }
+            renderOption={(props, option) => (
+              <li {...props} key={option.label}>
+                {option.label}
+              </li>
+            )}
+          />
           <RHFTextField name={"route_map"} label={" Route Map *"} />
           <RHFTextField name={"equipments"} label={" Equipments *"} />
           <RHFTextField name={"note"} label={" Note *"} />
-
           <Autocomplete
-            // defaultValue={{
-            //   label: data?.category?.name || "",
-            //   id: data?.category?.id || "",
-            // }}
             name="inclusives"
-            // disablePortal
+            defaultValue={defaultValues?.inclusives}
             id="combo-box-main-category"
             multiple
             options={
@@ -211,13 +219,9 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             )}
           />
           <Autocomplete
-            // defaultValue={{
-            //   label: data?.category?.name || "",
-            //   id: data?.category?.id || "",
-            // }}
             name="exclusives"
+            defaultValue={defaultValues?.exclusives}
             multiple
-            // disablePortal
             id="combo-box-main-category"
             options={
               exclusives?.data?.map((page) => ({
@@ -251,7 +255,7 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             variant="contained"
             className="!bg-primary w-fit"
           >
-            {isEdit ? "Update Page" : "Create Page"}
+            {isEdit ? "Update Package" : "Create Package"}
           </LoadingButton>
         </Stack>
       </FormProvider>

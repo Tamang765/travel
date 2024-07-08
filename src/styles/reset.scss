@@ -1,12 +1,11 @@
 // @import '../../public/assets/fonts/croogla/Croogla.ttf';
 
-@font-face {
-    font-family: "Croogla";
-    src:  url("../../public/assets/fonts/croogla/Croogla.ttf")format("truetype"),
-    url("../../public/assets/fonts/croogla/Croogla.woff2")format("woff2"),
-    url("../../public/assets/fonts/croogla/Croogla.eot?#iefix")format("embedded-opentype")
-}
-
+// @font-face {
+//     font-family: "";
+//     src:  url("../../public/assets/fonts/croogla/Croogla.ttf")format("truetype"),
+//     url("../../public/assets/fonts/croogla/Croogla.woff2")format("woff2"),
+//     url("../../public/assets/fonts/croogla/Croogla.eot?#iefix")format("embedded-opentype")
+// }
 
 @tailwind base;
 @tailwind components;
@@ -16,17 +15,18 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: "Croogla";
+  font-family: "Forum", serif;
+  font-weight: 900;
+  font-style: normal;
 }
 body {
   background-color: #eaedf7;
 }
 
 ::-webkit-scrollbar {
-          display: none;
-      }
+  display: none;
+}
 
-      
 @keyframes spin {
   0% {
     transform: rotate(0deg);

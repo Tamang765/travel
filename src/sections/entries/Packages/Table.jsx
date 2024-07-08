@@ -118,7 +118,7 @@ export default function EnhancedTable({
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.name);
+      const newSelected = rows?.map((n) => n.name);
       setSelected(newSelected);
       return;
     }
@@ -163,7 +163,7 @@ export default function EnhancedTable({
       <Box sx={{ width: "100%" }}>
         <EnhancedTableToolbar
           title={title}
-          numSelected={selected.length}
+          numSelected={selected?.length}
           showAdd={showAdd}
           showSearch={showSearch}
           showFilter={showFilter}
@@ -180,7 +180,7 @@ export default function EnhancedTable({
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={rows?.length}
               headCells={headCells}
             />
             <TableBody>
@@ -232,7 +232,6 @@ export default function EnhancedTable({
                               {row.page_id}
                             </span>
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,
@@ -398,7 +397,7 @@ export default function EnhancedTable({
       {/* TODO: edit modal */}
       <EditDialog
         open={openEditModal}
-        title={`Edit Page(${dataToEdit?.name})`}
+        title={`Edit Page(${dataToEdit?.id})`}
         handleClose={() => setOpenEditModal(false)}
         maxWidth="sm"
       >
@@ -413,7 +412,7 @@ export default function EnhancedTable({
       <ConfirmDialog
         handleClose={() => setOpenConfirmModal(false)}
         open={openConfirmModal}
-        title={`Are you sure, you want to delete this Page(${dataToEdit?.name})?`}
+        title={`Are you sure, you want to delete this Page(${dataToEdit?.id})?`}
         action={
           <Button
             loading={deleteLoading}

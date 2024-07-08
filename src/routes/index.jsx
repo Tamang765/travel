@@ -4,7 +4,6 @@ import AuthGuard from "../auth/AuthGuard";
 import GuestGuard from "../auth/GuestGuard";
 import { PATH_AFTER_LOGIN } from "../config-global";
 import CompactLayout from "../layouts/compact/CompactLayout";
-import Products from "../pages/entries/Products";
 import { Layout } from "../routers";
 import {
   Admins,
@@ -15,7 +14,9 @@ import {
   Customers,
   EmergencyContacts,
   Exclusive,
+  Facts,
   Faqs,
+  Gallery,
   LandingPage,
   Locations,
   LoginPage,
@@ -26,6 +27,7 @@ import {
   Settings,
   Sizes,
   TodayRides,
+  Vehicles,
 } from "./elements";
 
 //
@@ -132,10 +134,10 @@ export default function Router() {
             },
 
             {
-              path: "products",
+              path: "vehicles",
               element: (
                 <Layout>
-                  <Products />
+                  <Vehicles />
                 </Layout>
               ),
             },
@@ -210,6 +212,22 @@ export default function Router() {
               element: (
                 <Layout>
                   <Blogs />
+                </Layout>
+              ),
+            },
+            {
+              path: "facts",
+              element: (
+                <Layout>
+                  <Facts />
+                </Layout>
+              ),
+            },
+            {
+              path: "gallery",
+              element: (
+                <Layout>
+                  <Gallery />
                 </Layout>
               ),
             },

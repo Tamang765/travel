@@ -5,11 +5,11 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import { fetchBlogs } from "../../redux/slices/blogSlice";
 import { Shadow } from "../../routers";
-import EnhancedTable from "../../sections/content/Products/Table";
-import { headCells } from "../../sections/content/Products/headCells";
-import Form from "../../sections/entries/Products/Form";
+import EnhancedTable from "../../sections/content/Gallery/Table";
+import { headCells } from "../../sections/content/Gallery/headCells";
+import Form from "../../sections/entries/Gallery/Form";
+import { fetchGallerys } from "../../redux/slices/gallerySlice";
 
 // TODO: menu options alias
 const alias = {
@@ -18,7 +18,7 @@ const alias = {
   "Product for?": "category_id",
 };
 
-export default function Products() {
+export default function Gallery() {
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -37,7 +37,7 @@ export default function Products() {
   const [rows, setRows] = useState([]);
 
   // TODO: get the data from slice
-  const blogs = useSelector((state) => state.blog.blogs);
+  const gallery = useSelector((state) => state.blog.gallery);
 
   const formattedFilters = Object.entries(selectedFilters).reduce(
     (acc, [key, { value }]) => {
@@ -47,12 +47,12 @@ export default function Products() {
     {}
   );
 
-  // TODO: fetch the products when searached
+  // TODO: fetch the gallery when searached
   useEffect(() => {
     if (search) {
       const debounce = setTimeout(() => {
         dispatch(
-          fetchBlogs({
+          fetchGallerys({
             enqueueSnackbar,
             limit: pagination.limit,
             page: pagination.page,
@@ -65,7 +65,7 @@ export default function Products() {
       return () => clearTimeout(debounce);
     } else {
       dispatch(
-        fetchBlogs({
+        fetchGallerys({
           enqueueSnackbar,
           limit: pagination.limit,
           page: pagination.page,
@@ -87,7 +87,7 @@ export default function Products() {
   // TODO: set the rows
 
   useEffect(() => {
-    const data = blogs?.data?.data?.map((blog) => ({
+    const data = gallery?.data?.data?.map((blog) => ({
       id: blog?.id,
       slug: blog?.slug,
       title: blog?.title,
@@ -101,7 +101,7 @@ export default function Products() {
         .replace(/(\d+)(th|st|nd|rd)/, "$1$2"),
     }));
     setRows(data);
-  }, [blogs]);
+  }, [gallery]);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -119,7 +119,7 @@ export default function Products() {
   // TODO: filter the data
   const handleFilter = () => {
     dispatch(
-      fetchBlogs({
+      fetchGallerys({
         enqueueSnackbar,
         limit: pagination.limit,
         page: pagination.page,
@@ -130,13 +130,13 @@ export default function Products() {
   };
 
   // TODO: console.logs
-  console.log(blogs);
+  console.log(gallery);
   return (
     <>
       <Shadow>
         <Card color="transparent" shadow={false}>
           <EnhancedTable
-            title="Blogs"
+            title="Gallery"
             headCells={headCells}
             rows={rows}
             showFilter={true}
@@ -156,7 +156,7 @@ export default function Products() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={blogs?.meta?.total}
+            count={gallery?.meta?.total}
             rowsPerPage={pagination.limit}
             page={pagination.page}
             onPageChange={handleChangePage}
@@ -165,10 +165,10 @@ export default function Products() {
         </Card>
       </Shadow>
 
-      {/* TODO: add products */}
+      {/* TODO: add gallery */}
       <AddDialog
         maxWidth="lg"
-        title={"Add new Blog"}
+        title={"Add new Gallery"}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >

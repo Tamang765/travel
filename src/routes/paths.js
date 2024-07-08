@@ -1,19 +1,21 @@
 import { AiOutlineCalendar, AiOutlinePlus } from "react-icons/ai";
-import { BiCalendarX } from "react-icons/bi";
+import { BiCalendarX, BiSolidBookContent } from "react-icons/bi";
 import { CiGrid41, CiViewTimeline } from "react-icons/ci";
-import { FaProductHunt } from "react-icons/fa";
-import { IoMdResize } from "react-icons/io";
-import { IoSettings } from "react-icons/io5";
-import { MdCategory, MdOutlineInvertColors } from "react-icons/md";
-import { RiContactsBookLine } from "react-icons/ri";
-import { SiBrandfolder } from "react-icons/si";
-
+import { FaBlog, FaPage4, FaProductHunt, FaQuestion } from "react-icons/fa";
+import { FaLocationDot } from "react-icons/fa6";
+import { GiSurferVan } from "react-icons/gi";
+import { GrGallery } from "react-icons/gr";
 import {
   HiOutlineQuestionMarkCircle,
   HiOutlineUserCircle,
   HiOutlineUsers,
 } from "react-icons/hi";
-
+import { IoSettings } from "react-icons/io5";
+import { LuPackage } from "react-icons/lu";
+import { MdCategory, MdOutlinePostAdd } from "react-icons/md";
+import { RiContactsBookLine } from "react-icons/ri";
+import { SiAzureartifacts } from "react-icons/si";
+import { VscExclude } from "react-icons/vsc";
 export const ROOTS_DASHBOARD = "/admin";
 
 export const PATH_AUTH = {
@@ -37,16 +39,16 @@ const menu = [
         path: path(ROOTS_DASHBOARD, "/dashboard"),
         icon: <CiViewTimeline size={20} />,
       },
-      {
-        title: "Notification",
-        path: path(ROOTS_DASHBOARD, "/notifications"),
-        icon: <AiOutlineCalendar size={20} />,
-      },
-      {
-        title: "Orders",
-        path: path(ROOTS_DASHBOARD, "/orders"),
-        icon: <AiOutlinePlus size={20} />,
-      },
+      // {
+      //   title: "Notification",
+      //   path: path(ROOTS_DASHBOARD, "/notifications"),
+      //   icon: <AiOutlineCalendar size={20} />,
+      // },
+      // {
+      //   title: "Orders",
+      //   path: path(ROOTS_DASHBOARD, "/orders"),
+      //   icon: <AiOutlinePlus size={20} />,
+      // },
     ],
   },
 
@@ -62,46 +64,46 @@ const menu = [
       {
         title: "Inclusive",
         path: path(ROOTS_DASHBOARD, "/entries/brands"),
-        icon: <SiBrandfolder size={20} />,
+        icon: <MdOutlinePostAdd size={20} />,
       },
 
       {
         title: "Exclusive",
         path: path(ROOTS_DASHBOARD, "/entries/exclusive"),
-        icon: <MdCategory size={20} />,
+        icon: <VscExclude size={20} />,
       },
       {
         title: "Pages",
         path: path(ROOTS_DASHBOARD, "/entries/pages"),
-        icon: <IoMdResize size={20} />,
+        icon: <FaPage4 size={20} />,
       },
       {
         title: "Packages",
         path: path(ROOTS_DASHBOARD, "/entries/packages"),
-        icon: <MdOutlineInvertColors size={20} />,
+        icon: <LuPackage size={20} />,
       },
 
       {
         title: "Faq",
         path: path(ROOTS_DASHBOARD, "/entries/faq"),
-        icon: <MdOutlineInvertColors size={20} />,
+        icon: <FaQuestion size={20} />,
       },
 
       {
-        title: "Products",
-        path: path(ROOTS_DASHBOARD, "/entries/products"),
-        icon: <FaProductHunt size={20} />,
+        title: "Vehicles",
+        path: path(ROOTS_DASHBOARD, "/entries/vehicles"),
+        icon: <GiSurferVan size={20} />,
       },
       {
         title: "Location",
         path: path(ROOTS_DASHBOARD, "/entries/locations"),
-        icon: <FaProductHunt size={20} />,
+        icon: <FaLocationDot size={20} />,
       },
     ],
   },
   {
     title: "Contents",
-    icon: <HiOutlineUsers size={35} color="#ddd" />,
+    icon: <BiSolidBookContent size={35} color="#ddd" />,
     childrens: [
       // {
       //   title: "Admins",
@@ -111,30 +113,17 @@ const menu = [
       {
         title: "Blogs",
         path: path(ROOTS_DASHBOARD, "/content/blogs"),
-        icon: <HiOutlineUsers size={20} />,
+        icon: <FaBlog size={20} />,
       },
-
-      // {
-      //   title: "Roles",
-      //   path: path(ROOTS_DASHBOARD, "/users/roles"),
-      //   icon: <MdOutlineAdminPanelSettings size={20} />,
-      // },
-    ],
-  },
-
-  {
-    title: "Users",
-    icon: <HiOutlineUsers size={35} color="#ddd" />,
-    childrens: [
-      // {
-      //   title: "Admins",
-      //   path: path(ROOTS_DASHBOARD, "/users/admins"),
-      //   icon: <HiOutlineUsers size={20} />,
-      // },
       {
-        title: "Customers",
-        path: path(ROOTS_DASHBOARD, "/users/customers"),
-        icon: <HiOutlineUsers size={20} />,
+        title: "Facts",
+        path: path(ROOTS_DASHBOARD, "/content/facts"),
+        icon: <SiAzureartifacts size={20} />,
+      },
+      {
+        title: "Gallery",
+        path: path(ROOTS_DASHBOARD, "/content/gallery"),
+        icon: <GrGallery size={20} />,
       },
 
       // {
@@ -144,6 +133,7 @@ const menu = [
       // },
     ],
   },
+
 
   {
     title: "Settings",
@@ -157,28 +147,28 @@ const menu = [
     ],
   },
 
-  {
-    title: "Support",
-    icon: <HiOutlineUserCircle size={35} color="#ddd" />,
-    childrens: [
-      {
-        title: "FAQs",
-        path: path(ROOTS_DASHBOARD, "/supports/faqs"),
-        icon: <HiOutlineQuestionMarkCircle size={20} />,
-      },
-      {
-        title: "Cancel Reasons",
-        path: path(ROOTS_DASHBOARD, "/supports/cancel-reasons"),
-        icon: <BiCalendarX size={20} />,
-      },
+  // {
+  //   title: "Support",
+  //   icon: <HiOutlineUserCircle size={35} color="#ddd" />,
+  //   childrens: [
+  //     {
+  //       title: "FAQs",
+  //       path: path(ROOTS_DASHBOARD, "/supports/faqs"),
+  //       icon: <HiOutlineQuestionMarkCircle size={20} />,
+  //     },
+  //     {
+  //       title: "Cancel Reasons",
+  //       path: path(ROOTS_DASHBOARD, "/supports/cancel-reasons"),
+  //       icon: <BiCalendarX size={20} />,
+  //     },
 
-      {
-        title: "Emergency Contacts",
-        path: path(ROOTS_DASHBOARD, "/supports/emergency-contacts"),
-        icon: <RiContactsBookLine size={20} />,
-      },
-    ],
-  },
+  //     {
+  //       title: "Emergency Contacts",
+  //       path: path(ROOTS_DASHBOARD, "/supports/emergency-contacts"),
+  //       icon: <RiContactsBookLine size={20} />,
+  //     },
+  //   ],
+  // },
 ];
 
 export default menu;

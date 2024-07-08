@@ -7,13 +7,12 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import slugify from "slugify";
 import * as Yup from "yup";
-import { RHFEditor, RHFTextField } from "../../../components/hook-form";
+import { RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
 import { Upload } from "../../../components/upload";
 import { createBlog, updateBlog } from "../../../redux/slices/blogSlice";
 import { fetchCategories } from "../../../redux/slices/categorySlice";
 import { fetchInclusive } from "../../../redux/slices/inclusiveSlice";
-import DynamicForm from "./DynamicForm";
 
 const Form = ({
   handleClose,
@@ -30,25 +29,49 @@ const Form = ({
 
   // TODO: useStates
   const [photo, setPhoto] = useState(null);
+  const [description, setDescription] = useState(null);
 
   const [content, setContent] = useState(null);
 
+  const [variants, setVairants] = useState([
+    {
+      size_id: "",
+      price: "",
+      selling_price: "",
+      color_id: "",
+    },
+  ]);
+  const [documents, setDocuments] = useState([]);
+
   // TODO: get the data from slice
 
-  const createProductLoading = useSelector((state) => state.blog.isLoading);
+  const createProductLoading = useSelector((state) => state.product.isLoading);
+  const inclusives = useSelector((state) => state.inclusive.inclusive);
+  const sizes = useSelector((state) => state.size.sizes);
   const categories = useSelector((state) => state.category.categories);
+  const mainCategories = useSelector((state) => state.category.mainCategories);
+  const colors = useSelector((state) => state.color.colors);
 
   const Schema = Yup.object().shape({
-    title: Yup.string().required("Blog's title is required"),
-    category_id: Yup.string().required("Blog's category is required"),
-    description: Yup.string().required("Blog's description is required"),
+    country: Yup.string().required("Fact's country is required"),
+    duration: Yup.string().required("Fact's duration is required"),
+    difficulty: Yup.string().required("Fact's difficulty is required"),
+    activity: Yup.string().required("Fact's activity is required"),
+    altitude: Yup.string().required("Fact's altitude is required"),
+    best_season: Yup.string().required("Fact's best_season is required"),
+    accomodation: Yup.string().required("Fact's accomodation is required"),
+    meals: Yup.string().required("Fact's meals is required"),
+    start_end_point: Yup.string().required(
+      "Fact's start_end_point is required"
+    ),
+    package_id: Yup.string().required("Fact's package_id is required"),
   });
 
   // TODO: default values in the form
   const defaultValues = useMemo(
     () => ({
       title: data?.title || "",
-      category_id: data?.category_id || "",
+      duration: data?.duration || "",
       description: data?.description || "",
       image: data?.image || "",
     }),
@@ -88,6 +111,31 @@ const Form = ({
 
   // TODO: handle upload galleries
 
+  const handleDropGallery = useCallback((acceptedFiles) => {
+    const newFile = acceptedFiles[0];
+    if (newFile) {
+      setDocuments((prev) => [
+        ...prev,
+        Object.assign(newFile, {
+          preview: URL.createObjectURL(newFile),
+          key: prev.length,
+        }),
+      ]);
+    }
+  }, []);
+
+  // TODO: handle add and remove variants
+  const handleAddFields = () => {
+    setVairants((prev) => [
+      ...prev,
+      { size_id: "", price: "", selling_price: "", color_id: "" },
+    ]);
+  };
+
+  const handleRemoveFields = (index) => {
+    setVairants((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const onCreateVehicle = (values) => {
     // TODO: dispatch the action to create a product
     const formData = new FormData();
@@ -108,7 +156,6 @@ const Form = ({
     formData.append("content", jsonContent);
     // formData.
     if (photo) {
-      console.log("asdasdasd", photo);
       formData.append("image", photo);
     }
 
@@ -116,32 +163,9 @@ const Form = ({
   };
 
   const onUpdateProduct = (values) => {
-    // TODO: dispatch the action to update a product
-    const formData = new FormData();
-    if (values?.title) {
-      const slug = slugify(values.title, {
-        lower: true,
-        remove: /[*+~.()'"!:@]/,
-        strict: true,
-      });
-      formData.append("slug", slug);
-    }
-    const jsonContent = JSON.stringify(content);
-    formData.append("category_id", values.category_id);
-
-    formData.append("title", values.title);
-    formData.append("description", values.description);
-    formData.append("content", jsonContent);
-
-    console.log(typeof photo);
-    delete values.image;
-    if (photo) {
-      formData.append("image", photo);
-    }
-
     dispatch(
       updateBlog({
-        data: formData,
+        data: values,
         enqueueSnackbar,
         handleClose,
         id: data?.id,
@@ -149,6 +173,13 @@ const Form = ({
       })
     );
   };
+
+  useMemo(() => {
+    console.log(data);
+    setDescription(data?.description);
+    setPhoto(data?.image);
+  }, [data]);
+  console.log(defaultValues?.category_id);
 
   return (
     <Box p={3}>
@@ -165,7 +196,7 @@ const Form = ({
             sm: "repeat(2, 1fr)",
           }}
         >
-          <Autocomplete
+          {/* <Autocomplete
             defaultValue={defaultValues?.category_id}
             disabled={isView}
             name="category_id"
@@ -193,39 +224,77 @@ const Form = ({
                 {option.label}
               </li>
             )}
-          />
-          <RHFTextField
-            name={"title"}
-            label={"Blog's title *"}
+          /> */}
+          <Autocomplete
+            defaultValue={defaultValues?.category_id}
             disabled={isView}
+            name="package_id"
+            disablePortal
+            id="combo-box-main-package"
+            options={
+              categories?.data?.map((page) => ({
+                label: page?.name,
+                id: page?.id,
+              })) || []
+            }
+            renderInput={(params) => (
+              <RHFTextField
+                name={"package_id"}
+                {...params}
+                label="Package *"
+                disabled={isView}
+              />
+            )}
+            onChange={(event, newValues) =>
+              methods.setValue("package_id", newValues ? newValues.id : null)
+            }
+            renderOption={(props, option) => (
+              <li {...props} key={option.id}>
+                {option.label}
+              </li>
+            )}
+          />
+          <Autocomplete
+            defaultValue={defaultValues?.category_id}
+            disabled={isView}
+            name="vehicle_id"
+            disablePortal
+            id="combo-box-main-package"
+            options={
+              categories?.data?.map((page) => ({
+                label: page?.name,
+                id: page?.id,
+              })) || []
+            }
+            renderInput={(params) => (
+              <RHFTextField
+                name={"vehicle_id"}
+                {...params}
+                label="Vehicle *"
+                disabled={isView}
+              />
+            )}
+            onChange={(event, newValues) =>
+              methods.setValue("vehicle_id", newValues ? newValues.id : null)
+            }
+            renderOption={(props, option) => (
+              <li {...props} key={option.id}>
+                {option.label}
+              </li>
+            )}
           />
         </Box>
-        <Stack mt={5}>
-          <RHFEditor
-            placeholder="Write anwser here..."
-            name={"description"}
-            disabled={isView}
-          />
-        </Stack>
-        <Stack my={5}>
-          <span>Content</span>
-          <DynamicForm setContent={setContent} data={data} isView={isView} />
-        </Stack>
-
         <Box mt={3}>
-          <Stack flexDirection={"row"} gap={3}>
-            <Upload
-              isAvatar={false}
-              text={"Upload picture"}
-              file={photo || defaultValues?.image}
-              name="image"
-              accept="image/*"
-              maxSize={1}
-              onDrop={handleDropPhoto}
-            />
-          </Stack>
-        </Box>
-
+          <Upload
+            isAvatar={false}
+            text={"Upload picture"}
+            file={photo || defaultValues.photo}
+            name="photo"
+            accept="image/*"
+            maxSize={1}
+            onDrop={handleDropPhoto}
+          />
+        </Box>{" "}
         <Stack mt={2} alignItems={"end"}>
           <LoadingButton
             loading={createProductLoading}

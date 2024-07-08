@@ -11,7 +11,7 @@ import FormProvider from "../../../components/hook-form/FormProvider";
 import { createFaq, updateFaq } from "../../../redux/slices/faqSlice";
 import { fetchPackages } from "../../../redux/slices/packageSlice";
 
-const Form = ({ handleClose, data, isEdit = false }) => {
+const Form = ({ handleClose, data, isEdit = false, setOption, option }) => {
   // TODO: hooks
 
   const dispatch = useDispatch();
@@ -23,11 +23,13 @@ const Form = ({ handleClose, data, isEdit = false }) => {
 
   const createColorLoading = useSelector((state) => state.color.isLoading);
   const packages = useSelector((state) => state.packages.packages);
-
+console.log(option)
   const Schema = Yup.object().shape({
     question: Yup.string().required("question is required"),
     answer: Yup.string().required("answer is required"),
-    package_id: Yup.string().required("package is required"),
+    ...(option
+      ? {}
+      : { package_id: Yup.string().required("Package is required") }),
   });
 
   // TODO: default values in the form
@@ -57,9 +59,21 @@ const Form = ({ handleClose, data, isEdit = false }) => {
 
   // TODO: functions
 
-  const onCreateFaq = (values) => {
+  const onCreateFaq = async (values) => {
+    if (!option?.id) {
+      return;
+    }
     // TODO: dispatch the action to create a brand
-    dispatch(createFaq({ data: values, enqueueSnackbar, handleClose }));
+    await dispatch(
+      createFaq({
+        data: { ...values, package_id: option?.id },
+        enqueueSnackbar,
+        handleClose,
+      })
+    );
+    setOption({
+      isOpen: true,
+    });
   };
 
   const onUpdateFaq = (values) => {
@@ -92,35 +106,37 @@ const Form = ({ handleClose, data, isEdit = false }) => {
             sm: "repeat(1, 1fr)",
           }}
         >
-          <Autocomplete
-            defaultValue={{
-              label: data?.package_id || "",
-              id: data?.package_id || "",
-            }}
-            name="package_id"
-            id="combo-box-main-category"
-            options={
-              packages?.data?.data?.map((page) => ({
-                label: page?.overview,
-                id: page?.id,
-              })) || []
-            }
-            renderInput={(params) => (
-              <RHFTextField
-                name={"package_id"}
-                {...params}
-                label="Package id *"
-              />
-            )}
-            onChange={(event, newValues) =>
-              methods.setValue("package_id", newValues ? newValues.id : null)
-            }
-            renderOption={(props, option) => (
-              <li {...props} key={option.id}>
-                {option.label}
-              </li>
-            )}
-          />
+          {!setOption && (
+            <Autocomplete
+              defaultValue={{
+                label: data?.package_id || "",
+                id: data?.package_id || "",
+              }}
+              name="package_id"
+              id="combo-box-main-category"
+              options={
+                packages?.data?.data?.map((page) => ({
+                  label: page?.overview,
+                  id: page?.id,
+                })) || []
+              }
+              renderInput={(params) => (
+                <RHFTextField
+                  name={"package_id"}
+                  {...params}
+                  label="Package id *"
+                />
+              )}
+              onChange={(event, newValues) =>
+                methods.setValue("package_id", newValues ? newValues.id : null)
+              }
+              renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                  {option.label}
+                </li>
+              )}
+            />
+          )}
           <RHFTextField name={"question"} label={"Question *"} />
           <RHFTextField name={"answer"} label={"Answer *"} />
         </Box>

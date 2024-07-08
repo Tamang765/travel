@@ -1,7 +1,6 @@
 import { Button } from "@material-tailwind/react";
-import { FormControlLabel, Stack, Switch } from "@mui/material";
+import { Stack } from "@mui/material";
 import Box from "@mui/material/Box";
-import Checkbox from "@mui/material/Checkbox";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -195,22 +194,6 @@ export default function EnhancedTable({
           handleFilter={handleFilter}
         />
 
-        {/* TODO: tabs */}
-        <div className="flex border-b border-gray-200 overflow-scroll">
-          {tabData.map((tab) => (
-            <button
-              key={tab.value}
-              className={`px-4 py-2 -mb-px text-sm font-medium border-b-4 w-fit ${
-                activeTab === tab.value
-                  ? "border-black text-black border-b-4"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-              onClick={() => setActiveTab(tab.value)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -240,7 +223,7 @@ export default function EnhancedTable({
                           selected={isItemSelected}
                           sx={{ cursor: "pointer" }}
                         >
-                          <TableCell
+                          {/* <TableCell
                             style={{
                               color: colors.text,
                             }}
@@ -256,8 +239,7 @@ export default function EnhancedTable({
                                 "aria-labelledby": labelId,
                               }}
                             />
-                          </TableCell>
-
+                          </TableCell> */}
                           <TableCell
                             style={{
                               color: colors.text,
@@ -270,7 +252,6 @@ export default function EnhancedTable({
                               className="w-20 h-20 object-contain"
                             />
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,
@@ -282,10 +263,9 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.sku}
+                              {row?.name}
                             </span>
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,
@@ -297,27 +277,38 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.name}
+                              {row?.type}
                             </span>
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,
                             }}
                             id={labelId}
                           >
-                            <FormControlLabel
-                              control={
-                                <Switch
-                                  checked={row.status}
-                                  onChange={() => {
-                                    handleChangeStatus(row);
-                                  }}
-                                />
-                              }
+                            <span
+                              dangerouslySetInnerHTML={{
+                                __html: row?.description,
+                              }}
+                              style={{
+                                color: colors.text,
+                              }}
                             />
                           </TableCell>
+                          <TableCell
+                            style={{
+                              color: colors.text,
+                            }}
+                            id={labelId}
+                          >
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row?.capacity}
+                            </span>
+                          </TableCell>
 
                           <TableCell
                             style={{
@@ -330,10 +321,9 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row.brand?.name}
+                              {row?.price}
                             </span>
                           </TableCell>
-
                           <TableCell
                             style={{
                               color: colors.text,
@@ -380,7 +370,7 @@ export default function EnhancedTable({
       {/* TODO: edit role modal */}
       <EditDialog
         open={openEditModal}
-        title={`Edit product (${(dataToEdit?.name, dataToEdit?.sku)})`}
+        title={`Edit Vehicle (${(dataToEdit?.name)})`}
         handleClose={() => setOpenEditModal(false)}
         maxWidth="lg"
       >

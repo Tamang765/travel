@@ -7,24 +7,37 @@ export const headCells = [
   },
 
   {
-    id: "title",
+    id: "name",
     numeric: false,
     disablePadding: false,
-    label: "Title",
+    label: "Name",
+  },
+
+
+  {
+    id: "type",
+    numeric: false,
+    disablePadding: false,
+    label: "Type",
   },
 
   {
-    id: "slug",
+    id: "description",
     numeric: false,
     disablePadding: false,
-    label: "Slug",
+    label: "Description",
   },
-
   {
-    id: "createdAt",
+    id: "capacity",
     numeric: false,
     disablePadding: false,
-    label: "CreatedAt",
+    label: "Capacity",
+  },
+  {
+    id: "price",
+    numeric: false,
+    disablePadding: false,
+    label: "Price",
   },
 
   {

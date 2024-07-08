@@ -1,8 +1,8 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { LoadingButton } from "@mui/lab";
-import { Autocomplete, Box, Stack } from "@mui/material";
+import { Autocomplete, LoadingButton } from "@mui/lab";
+import { Box, Stack } from "@mui/material";
 import { useSnackbar } from "notistack";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import slugify from "slugify";
@@ -10,10 +10,25 @@ import * as Yup from "yup";
 import { RHFEditor, RHFTextField } from "../../../components/hook-form";
 import FormProvider from "../../../components/hook-form/FormProvider";
 import { Upload } from "../../../components/upload";
-import { createBlog, updateBlog } from "../../../redux/slices/blogSlice";
-import { fetchCategories } from "../../../redux/slices/categorySlice";
-import { fetchInclusive } from "../../../redux/slices/inclusiveSlice";
-import DynamicForm from "./DynamicForm";
+import {
+  createVehicle,
+  updateVehicle,
+} from "../../../redux/slices/vehicleSlice";
+
+const DummyVehicleType = [
+  {
+    id: 1,
+    label: "Car",
+  },
+  {
+    id: 2,
+    label: "Jeep",
+  },
+  {
+    id: 3,
+    label: "Bus",
+  },
+];
 
 const Form = ({
   handleClose,
@@ -35,22 +50,28 @@ const Form = ({
 
   // TODO: get the data from slice
 
-  const createProductLoading = useSelector((state) => state.blog.isLoading);
-  const categories = useSelector((state) => state.category.categories);
+  const createVehicleLoading = useSelector((state) => state.vehicle.isLoading);
 
   const Schema = Yup.object().shape({
-    title: Yup.string().required("Blog's title is required"),
-    category_id: Yup.string().required("Blog's category is required"),
-    description: Yup.string().required("Blog's description is required"),
+    name: Yup.string().required("Vehicle's name is required"),
+    type: Yup.string().required("Vehicle's type is required"),
+    capacity: Yup.string().required("Vehicle's capacity is required"),
+
+    // image: Yup.string().required("Vehicle's image is required"),
+    price: Yup.string().required("Vehicle's price is required"),
+
+    description: Yup.string().required("Vehicle's description is required"),
   });
 
   // TODO: default values in the form
   const defaultValues = useMemo(
     () => ({
-      title: data?.title || "",
-      category_id: data?.category_id || "",
+      name: data?.name || "",
+      type: data?.type || "",
       description: data?.description || "",
       image: data?.image || "",
+      capacity: data?.capacity || "",
+      price: data?.price || "",
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [data]
@@ -64,12 +85,6 @@ const Form = ({
   const { handleSubmit, reset, watch, setValue } = methods;
 
   // TODO: useEffects, write the useEffect codes here
-
-  // TODO: fetch the brand, categories, size and color
-  useEffect(() => {
-    dispatch(fetchInclusive({ enqueueSnackbar, page: 0, limit: 100 }));
-    dispatch(fetchCategories({ enqueueSnackbar }));
-  }, [dispatch, enqueueSnackbar]);
 
   // TODO: functions
 
@@ -89,58 +104,57 @@ const Form = ({
   // TODO: handle upload galleries
 
   const onCreateVehicle = (values) => {
+    console.log(values);
     // TODO: dispatch the action to create a product
     const formData = new FormData();
-    if (values?.title) {
-      const slug = slugify(values.title, {
+
+    if (values?.name) {
+      const slug = slugify(values.name, {
         lower: true,
         remove: /[*+~.()'"!:@]/,
         strict: true,
       });
       formData.append("slug", slug);
     }
-    const jsonContent = JSON.stringify(content);
-
-    formData.append("category_id", values.category_id);
-
-    formData.append("title", values.title);
+    formData.append("name", values.name);
+    formData.append("type", values.type);
     formData.append("description", values.description);
-    formData.append("content", jsonContent);
+    formData.append("capacity", values.capacity);
+    formData.append("price", values.price);
+
     // formData.
     if (photo) {
-      console.log("asdasdasd", photo);
       formData.append("image", photo);
     }
 
-    dispatch(createBlog({ data: formData, enqueueSnackbar, handleClose }));
+    dispatch(createVehicle({ data: formData, enqueueSnackbar, handleClose }));
   };
 
   const onUpdateProduct = (values) => {
     // TODO: dispatch the action to update a product
     const formData = new FormData();
-    if (values?.title) {
-      const slug = slugify(values.title, {
+
+    if (values?.name) {
+      const slug = slugify(values.name, {
         lower: true,
         remove: /[*+~.()'"!:@]/,
         strict: true,
       });
       formData.append("slug", slug);
     }
-    const jsonContent = JSON.stringify(content);
-    formData.append("category_id", values.category_id);
-
-    formData.append("title", values.title);
+    formData.append("name", values.name);
+    formData.append("type", values.type);
     formData.append("description", values.description);
-    formData.append("content", jsonContent);
+    formData.append("capacity", values.capacity);
+    formData.append("price", values.price);
 
-    console.log(typeof photo);
-    delete values.image;
+
     if (photo) {
       formData.append("image", photo);
     }
 
     dispatch(
-      updateBlog({
+      updateVehicle({
         data: formData,
         enqueueSnackbar,
         handleClose,
@@ -165,28 +179,33 @@ const Form = ({
             sm: "repeat(2, 1fr)",
           }}
         >
-          <Autocomplete
-            defaultValue={defaultValues?.category_id}
+          <RHFTextField
+            name={"name"}
+            label={"Vehicle's name *"}
             disabled={isView}
-            name="category_id"
+          />{" "}
+          <Autocomplete
+            defaultValue={defaultValues?.type}
+            disabled={isView}
+            name="type"
             disablePortal
             id="combo-box-main-category"
             options={
-              categories?.data?.map((page) => ({
-                label: page?.name,
+              DummyVehicleType?.map((page) => ({
+                label: page?.label,
                 id: page?.id,
               })) || []
             }
             renderInput={(params) => (
               <RHFTextField
-                name={"category_id"}
+                name={"type"}
                 {...params}
-                label="Category *"
+                label="Vehicle Type"
                 disabled={isView}
               />
             )}
             onChange={(event, newValues) =>
-              methods.setValue("category_id", newValues ? newValues.id : null)
+              methods.setValue("type", newValues ? newValues.label : null)
             }
             renderOption={(props, option) => (
               <li {...props} key={option.id}>
@@ -195,8 +214,13 @@ const Form = ({
             )}
           />
           <RHFTextField
-            name={"title"}
-            label={"Blog's title *"}
+            name={"capacity"}
+            label={"Vehicle's capacity *"}
+            disabled={isView}
+          />
+          <RHFTextField
+            name={"price"}
+            label={"Vehicle's price *"}
             disabled={isView}
           />
         </Box>
@@ -206,10 +230,6 @@ const Form = ({
             name={"description"}
             disabled={isView}
           />
-        </Stack>
-        <Stack my={5}>
-          <span>Content</span>
-          <DynamicForm setContent={setContent} data={data} isView={isView} />
         </Stack>
 
         <Box mt={3}>
@@ -228,13 +248,13 @@ const Form = ({
 
         <Stack mt={2} alignItems={"end"}>
           <LoadingButton
-            loading={createProductLoading}
-            disabled={createProductLoading}
+            loading={createVehicleLoading}
+            disabled={createVehicleLoading}
             type="submit"
             variant="contained"
             className="!bg-primary w-fit"
           >
-            {isEdit ? "Update blog" : "Create blog"}
+            {isEdit ? "Update vehicle" : "Create vehicle"}
           </LoadingButton>
         </Stack>
       </FormProvider>
