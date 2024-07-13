@@ -1,81 +1,198 @@
-import { Divider } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Stepper from "@mui/material/Stepper";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import Form from "../../../sections/entries/Packages/Form";
+import DynamicForm from "../../../sections/entries/Colors/DynamicForm";
+import DynamicFormFact from "../../../sections/entries/Facts/Form";
+import DynamicGallery from "../../../sections/entries/Gallery/Form";
+import DynamicFormPrice from "../../../sections/entries/Pricing/DynamicForm";
 
-const steps = ["Create Package", "Create Faq"];
+import FormPackage from "../../../sections/entries/Packages/Form";
+import Form from "../../../sections/entries/Sizes/Form";
 
-export default function HorizontalNonLinearStepper({ handleClose }) {
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [completed, setCompleted] = React.useState({});
-  const [showContent, setShowContent] = React.useState(
-    <Form handleClose={handleClose} />
-  );
-  const totalSteps = () => {
-    return steps.length;
+const steps = [
+  "Select campaign settings",
+  "Create an ad group",
+  "Create an ad",
+  "Create an ad",
+  "Create an ad",
+
+  "Create an ad",
+];
+
+export default function HorizontalLinearStepper({
+  handleClose,
+  setTitle,
+  title,
+  activePackageForm,
+  isEdit = false,
+  data,
+}) {
+  const [openAdd, setOpenAdd] = React.useState(false);
+  const [activeStep, setActiveStep] = React.useState(activePackageForm ? 1 : 0);
+  const [pageId, setPageId] = React.useState(null);
+  const [packageId, setPackageId] = React.useState(data?.id || null);
+  const [skipped, setSkipped] = React.useState(new Set());
+  const formRefs = {
+    0: React.useRef(),
+    1: React.useRef(),
+    2: React.useRef(),
+    3: React.useRef(),
+    4: React.useRef(),
+    5: React.useRef(),
   };
 
-  const completedSteps = () => {
-    return Object.keys(completed).length;
+  const isStepOptional = (step) => {
+    return step > 1; // Allow skipping steps greater than 1
   };
 
-  const isLastStep = () => {
-    return activeStep === totalSteps() - 1;
+  const isStepSkipped = (step) => {
+    return skipped.has(step);
   };
 
-  const allStepsCompleted = () => {
-    return completedSteps() === totalSteps();
-  };
-
-  const handleNext = () => {
-    const newActiveStep = isLastStep()
-      ? // It's the last step, but not all steps have been completed,
-        // find the first step that has been completed
-        steps.findIndex((step, i) => !(i in completed))
-      : activeStep + 1;
-    setActiveStep(newActiveStep);
+  const handleNext = async () => {
+    if (formRefs[activeStep]?.current) {
+      const isValid = await formRefs[activeStep].current.submit();
+      if (isValid) {
+        if (activeStep < steps.length - 1) {
+          let newSkipped = skipped;
+          if (isStepSkipped(activeStep)) {
+            newSkipped = new Set(newSkipped.values());
+            newSkipped.delete(activeStep);
+          }
+          setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          setSkipped(newSkipped);
+        }
+      }
+    }
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleStep = (step) => () => {
-    setActiveStep(step);
-  };
+  const handleSkip = () => {
+    if (!isStepOptional(activeStep)) {
+      throw new Error("You can't skip a step that isn't optional.");
+    }
 
-  const handleComplete = () => {
-    const newCompleted = completed;
-    newCompleted[activeStep] = true;
-    setCompleted(newCompleted);
-    handleNext();
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped((prevSkipped) => {
+      const newSkipped = new Set(prevSkipped.values());
+      newSkipped.add(activeStep);
+      return newSkipped;
+    });
   };
 
   const handleReset = () => {
     setActiveStep(0);
-    setCompleted({});
   };
 
+  React.useEffect(() => {
+    if (activeStep === 0) {
+      setTitle("Page");
+    } else if (activeStep === 1) {
+      setTitle("Package");
+    } else if (activeStep === 2) {
+      setTitle("Faq");
+    } else if (activeStep === 3) {
+      setTitle("Pricing");
+    } else if (activeStep === 5) {
+      setTitle("Gallery");
+    } else if (activeStep === 4) {
+      setTitle("Facts");
+    }
+  }, [activeStep, setTitle]);
+
+  const faqData = data?.faqs;
+  const galleryData = data?.gallery;
+  const factsData = data?.facts[0];
+
+  const pricingData = data?.pricings;
+
   return (
-    <Box sx={{ width: "100%", display: "flex", flexDirection: "column" }}>
-      <Typography sx={{ px: 4, py: 1 }} fontSize={17} fontWeight={600}>
-        {steps[activeStep]}
-      </Typography>
-      {showContent}
-      <Divider />
-      <div>
+    <Box sx={{ width: "100%" }}>
+      <Stepper activeStep={activeStep} />
+      {activeStep === steps.length ? (
         <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
+          <Typography sx={{ mt: 2, mb: 1, px: 4 }}>
             All steps completed - you&apos;re finished
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Box sx={{ flex: "1 1 auto" }} />
-            <Button onClick={handleReset}>Reset</Button>
+            {/* <Button onClick={handleReset}>Reset</Button> */}
           </Box>
         </React.Fragment>
-      </div>
+      ) : (
+        <React.Fragment>
+          {activeStep === 0 ? (
+            <Form
+              ref={formRefs[0]}
+              handleClose={handleClose}
+              title={"location"}
+              stepper
+              setPageId={setPageId}
+            />
+          ) : activeStep === 1 ? (
+            <FormPackage
+              ref={formRefs[1]}
+              title="Package"
+              stepper
+              pageId={pageId}
+              data={data}
+              isEdit={isEdit}
+              setPackageId={setPackageId}
+            />
+          ) : activeStep === 2 ? (
+            <DynamicForm
+              ref={formRefs[2]}
+              packageId={packageId}
+              data={faqData}
+              isEdit={isEdit}
+            />
+          ) : activeStep === 3 ? (
+            <DynamicFormPrice
+              ref={formRefs[3]}
+              packageId={packageId}
+              data={pricingData}
+              isEdit={isEdit}
+            />
+          ) : activeStep === 4 ? (
+            <DynamicFormFact
+              ref={formRefs[4]}
+              packageId={packageId}
+              data={factsData}
+              isEdit={isEdit}
+              // handleClose={handleClose}
+            />
+          ) : (
+            <DynamicGallery
+              ref={formRefs[5]}
+              packageId={packageId}
+              data={galleryData}
+              isEdit={isEdit}
+              handleClose={handleClose}
+            />
+          )}
+          <Box sx={{ display: "flex", flexDirection: "row", pt: 2, m: 4 }}>
+            <Box sx={{ flex: "1 1 auto" }} />
+            {isStepOptional(activeStep) && (
+              <Button
+                color="inherit"
+                onClick={handleSkip}
+                sx={{ mr: 1 }}
+                className="!bg-primary !text-white"
+              >
+                Skip
+              </Button>
+            )}
+            <Button onClick={handleNext} className="!bg-primary !text-white">
+              {activeStep === steps.length - 1 ? "Finish" : "Next"}
+            </Button>
+          </Box>
+        </React.Fragment>
+      )}
     </Box>
   );
 }

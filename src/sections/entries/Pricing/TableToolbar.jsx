@@ -12,7 +12,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   AiOutlineEdit,
   AiOutlinePlus,
@@ -28,11 +28,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../../../redux/slices/productSlice";
 import { TitleMd, TitleSm } from "../../../routers";
 
-// TODO: menu options alias
-const alias = {
-  Category: "category_id",
-  Brand: "brand_id",
-};
+// TODO: menu options
+const filterMenus = [
+  {
+    title: "status",
+    options: [
+      {
+        label: "Active",
+        value: 1,
+      },
+
+      {
+        label: "Inactive",
+        value: 0,
+      },
+    ],
+  },
+];
 
 export function EnhancedTableToolbar({
   numSelected,
@@ -46,8 +58,6 @@ export function EnhancedTableToolbar({
   page,
   setRefresh,
   refresh,
-  search,
-  setSearch,
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
@@ -57,13 +67,10 @@ export function EnhancedTableToolbar({
   const [anchorEl, setAnchorEl] = useState(null);
   const [submenuAnchorEl, setSubmenuAnchorEl] = useState({});
   const [selectedFilters, setSelectedFilters] = useState({});
-  const [filterMenus, setFilterMenus] = useState([]);
 
   // TODO: get the data from slice
 
   const fetchLoading = useSelector((state) => state.product.fetchLoading);
-  const categories = useSelector((state) => state.category.categories);
-  // const brands = useSelector((state) => state.brand.brands);
 
   // TODO: functions
   const handleFilterClick = (event) => {
@@ -112,7 +119,7 @@ export function EnhancedTableToolbar({
 
   const formattedFilters = Object.entries(selectedFilters).reduce(
     (acc, [key, { value }]) => {
-      acc[alias[key]] = value;
+      acc[key] = value;
       return acc;
     },
     {}
@@ -126,7 +133,6 @@ export function EnhancedTableToolbar({
         limit,
         page,
         filter: formattedFilters,
-        search,
       })
     );
   };
@@ -135,48 +141,6 @@ export function EnhancedTableToolbar({
   useMemo(() => {
     setSelectedFilters([]);
   }, [refresh]);
-
-  // TODO: set the filter menus based on category and brand from backend.
-  // TODO: since it has dependency of category and brands, it can have duplicate object, so remove it
-  useEffect(() => {
-    if (categories?.data?.length) {
-      setFilterMenus((prev) => {
-        // Filter out existing "Category" entries
-        const filteredPrev = prev.filter((menu) => menu.title !== "Category");
-        return [
-          ...filteredPrev,
-          {
-            title: "Category",
-            options: categories.data.map((cat) => ({
-              label: cat.name,
-              value: cat.id,
-            })),
-          },
-        ];
-      });
-    }
-
-    // if (brands?.data?.length) {
-    //   setFilterMenus((prev) => {
-    //     // Filter out existing "Brand" entries
-    //     const filteredPrev = prev.filter((menu) => menu.title !== "Brand");
-    //     return [
-    //       ...filteredPrev,
-    //       {
-    //         title: "Brand",
-    //         options: brands.data.map((brand) => ({
-    //           label: brand.name,
-    //           value: brand.id,
-    //         })),
-    //       },
-    //     ];
-    //   });
-    // }
-  }, [categories]);
-
-
-
-  // TODO: console.log
 
   return (
     <Box>
@@ -221,8 +185,6 @@ export function EnhancedTableToolbar({
           <div className="flex items-center gap-5">
             {showSearch && (
               <TextField
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
                 placeholder="search..."
                 size="small"
                 InputProps={{
@@ -262,10 +224,7 @@ export function EnhancedTableToolbar({
             <Button
               loading={fetchLoading}
               disabled={fetchLoading}
-              onClick={() => {
-                setRefresh((prev) => !prev);
-                setSearch("");
-              }}
+              onClick={() => setRefresh((prev) => !prev)}
               className="flex items-center !bg-secondary !text-sm !text-white p-2.5 px-3 rounded-lg"
             >
               <MdOutlineRefresh size={20} />
@@ -275,7 +234,7 @@ export function EnhancedTableToolbar({
       </Stack>
 
       {/* TODO: filtere menu */}
-      {/* <Menu
+      <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleFilterClose}
@@ -301,7 +260,7 @@ export function EnhancedTableToolbar({
             </Menu>
           </div>
         ))}
-      </Menu> */}
+      </Menu>
 
       {/* TODO: chips */}
       {Object.entries(selectedFilters).length ? (

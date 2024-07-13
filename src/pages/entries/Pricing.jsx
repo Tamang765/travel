@@ -4,11 +4,11 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
-import HorizontalNonLinearStepper from "../../components/component/stepper/Stepper";
 import { fetchPackages } from "../../redux/slices/packageSlice";
 import { Shadow } from "../../routers";
 
-import EnhancedTable from "../../sections/entries/Packages/Table";
+import Form from "../../sections/entries/Pricing/Form";
+import EnhancedTable from "../../sections/entries/Pricing/Table";
 
 const headCells = [
   {
@@ -84,8 +84,7 @@ export default function Packages() {
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  // TODO: dynamic title for dialoge
-  const [title, setTitle] = useState("");
+
   // TODO: useStates
   const [openAdd, setOpenAdd] = useState(false);
   const [optionForm, setOptionForm] = useState({
@@ -115,26 +114,14 @@ export default function Packages() {
     const data = packages?.data?.data?.map((size) => ({
       id: size?.id,
       page_id: size?.page_id,
-      category_id: size?.category_id,
-
       highlights: size?.highlights,
       overview: size?.overview,
       locations: size?.locations,
       route_map: size?.route_map,
       equipments: size?.equipments,
-      banner: size?.banner,
-      facts: size?.facts,
-
       inclusives: size?.inclusives,
       exclusives: size?.exclusives,
       note: size?.note,
-      featured: size?.featured,
-      rated: size?.rated,
-      pricings: size?.pricings,
-      order: size?.order,
-      gallery: size?.gallery,
-
-      faqs: size?.faqs,
 
       createdDate: moment(size?.created_at)
         .format("Do MMMM, YYYY")
@@ -155,6 +142,7 @@ export default function Packages() {
       limit: parseInt(event.target.value, 10),
     }));
   };
+
   // TODO: console.logs
 
   return (
@@ -188,7 +176,7 @@ export default function Packages() {
       </Shadow>
 
       {/* TODO: add sizes */}
-      {/* <AddDialog
+      <AddDialog
         maxWidth="sm"
         title={`Create ${optionForm?.title}`}
         open={openAdd}
@@ -201,46 +189,17 @@ export default function Packages() {
           });
         }}
       >
-        {optionForm.isOpen ? (
-          <Form
-            handleClose={() => {
-              setOpenAdd(false);
-              setOptionForm({
-                title: "Package",
-                isOpen: true,
-                id: null,
-              });
-            }}
-            setvalue={setOptionForm}
-          />
-        ) : (
-          <FormFaq
-            handleClose={() => {
-              setOpenAdd(false);
-              setOptionForm({
-                title: "Package",
-                isOpen: true,
-                id: null,
-              });
-            }}
-            setOption={setOptionForm}
-            option={optionForm}
-          />
-        )}
-      </AddDialog> */}
-
-      <AddDialog
-        maxWidth="sm"
-        title={`Add new ${title}`}
-        open={openAdd}
-        handleClose={() => setOpenAdd(false)}
-      >
-        <HorizontalNonLinearStepper
-          handleClose={() => setOpenAdd(false)}
-          setTitle={setTitle}
-          title={title}
+        <Form
+          handleClose={() => {
+            setOpenAdd(false);
+            setOptionForm({
+              title: "Package",
+              isOpen: true,
+              id: null,
+            });
+          }}
+          setvalue={setOptionForm}
         />
-        {/* <Form handleClose={() => setOpenAdd(false)} /> */}
       </AddDialog>
     </>
   );

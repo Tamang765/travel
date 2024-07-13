@@ -61,7 +61,7 @@ export const updateVehicle = createAsyncThunk(
   "updateVehicle/vehicles",
   async ({ data, enqueueSnackbar, handleClose, id, setRefresh }, thunkApi) => {
     try {
-      const response = await axiosInstance.post(`vehicles/${id}`, data);
+      const response = await axiosInstance.patch(`vehicles/${id}`, data);
 
       return {
         data: response.data.data,

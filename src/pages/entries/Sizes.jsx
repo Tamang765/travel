@@ -4,9 +4,9 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AddDialog } from "../../components/component/modals/AddModal";
+import HorizontalNonLinearStepper from "../../components/component/stepper/Stepper";
 import { fetchPages } from "../../redux/slices/pageSlice";
 import { Shadow } from "../../routers";
-import Form from "../../sections/entries/Sizes/Form";
 import EnhancedTable from "../../sections/entries/Sizes/Table";
 
 const headCells = [
@@ -66,6 +66,9 @@ export default function Sizes() {
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+
+  // TODO: dynamic title for dialoge
+  const [title, setTitle] = useState("");
 
   // TODO: useStates
   const [openAdd, setOpenAdd] = useState(false);
@@ -151,11 +154,16 @@ export default function Sizes() {
       {/* TODO: add sizes */}
       <AddDialog
         maxWidth="sm"
-        title={"Add new Page"}
+        title={`Add new ${title}`}
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
       >
-        <Form handleClose={() => setOpenAdd(false)} />
+        <HorizontalNonLinearStepper
+          handleClose={() => setOpenAdd(false)}
+          setTitle={setTitle}
+          title={title}
+        />
+        {/* <Form handleClose={() => setOpenAdd(false)} /> */}
       </AddDialog>
     </>
   );

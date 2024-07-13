@@ -14,11 +14,11 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { ConfirmDialog } from "../../../components/component/modals/ConfirmDialog";
 import { EditDialog } from "../../../components/component/modals/EditModal";
-import HorizontalNonLinearStepper from "../../../components/component/stepper/Stepper";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
 import { deletePackages } from "../../../redux/slices/packageSlice";
+import Form from "./Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
 
@@ -51,7 +51,7 @@ function stableSort(array, comparator) {
 }
 
 export default function EnhancedTable({
-  // title,
+  title,
   showFilter = true,
   showSearch = true,
   showAdd = true,
@@ -68,8 +68,7 @@ export default function EnhancedTable({
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const { colors } = useTheme();
-  // TODO: dynamic title for dialoge
-  const [title, setTitle] = React.useState("");
+
   // TODO: useStates
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("name");
@@ -116,6 +115,7 @@ export default function EnhancedTable({
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelected = rows?.map((n) => n.name);
@@ -147,7 +147,6 @@ export default function EnhancedTable({
 
   // TODO: delete the size
   const handleDelete = () => {
-    console.log(dataToEdit);
     dispatch(
       deletePackages({
         id: dataToEdit?.id,
@@ -281,7 +280,13 @@ export default function EnhancedTable({
                             }}
                             id={labelId}
                           >
-                            <img src={row?.route_map} alt="route_map" />
+                            <span
+                              style={{
+                                color: colors.text,
+                              }}
+                            >
+                              {row?.route_map}
+                            </span>
                           </TableCell>
                           <TableCell
                             style={{
@@ -308,7 +313,7 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row?.inclusives?.map((item) => item?.name)}
+                              {row?.inclusives}
                             </span>
                           </TableCell>
                           <TableCell
@@ -322,7 +327,7 @@ export default function EnhancedTable({
                                 color: colors.text,
                               }}
                             >
-                              {row?.exclusives?.map((item) => item?.name)}
+                              {row?.exclusives}
                             </span>
                           </TableCell>
                           <TableCell
@@ -392,23 +397,15 @@ export default function EnhancedTable({
       {/* TODO: edit modal */}
       <EditDialog
         open={openEditModal}
-        title={`Edit ${title}(${dataToEdit?.id})`}
+        title={`Edit Page(${dataToEdit?.id})`}
         handleClose={() => setOpenEditModal(false)}
         maxWidth="sm"
       >
-        <HorizontalNonLinearStepper
-          handleClose={() => setOpenAdd(false)}
-          setTitle={setTitle}
-          title={title}
-          data={dataToEdit}
-          activePackageForm
-          isEdit
-        />
-        {/* <Form
+        <Form
           data={dataToEdit}
           isEdit={true}
           handleClose={() => setOpenEditModal(false)}
-        /> */}
+        />
       </EditDialog>
 
       {/* TODO: delete confirm modal */}

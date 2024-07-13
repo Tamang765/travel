@@ -1,20 +1,10 @@
-import { AiOutlineCalendar, AiOutlinePlus } from "react-icons/ai";
-import { BiCalendarX, BiSolidBookContent } from "react-icons/bi";
 import { CiGrid41, CiViewTimeline } from "react-icons/ci";
-import { FaBlog, FaPage4, FaProductHunt, FaQuestion } from "react-icons/fa";
+import { FaPage4, FaProductHunt, FaQuestion } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
 import { GiSurferVan } from "react-icons/gi";
-import { GrGallery } from "react-icons/gr";
-import {
-  HiOutlineQuestionMarkCircle,
-  HiOutlineUserCircle,
-  HiOutlineUsers,
-} from "react-icons/hi";
 import { IoSettings } from "react-icons/io5";
 import { LuPackage } from "react-icons/lu";
 import { MdCategory, MdOutlinePostAdd } from "react-icons/md";
-import { RiContactsBookLine } from "react-icons/ri";
-import { SiAzureartifacts } from "react-icons/si";
 import { VscExclude } from "react-icons/vsc";
 export const ROOTS_DASHBOARD = "/admin";
 
@@ -102,38 +92,80 @@ const menu = [
     ],
   },
   {
-    title: "Contents",
-    icon: <BiSolidBookContent size={35} color="#ddd" />,
+    title: "Categories",
+    icon: <IoSettings size={20} />,
     childrens: [
-      // {
-      //   title: "Admins",
-      //   path: path(ROOTS_DASHBOARD, "/users/admins"),
-      //   icon: <HiOutlineUsers size={20} />,
-      // },
       {
         title: "Blogs",
-        path: path(ROOTS_DASHBOARD, "/content/blogs"),
-        icon: <FaBlog size={20} />,
+        path: path(ROOTS_DASHBOARD, "/category/blogs"),
+        icon: <IoSettings size={20} />,
       },
       {
-        title: "Facts",
-        path: path(ROOTS_DASHBOARD, "/content/facts"),
-        icon: <SiAzureartifacts size={20} />,
-      },
-      {
-        title: "Gallery",
-        path: path(ROOTS_DASHBOARD, "/content/gallery"),
-        icon: <GrGallery size={20} />,
+        title: "Tours",
+        path: path(ROOTS_DASHBOARD, "/category/tours"),
+        icon: <IoSettings size={20} />,
       },
 
-      // {
-      //   title: "Roles",
-      //   path: path(ROOTS_DASHBOARD, "/users/roles"),
-      //   icon: <MdOutlineAdminPanelSettings size={20} />,
-      // },
+      {
+        title: "Trekkings",
+        path: path(ROOTS_DASHBOARD, "/category/trekkings"),
+        icon: <IoSettings size={20} />,
+      },
+      {
+        title: "Kailash",
+        path: path(ROOTS_DASHBOARD, "/category/kailash"),
+        icon: <IoSettings size={20} />,
+      },
+      {
+        title: "Muktinath",
+        path: path(ROOTS_DASHBOARD, "/category/muktinath"),
+        icon: <IoSettings size={20} />,
+      },
+      {
+        title: "Activities",
+        path: path(ROOTS_DASHBOARD, "/category/activites"),
+        icon: <IoSettings size={20} />,
+      },
+      {
+        title: "Vehicle",
+        path: path(ROOTS_DASHBOARD, "/category/vehcile"),
+        icon: <IoSettings size={20} />,
+      },
     ],
   },
 
+  // {
+  //   title: "Contents",
+  //   icon: <BiSolidBookContent size={35} color="#ddd" />,
+  //   childrens: [
+  //     // {
+  //     //   title: "Admins",
+  //     //   path: path(ROOTS_DASHBOARD, "/users/admins"),
+  //     //   icon: <HiOutlineUsers size={20} />,
+  //     // },
+  //     {
+  //       title: "Blogs",
+  //       path: path(ROOTS_DASHBOARD, "/content/blogs"),
+  //       icon: <FaBlog size={20} />,
+  //     },
+  //     {
+  //       title: "Facts",
+  //       path: path(ROOTS_DASHBOARD, "/content/facts"),
+  //       icon: <SiAzureartifacts size={20} />,
+  //     },
+  //     {
+  //       title: "Gallery",
+  //       path: path(ROOTS_DASHBOARD, "/content/gallery"),
+  //       icon: <GrGallery size={20} />,
+  //     },
+
+  //     // {
+  //     //   title: "Roles",
+  //     //   path: path(ROOTS_DASHBOARD, "/users/roles"),
+  //     //   icon: <MdOutlineAdminPanelSettings size={20} />,
+  //     // },
+  //   ],
+  // },
 
   {
     title: "Settings",

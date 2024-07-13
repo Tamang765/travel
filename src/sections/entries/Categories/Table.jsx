@@ -42,7 +42,6 @@ export default function EnhancedTable({
   setSearch,
   search,
 }) {
-  console.log(rows, "row");
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();

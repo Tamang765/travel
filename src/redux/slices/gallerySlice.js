@@ -22,7 +22,7 @@ export const fetchGallerys = createAsyncThunk(
   "fetchGallerys/gallerys",
   async ({ enqueueSnackbar, search }, thunkApi) => {
     try {
-      const response = await axiosInstance.get(`gallerys`, {
+      const response = await axiosInstance.get(`gallery`, {
         params: {
           ...(search !== "" && {
             search,
@@ -50,8 +50,7 @@ export const createGallery = createAsyncThunk(
     thunkApi
   ) => {
     try {
-      const response = await axiosInstance.post(`gallerys`, data);
-      handleClose();
+      const response = await axiosInstance.post(`gallery`, data);
 
       return {
         data: response.data.data,
@@ -71,7 +70,7 @@ export const updateGallery = createAsyncThunk(
   "updateGallery/gallerys",
   async ({ data, enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
-      const response = await axiosInstance.post(`gallerys/${id}`, data);
+      const response = await axiosInstance.post(`gallery/${id}`, data);
 
       return {
         data: response.data.data,
@@ -89,7 +88,7 @@ export const deleteGallery = createAsyncThunk(
   "deleteGallery/gallerys",
   async ({ enqueueSnackbar, handleClose, id }, thunkApi) => {
     try {
-      await axiosInstance.delete(`gallerys/${id}`);
+      await axiosInstance.delete(`gallery/${id}`);
       return {
         data: id,
         handleClose,
@@ -118,7 +117,7 @@ const galleryslice = createSlice({
 
     builder.addCase(fetchGallerys.fulfilled, (state, action) => {
       state.fetchLoading = false;
-      state.gallerys = action.payload;
+      state.gallerys.data = action.payload.data;
     });
 
     builder.addCase(fetchGallerys.rejected, (state, action) => {
@@ -141,6 +140,7 @@ const galleryslice = createSlice({
       action.payload.enqueueSnackbar("Gallery is created successfully.", {
         variant: "success",
       });
+      action.payload.handleClose && action.payload.handleClose();
     });
 
     builder.addCase(createGallery.rejected, (state, action) => {
@@ -157,7 +157,7 @@ const galleryslice = createSlice({
 
     builder.addCase(updateGallery.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.gallerys.data = state.gallerys.data.map((gallery) => {
+      state.gallerys.data.data = state.gallerys.data.data.map((gallery) => {
         if (gallery.id === action.payload.data.id) {
           return action.payload.data;
         } else {

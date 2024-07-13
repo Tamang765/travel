@@ -14,11 +14,11 @@ import { MdOutlineDeleteOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { ConfirmDialog } from "../../../components/component/modals/ConfirmDialog";
 import { EditDialog } from "../../../components/component/modals/EditModal";
+import HorizontalNonLinearStepper from "../../../components/component/stepper/Stepper";
 import TableNoData from "../../../components/table/TableNoData";
 import TableSkeleton from "../../../components/table/TableSkeleton";
 import { useTheme } from "../../../providers/ThemeProvider";
 import { deletePage } from "../../../redux/slices/pageSlice";
-import Form from "./Form";
 import { EnhancedTableHead } from "./TableHeads";
 import { EnhancedTableToolbar } from "./TableToolbar";
 
@@ -51,7 +51,7 @@ function stableSort(array, comparator) {
 }
 
 export default function EnhancedTable({
-  title,
+  // title,
   showFilter = true,
   showSearch = true,
   showAdd = true,
@@ -66,6 +66,8 @@ export default function EnhancedTable({
 }) {
   // TODO: hooks
   const dispatch = useDispatch();
+  const [title, setTitle] = React.useState("");
+
   const { enqueueSnackbar } = useSnackbar();
   const { colors } = useTheme();
 
@@ -163,7 +165,7 @@ export default function EnhancedTable({
     <>
       <Box sx={{ width: "100%" }}>
         <EnhancedTableToolbar
-          title={title}
+          title={'title'}
           numSelected={selected.length}
           showAdd={showAdd}
           showSearch={showSearch}
@@ -368,11 +370,17 @@ export default function EnhancedTable({
         handleClose={() => setOpenEditModal(false)}
         maxWidth="sm"
       >
-        <Form
+        <HorizontalNonLinearStepper
+          handleClose={() => setOpenAdd(false)}
+          setTitle={setTitle}
+          title={title}
+          isEdit
+        />
+        {/* <Form
           data={dataToEdit}
           isEdit={true}
           handleClose={() => setOpenEditModal(false)}
-        />
+        /> */}
       </EditDialog>
 
       {/* TODO: delete confirm modal */}

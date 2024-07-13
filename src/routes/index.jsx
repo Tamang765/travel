@@ -123,6 +123,73 @@ export default function Router() {
             },
           ],
         },
+        // TODO:categories
+        {
+          path: "/admin/category",
+          children: [
+            {
+              element: <Navigate to="/admin/category" replace />,
+              index: true,
+            },
+
+            {
+              path: "blogs",
+              element: (
+                <Layout>
+                  <Categories title="Blogs" />
+                </Layout>
+              ),
+            },
+            {
+              path: "tours",
+              element: (
+                <Layout>
+                  <Categories title="Tours" />
+                </Layout>
+              ),
+            },
+            {
+              path: "trekkings",
+              element: (
+                <Layout>
+                  <Categories title="Trekkings" />
+                </Layout>
+              ),
+            },
+            {
+              path: "kailash",
+              element: (
+                <Layout>
+                  <Categories title="kailash" />
+                </Layout>
+              ),
+            },
+            {
+              path: "muktinath",
+              element: (
+                <Layout>
+                  <Categories title="Muktinath" />
+                </Layout>
+              ),
+            },
+            {
+              path: "activities",
+              element: (
+                <Layout>
+                  <Categories title="Activities" />
+                </Layout>
+              ),
+            },
+            {
+              path: "vehicle",
+              element: (
+                <Layout>
+                  <Categories title="Vehicles" />
+                </Layout>
+              ),
+            },
+          ],
+        },
 
         // TODO: Entries
         {

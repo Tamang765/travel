@@ -21,7 +21,6 @@ const headCells = [
     label: "NAME",
   },
 
-
   {
     id: "date",
     numeric: true,
@@ -36,7 +35,7 @@ const headCells = [
   },
 ];
 
-export default function Categories() {
+export default function Categories({ title }) {
   // TODO: hooks
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
@@ -77,8 +76,9 @@ export default function Categories() {
   // TODO: set the rows
 
   useEffect(() => {
+    console.log(title);
     const filtered = categories?.data?.filter(
-      (cat) => cat?.parent_id === activeTab
+      (cat) => cat?.slug === title?.toLowerCase()
     );
     setFilteredCategories(filtered);
 
@@ -93,7 +93,13 @@ export default function Categories() {
     }));
 
     setRows(data);
-  }, [activeTab, categories]);
+  }, [title, categories]);
+
+  // TODO: choose category
+
+  useEffect(() => {
+    dispatch(fetchCategories({ category_id: filteredCategories[0]?.id }));
+  }, []);
 
   // TODO: functions
   const handleChangePage = (event, newPage) => {
@@ -107,6 +113,7 @@ export default function Categories() {
       limit: parseInt(event.target.value, 10),
     }));
   };
+  console.log(filteredCategories);
 
   // TODO: console.logs
 
@@ -116,7 +123,7 @@ export default function Categories() {
         <Card color="transparent" shadow={false}>
           <EnhancedTable
             showSearch={false}
-            title="Categories"
+            title={`${title} Categories`}
             headCells={headCells}
             rows={rows}
             showFilter={false}

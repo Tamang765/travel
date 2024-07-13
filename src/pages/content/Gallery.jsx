@@ -37,7 +37,10 @@ export default function Gallery() {
   const [rows, setRows] = useState([]);
 
   // TODO: get the data from slice
-  const gallery = useSelector((state) => state.blog.gallery);
+  const gallery = useSelector((state) => state.gallery.gallerys);
+
+
+  console.log(gallery);
 
   const formattedFilters = Object.entries(selectedFilters).reduce(
     (acc, [key, { value }]) => {

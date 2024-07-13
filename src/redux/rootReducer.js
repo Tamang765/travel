@@ -12,16 +12,17 @@ import categorySlice from "./slices/categorySlice";
 import colorSlice from "./slices/colorSlice";
 import customerSlice from "./slices/customerSlice";
 import emergencyContactSlice from "./slices/emergencyContactSlice";
+import factSlice from "./slices/factSlice";
 import faqSlice from "./slices/faqSlice";
+import gallerySlice from "./slices/gallerySlice";
 import packagesSlice from "./slices/packageSlice";
 import pageSlice from "./slices/pageSlice";
+import pricingSlice from "./slices/pricingSlice";
 import productSlice from "./slices/productSlice";
 import referSlice from "./slices/referSlice";
 import roleSlice from "./slices/roleSlice";
 import sizeSlice from "./slices/sizeSlice";
-import factSlice from "./slices/factSlice";
 import vehicleSlice from "./slices/vehicleSlice";
-
 
 import teamSlice from "./slices/teamSlice";
 import userSlice from "./slices/userSlice";
@@ -158,6 +159,19 @@ export const vehiclePersistConfig = {
   storage,
   keyPrefix: "redux-",
 };
+
+export const pricingPersistConfig = {
+  key: "pricing",
+  storage,
+  keyPrefix: "redux-",
+};
+
+export const galleryPersistConfig = {
+  key: "gallery",
+  storage,
+  keyPrefix: "redux-",
+};
+
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authSlice),
   user: persistReducer(userPersistConfig, userSlice),
@@ -168,6 +182,8 @@ const rootReducer = combineReducers({
   category: persistReducer(categoryPersistConfig, categorySlice),
   size: persistReducer(sizePersistConfig, sizeSlice),
   page: persistReducer(pagePersistConfig, pageSlice),
+  pricing: persistReducer(pricingPersistConfig, pricingSlice),
+  gallery: persistReducer(galleryPersistConfig, gallerySlice),
 
   color: persistReducer(colorPersistConfig, colorSlice),
   inclusive: persistReducer(inclusivePersistConfig, inclusiveSlice),
@@ -181,7 +197,6 @@ const rootReducer = combineReducers({
   blog: persistReducer(blogPersistConfig, blogSlice),
   fact: persistReducer(factPersistConfig, factSlice),
   vehicle: persistReducer(vehiclePersistConfig, vehicleSlice),
-
 
   emergencyContact: persistReducer(
     emergencyContactPersistConfig,
